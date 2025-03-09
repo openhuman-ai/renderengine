@@ -10,6 +10,8 @@ import GUI from "./gui/GUI"
 import { LoadingManager } from "./loaders/LoadingManager"
 import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
 import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
+import { DirectionalLight } from "@/lights/DirectionalLight"
+import { KTX2Loader } from "./jsm/loaders/KTX2Loader"
 // import { PMREMGenerator } from "./extras/PMREMGenerator"
 
 const loadingManager = new LoadingManager()
@@ -62,20 +64,20 @@ class App {
 
 	constructor() {
 		this.scene = new Scene()
-		const room = new RoomEnvironment()
-		const pmremGenerator = new PMREMGenerator(this.renderer)
 		this.setupCamera()
 		this.setupRenderer()
 		this.setupCube()
 		this.setupLights()
 		this.setupEventListeners()
 		this.animate()
+		// this.loadModel()
 		// this.createGUI()
 	}
 
 	setupCamera() {
 		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-		this.camera.position.z = 5
+		// this.camera.position.z = 5
+		this.camera.position.set(-1, 0.8, 5)
 	}
 
 	setupRenderer() {
@@ -86,6 +88,10 @@ class App {
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 		this.renderer.setClearColor(0xffffff, 1)
+
+		const room = new RoomEnvironment()
+		const pmremGenerator = new PMREMGenerator(this.renderer)
+		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
 	}
 
 	setupCube() {
@@ -96,12 +102,18 @@ class App {
 	}
 
 	setupLights() {
-		const ambientLight = new AmbientLight(0xffffff, 0.5)
-		this.scene.add(ambientLight)
+		// const ambientLight = new AmbientLight(0xffffff, 0.5)
+		// this.scene.add(ambientLight)
 
-		const pointLight = new PointLight(0xffffff, 1)
-		pointLight.position.set(5, 5, 5)
-		this.scene.add(pointLight)
+		// const pointLight = new PointLight(0xffffff, 1)
+		// pointLight.position.set(5, 5, 5)
+		// this.scene.add(pointLight)
+		const light = new DirectionalLight("white", 8)
+		light.position.set(10, 10, 10)
+		this.scene.add(light)
+
+		const ambientLight = new AmbientLight("white", 2)
+		this.scene.add(ambientLight)
 	}
 
 	setupEventListeners() {
@@ -198,6 +210,64 @@ class App {
 		// point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
 		this.gui.close()
 	}
+
+	// async loadModel() {
+	// 	// const ktx2Loader = new KTX2Loader(loadingManager)
+	// 	//   .setTranscoderPath("three/examples/jsm/libs/basis/")
+	// 	//   .detectSupport(this.renderer)
+	// 	const ktx2Loader = new KTX2Loader(loadingManager).setTranscoderPath("/libs/basis/").detectSupport(this.renderer)
+
+	// 	const dracoLoader = new DRACOLoader(loadingManager)
+	// 	dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/")
+
+	// 	const loader = new GLTFLoader(loadingManager)
+	// 	loader.setDRACOLoader(dracoLoader)
+	// 	loader.setKTX2Loader(ktx2Loader)
+	// 	loader.setMeshoptDecoder(MeshoptDecoder)
+
+	// 	loader.load(MODEL_PATH, (gltf) => {
+	// 		//   this.model = gltf.scene
+	// 		const mesh = gltf.scene.children[0]
+	// 		this.mixer = new THREE.AnimationMixer(mesh)
+	// 		this.mixer.clipAction(gltf.animations[0]).play()
+	// 		const head = mesh.getObjectByName("mesh_2")
+	// 		const influences = head.morphTargetInfluences
+
+	// 		//   // Center the model
+	// 		//   const box = new THREE.Box3().setFromObject(this.model)
+	// 		//   const center = box.getCenter(new THREE.Vector3())
+	// 		//   this.model.position.sub(center)
+
+	// 		//   // Setup morph targets
+	// 		//   this.model.traverse((node) => {
+	// 		//     if (node.isMesh && node.morphTargetDictionary) {
+	// 		//       this.meshWithMorphTargets = node
+	// 		//     }
+	// 		//   })
+
+	// 		// // Handle animations
+	// 		// if (gltf.animations?.length) {
+	// 		//   this.mixer = new THREE.AnimationMixer(this.model)
+	// 		//   this.animations = gltf.animations
+	// 		//   this.animations.forEach((clip) => {
+	// 		//     this.mixer.clipAction(clip).play()
+	// 		//   })
+	// 		// }
+
+	// 		for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+	// 			this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+	// 		}
+	// 		//   this.gui.close()
+	// 		this.scene.add(mesh)
+
+	// 		//   this.scene.add(this.model)
+
+	// 		// Update GUI after model is loaded
+	// 		if (this.meshWithMorphTargets) {
+	// 			this.updateMorphTargetGUI()
+	// 		}
+	// 	})
+	// }
 }
 
 // Initialize the app
