@@ -855,7 +855,6 @@ class WebGLBackend extends Backend {
 
 			if (vaoGPU === undefined) {
 				let staticVao
-
 				;({ vaoGPU, staticVao } = this._createVao(renderObject.getAttributes()))
 
 				if (staticVao) {
