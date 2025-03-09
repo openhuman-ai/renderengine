@@ -1,4 +1,10 @@
-import { BufferAttribute, BufferGeometry, Color, ColorManagement, FileLoader, Loader, LinearSRGBColorSpace, SRGBColorSpace } from "three"
+import { LinearSRGBColorSpace, SRGBColorSpace } from "@/constants"
+import { BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { FileLoader } from "@/loaders/FileLoader"
+import { Loader } from "@/loaders/Loader"
+import { Color } from "@/math/Color"
+import { ColorManagement } from "@/math/ColorManagement"
 
 const _taskCache = new WeakMap()
 
