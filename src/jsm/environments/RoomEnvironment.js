@@ -1,4 +1,12 @@
-import { BackSide, BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, PointLight, Scene } from "three"
+// import { BackSide, BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, PointLight, Scene } from "three"
+
+import { BackSide } from "@/constants"
+import { BoxGeometry } from "@/geometries/BoxGeometry"
+import { PointLight } from "@/lights/PointLight"
+import { MeshBasicMaterial } from "@/materials/MeshBasicMaterial"
+import { MeshStandardMaterial } from "@/materials/MeshStandardMaterial"
+import { Mesh } from "@/objects/Mesh"
+import { Scene } from "@/scenes/Scene"
 
 /**
  * This class represents a scene with a basic room setup that can be used as

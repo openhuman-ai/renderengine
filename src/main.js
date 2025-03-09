@@ -6,6 +6,18 @@ import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
 import { Mesh } from "./objects/Mesh"
 import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import { Scene } from "./scenes/Scene"
+import GUI from "./gui/GUI"
+import { LoadingManager } from "./loaders/LoadingManager"
+import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
+import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
+// import { PMREMGenerator } from "./extras/PMREMGenerator"
+
+const loadingManager = new LoadingManager()
+loadingManager.onProgress = (url, loaded, total) => {
+	console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)
+}
+
+const MODEL_PATH = new URL("/facecap.glb", import.meta.url).href
 
 class App {
 	canvas
@@ -19,6 +31,8 @@ class App {
 	model
 	composer
 	effectFXAA
+	meshWithMorphTargets
+	morphTargetFolder
 	stats
 	gui
 	helpers = {
@@ -48,13 +62,15 @@ class App {
 
 	constructor() {
 		this.scene = new Scene()
+		const room = new RoomEnvironment()
+		const pmremGenerator = new PMREMGenerator(this.renderer)
 		this.setupCamera()
 		this.setupRenderer()
 		this.setupCube()
 		this.setupLights()
 		this.setupEventListeners()
 		this.animate()
-		this.createGUI()
+		// this.createGUI()
 	}
 
 	setupCamera() {

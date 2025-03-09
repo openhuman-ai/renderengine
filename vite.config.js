@@ -1,5 +1,6 @@
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
+import path from 'path';
 import { defineConfig } from "vite"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -10,6 +11,11 @@ export default defineConfig({
 	base: "/",
 	server: {
 		open: true,
+	},
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "src"),
+		},
 	},
 	build: {
 		outDir: "dist",
