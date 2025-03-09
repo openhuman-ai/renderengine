@@ -7,7 +7,7 @@ import NumberController from "./NumberController"
 import OptionController from "./OptionController"
 import StringController from "./StringController"
 
-import stylesheet from "stylesheet"
+// import stylesheet from "stylesheet"
 import _injectStyles from "./utils/injectStyles"
 
 let stylesInjected = false
@@ -137,9 +137,9 @@ export default class GUI {
 			this.domElement.classList.add("allow-touch-styles")
 		}
 
-		// Inject stylesheet if we haven't done that yet
+		// // Inject stylesheet if we haven't done that yet
 		if (!stylesInjected && injectStyles) {
-			_injectStyles(stylesheet)
+		// 	_injectStyles(stylesheet)
 			stylesInjected = true
 		}
 
