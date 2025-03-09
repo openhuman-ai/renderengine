@@ -340,7 +340,7 @@ class WebGLRenderer {
 			}
 
 			// OffscreenCanvas does not have setAttribute, see #22811
-			if ("setAttribute" in canvas) canvas.setAttribute("data-engine", `three.js r${REVISION}`)
+			if ("setAttribute" in canvas) canvas.setAttribute("data-engine", `${REVISION}`)
 
 			// event listeners must be registered before WebGL context is created, see #12753
 			canvas.addEventListener("webglcontextlost", onContextLost, false)
