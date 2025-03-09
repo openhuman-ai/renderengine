@@ -1,15 +1,23 @@
-import {
-	BufferAttribute,
-	BufferGeometry,
-	Float32BufferAttribute,
-	InstancedBufferAttribute,
-	InterleavedBuffer,
-	InterleavedBufferAttribute,
-	TriangleFanDrawMode,
-	TriangleStripDrawMode,
-	TrianglesDrawMode,
-	Vector3,
-} from "three"
+// import {
+// 	BufferAttribute,
+// 	BufferGeometry,
+// 	Float32BufferAttribute,
+// 	InstancedBufferAttribute,
+// 	InterleavedBuffer,
+// 	InterleavedBufferAttribute,
+// 	TriangleFanDrawMode,
+// 	TriangleStripDrawMode,
+// 	TrianglesDrawMode,
+// 	Vector3,
+// } from "@/core"
+
+import { TriangleFanDrawMode, TrianglesDrawMode, TriangleStripDrawMode } from "@/constants"
+import { BufferAttribute, Float32BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { InstancedBufferAttribute } from "@/core/InstancedBufferAttribute"
+import { InterleavedBuffer } from "@/core/InterleavedBuffer"
+import { InterleavedBufferAttribute } from "@/core/InterleavedBufferAttribute"
+import { Vector3 } from "@/math/Vector3"
 
 function computeMikkTSpaceTangents(geometry, MikkTSpace, negateSign = true) {
 	if (!MikkTSpace || !MikkTSpace.isReady) {
