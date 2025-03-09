@@ -4191,7 +4191,6 @@ UTIF.LosslessJpegDecode = (function () {
 	}
 	return C
 })()
-
 ;(function () {
 	var G = 0,
 		F = 1,
