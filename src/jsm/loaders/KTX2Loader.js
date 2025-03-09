@@ -46,6 +46,7 @@ import { CompressedArrayTexture } from "@/textures/CompressedArrayTexture.js"
 import { CompressedCubeTexture } from "@/textures/CompressedCubeTexture.js"
 import { FloatType, HalfFloatType, LinearSRGBColorSpace, RedFormat, RGB_BPTC_UNSIGNED_Format, RGB_ETC1_Format, RGB_ETC2_Format, RGB_PVRTC_4BPPV1_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_6x6_Format, RGBA_BPTC_Format, RGBA_ETC2_EAC_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT5_Format, RGBAFormat, RGFormat, SRGBColorSpace, UnsignedByteType } from "@/constants.js"
 import { Loader } from "@/loaders/Loader.js"
+import { FileLoader } from "@/loaders/FileLoader.js"
 
 const _taskCache = new WeakMap()
 
