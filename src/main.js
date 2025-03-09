@@ -96,10 +96,10 @@ class App {
 		this.setupCamera()
 		this.createClock()
 		this.createControls()
-		this.setupCube()
+		// this.setupCube()
 		this.setupLights()
 		this.loadModel()
-		// this.createGUI()
+		this.createGUI()
 
 		this.setupEventListeners()
 
@@ -108,7 +108,7 @@ class App {
 		})
 	}
 
-	createClock(){
+	createClock() {
 		this.clock = new Clock()
 	}
 
@@ -134,8 +134,6 @@ class App {
 		const room = new RoomEnvironment()
 		const pmremGenerator = new PMREMGenerator(this.renderer)
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
-
-		// this.canvas.appendChild(this.renderer.domElement)
 	}
 
 	createControls() {
@@ -167,12 +165,12 @@ class App {
 		// const pointLight = new PointLight(0xffffff, 1)
 		// pointLight.position.set(5, 5, 5)
 		// this.scene.add(pointLight)
-		const light = new DirectionalLight("white", 8)
-		light.position.set(10, 10, 10)
-		this.scene.add(light)
+		this.lights.main = new DirectionalLight("white", 8)
+		this.lights.main.position.set(10, 10, 10)
+		this.scene.add(this.lights.main)
 
-		const ambientLight = new AmbientLight("white", 2)
-		this.scene.add(ambientLight)
+		this.lights.ambient = new AmbientLight("white", 2)
+		this.scene.add(this.lights.ambient)
 	}
 
 	setupEventListeners() {
@@ -183,24 +181,6 @@ class App {
 		this.camera.aspect = window.innerWidth / window.innerHeight
 		this.camera.updateProjectionMatrix()
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
-	}
-
-	render() {
-		const delta = this.clock.getDelta()
-
-		if (this.mixer) {
-			this.mixer.update(delta)
-		}
-
-		// Rotate the cube
-		this.cube.rotation.x += 0.01
-		this.cube.rotation.y += 0.01
-
-		if (this.controls) {
-			this.controls.update()
-		}
-
-		this.renderer.render(this.scene, this.camera)
 	}
 
 	createGUI() {
@@ -238,50 +218,50 @@ class App {
 		mainFolder.add(this.lights.main.position, "y", -10, 10).name("Position Y")
 		mainFolder.add(this.lights.main.position, "z", -10, 10).name("Position Z")
 
-		// Front Light controls
-		const frontFolder = this.gui.addFolder("Front Light")
-		frontFolder.close() // Close by default
-		frontFolder.add(this.lights.front, "intensity", 0, 2).name("Intensity")
-		frontFolder.addColor(this.lights.front, "color").name("Color")
-		frontFolder.add(this.lights.front.position, "x", -10, 10).name("Position X")
-		frontFolder.add(this.lights.front.position, "y", -10, 10).name("Position Y")
-		frontFolder.add(this.lights.front.position, "z", -10, 10).name("Position Z")
+		// // Front Light controls
+		// const frontFolder = this.gui.addFolder("Front Light")
+		// frontFolder.close() // Close by default
+		// frontFolder.add(this.lights.front, "intensity", 0, 2).name("Intensity")
+		// frontFolder.addColor(this.lights.front, "color").name("Color")
+		// frontFolder.add(this.lights.front.position, "x", -10, 10).name("Position X")
+		// frontFolder.add(this.lights.front.position, "y", -10, 10).name("Position Y")
+		// frontFolder.add(this.lights.front.position, "z", -10, 10).name("Position Z")
 
-		// Back Light controls
-		const backFolder = this.gui.addFolder("Back Light")
-		backFolder.close() // Close by default
-		backFolder.add(this.lights.back, "intensity", 0, 2).name("Intensity")
-		backFolder.addColor(this.lights.back, "color").name("Color")
-		backFolder.add(this.lights.back.position, "x", -10, 10).name("Position X")
-		backFolder.add(this.lights.back.position, "y", -10, 10).name("Position Y")
-		backFolder.add(this.lights.back.position, "z", -10, 10).name("Position Z")
+		// // Back Light controls
+		// const backFolder = this.gui.addFolder("Back Light")
+		// backFolder.close() // Close by default
+		// backFolder.add(this.lights.back, "intensity", 0, 2).name("Intensity")
+		// backFolder.addColor(this.lights.back, "color").name("Color")
+		// backFolder.add(this.lights.back.position, "x", -10, 10).name("Position X")
+		// backFolder.add(this.lights.back.position, "y", -10, 10).name("Position Y")
+		// backFolder.add(this.lights.back.position, "z", -10, 10).name("Position Z")
 
-		// // Point Light 1 controls
-		// const point1Folder = this.gui.addFolder('Point Light 1')
-		// point1Folder.close() // Close by default
-		// point1Folder.add(this.lights.point1, 'intensity', 0, 2).name('Intensity')
-		// point1Folder.addColor(this.lights.point1, 'color').name('Color')
-		// point1Folder.add(this.lights.point1.position, 'x', -10, 10).name('Position X')
-		// point1Folder.add(this.lights.point1.position, 'y', -10, 10).name('Position Y')
-		// point1Folder.add(this.lights.point1.position, 'z', -10, 10).name('Position Z')
-		// point1Folder.add(this.lights.point1, 'distance', 0, 2000).name('Distance')
+		// // // Point Light 1 controls
+		// // const point1Folder = this.gui.addFolder('Point Light 1')
+		// // point1Folder.close() // Close by default
+		// // point1Folder.add(this.lights.point1, 'intensity', 0, 2).name('Intensity')
+		// // point1Folder.addColor(this.lights.point1, 'color').name('Color')
+		// // point1Folder.add(this.lights.point1.position, 'x', -10, 10).name('Position X')
+		// // point1Folder.add(this.lights.point1.position, 'y', -10, 10).name('Position Y')
+		// // point1Folder.add(this.lights.point1.position, 'z', -10, 10).name('Position Z')
+		// // point1Folder.add(this.lights.point1, 'distance', 0, 2000).name('Distance')
 
-		// // Point Light 2 controls
-		// const point2Folder = this.gui.addFolder('Point Light 2')
-		// point2Folder.close() // Close by default
-		// point2Folder.add(this.lights.point2, 'intensity', 0, 2).name('Intensity')
-		// point2Folder.addColor(this.lights.point2, 'color').name('Color')
-		// point2Folder.add(this.lights.point2.position, 'x', -10, 10).name('Position X')
-		// point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
-		// point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
-		// point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
+		// // // Point Light 2 controls
+		// // const point2Folder = this.gui.addFolder('Point Light 2')
+		// // point2Folder.close() // Close by default
+		// // point2Folder.add(this.lights.point2, 'intensity', 0, 2).name('Intensity')
+		// // point2Folder.addColor(this.lights.point2, 'color').name('Color')
+		// // point2Folder.add(this.lights.point2.position, 'x', -10, 10).name('Position X')
+		// // point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
+		// // point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
+		// // point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
 
-		// Add camera controls
-		const cameraFolder = this.gui.addFolder("Camera")
-		cameraFolder.add(this.camera.position, "x", -5, 5, 0.1).name("Position X")
-		cameraFolder.add(this.camera.position, "y", -5, 5, 0.1).name("Position Y")
-		cameraFolder.add(this.camera.position, "z", -5, 5, 0.1).name("Position Z")
-		cameraFolder.close()
+		// // Add camera controls
+		// const cameraFolder = this.gui.addFolder("Camera")
+		// cameraFolder.add(this.camera.position, "x", -5, 5, 0.1).name("Position X")
+		// cameraFolder.add(this.camera.position, "y", -5, 5, 0.1).name("Position Y")
+		// cameraFolder.add(this.camera.position, "z", -5, 5, 0.1).name("Position Z")
+		// cameraFolder.close()
 
 		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
 		this.morphTargetFolder.close()
@@ -319,9 +299,9 @@ class App {
 			//     this.mixer.clipAction(clip).play()
 			//   })
 			// }
-			// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
-			// 	this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
-			// }
+			for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+				this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+			}
 			//   this.gui.close()
 			this.scene.add(mesh)
 			//   this.scene.add(this.model)
@@ -330,6 +310,24 @@ class App {
 				this.updateMorphTargetGUI()
 			}
 		})
+	}
+
+	render() {
+		const delta = this.clock.getDelta()
+
+		if (this.mixer) {
+			this.mixer.update(delta)
+		}
+
+		// // Rotate the cube
+		// this.cube.rotation.x += 0.01
+		// this.cube.rotation.y += 0.01
+
+		if (this.controls) {
+			this.controls.update()
+		}
+
+		this.renderer.render(this.scene, this.camera)
 	}
 }
 

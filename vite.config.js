@@ -39,5 +39,5 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: [],
 	},
-	assetsInclude: ["**/*.wasm"],
+	assetsInclude: ["**/*.wasm", "**/*.ktx2", "**/*.glb"],
 })
