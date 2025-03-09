@@ -12,37 +12,6 @@
  * - BasisU HDR: https://github.com/BinomialLLC/basis_universal/wiki/UASTC-HDR-Texture-Specification-v1.0
  */
 
-import {
-	CompressedTexture,
-	CompressedArrayTexture,
-	CompressedCubeTexture,
-	Data3DTexture,
-	DataTexture,
-	FileLoader,
-	FloatType,
-	HalfFloatType,
-	NoColorSpace,
-	LinearFilter,
-	LinearMipmapLinearFilter,
-	LinearSRGBColorSpace,
-	Loader,
-	RedFormat,
-	RGB_BPTC_UNSIGNED_Format,
-	RGB_ETC1_Format,
-	RGB_ETC2_Format,
-	RGB_PVRTC_4BPPV1_Format,
-	RGBA_ASTC_4x4_Format,
-	RGBA_ASTC_6x6_Format,
-	RGBA_BPTC_Format,
-	RGBA_ETC2_EAC_Format,
-	RGBA_PVRTC_4BPPV1_Format,
-	RGBA_S3TC_DXT5_Format,
-	RGBA_S3TC_DXT1_Format,
-	RGBAFormat,
-	RGFormat,
-	SRGBColorSpace,
-	UnsignedByteType,
-} from "three"
 import { WorkerPool } from "../utils/WorkerPool.js"
 import {
 	read,
@@ -72,6 +41,11 @@ import {
 } from "../libs/ktx-parse.module.js"
 import { ZSTDDecoder } from "../libs/zstddec.module.js"
 import { DisplayP3ColorSpace, LinearDisplayP3ColorSpace } from "../math/ColorSpaces.js"
+import { CompressedTexture } from "@/textures/CompressedTexture.js"
+import { CompressedArrayTexture } from "@/textures/CompressedArrayTexture.js"
+import { CompressedCubeTexture } from "@/textures/CompressedCubeTexture.js"
+import { FloatType, HalfFloatType, LinearSRGBColorSpace, RedFormat, RGB_BPTC_UNSIGNED_Format, RGB_ETC1_Format, RGB_ETC2_Format, RGB_PVRTC_4BPPV1_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_6x6_Format, RGBA_BPTC_Format, RGBA_ETC2_EAC_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT5_Format, RGBAFormat, RGFormat, SRGBColorSpace, UnsignedByteType } from "@/constants.js"
+import { Loader } from "@/loaders/Loader.js"
 
 const _taskCache = new WeakMap()
 

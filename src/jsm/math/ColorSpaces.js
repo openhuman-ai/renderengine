@@ -1,5 +1,3 @@
-// import { LinearTransfer, Matrix3, SRGBTransfer } from "three"
-
 import { LinearTransfer, SRGBTransfer } from "@/constants"
 import { Matrix3 } from "@/math/Matrix3"
 
