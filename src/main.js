@@ -1,18 +1,47 @@
-import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
-import { BoxGeometry } from "./geometries/BoxGeometry"
-import { AmbientLight } from "./lights/AmbientLight"
-import { PointLight } from "./lights/PointLight"
-import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
-import { Mesh } from "./objects/Mesh"
-import { WebGLRenderer } from "./renderers/WebGLRenderer"
-import { Scene } from "./scenes/Scene"
+// import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
+// import { BoxGeometry } from "./geometries/BoxGeometry"
+// import { AmbientLight } from "./lights/AmbientLight"
+// import { PointLight } from "./lights/PointLight"
+// import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
+// import { Mesh } from "./objects/Mesh"
+// import { WebGLRenderer } from "./renderers/WebGLRenderer"
+// import { Scene } from "./scenes/Scene"
 import GUI from "./gui/GUI"
-import { LoadingManager } from "./loaders/LoadingManager"
-import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
-import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
-import { DirectionalLight } from "@/lights/DirectionalLight"
-import { KTX2Loader } from "./jsm/loaders/KTX2Loader"
-// import { PMREMGenerator } from "./extras/PMREMGenerator"
+// import { LoadingManager } from "./loaders/LoadingManager"
+// import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
+// import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
+// import { DirectionalLight } from "@/lights/DirectionalLight"
+// import { KTX2Loader } from "./jsm/loaders/KTX2Loader"
+// import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
+// import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
+// import { MeshoptDecoder } from "./jsm/libs/meshopt_decoder.module"
+// import { AnimationMixer } from "./animation/AnimationMixer"
+import {
+	LoadingManager,
+	Scene,
+	Color,
+	Clock,
+	WebGLRenderer,
+	PMREMGenerator,
+	PerspectiveCamera,
+	ACESFilmicToneMapping,
+	DirectionalLight,
+	BoxGeometry,
+	AmbientLight,
+	MeshPhongMaterial,
+	Mesh,
+	AnimationMixer,
+	Box3,
+	Vector3,
+} from "three"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import Stats from "three/addons/libs/stats.module.js"
+
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js"
+import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js"
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -63,35 +92,65 @@ class App {
 	windowHalfY = window.innerHeight / 2
 
 	constructor() {
-		this.scene = new Scene()
+		this.createRenderer()
 		this.setupCamera()
-		this.setupRenderer()
+		this.createClock()
+		this.createControls()
 		this.setupCube()
 		this.setupLights()
-		this.setupEventListeners()
-		this.animate()
-		// this.loadModel()
+		this.loadModel()
 		// this.createGUI()
+
+		this.setupEventListeners()
+
+		this.renderer.setAnimationLoop(() => {
+			this.render()
+		})
+	}
+
+	createClock(){
+		this.clock = new Clock()
 	}
 
 	setupCamera() {
 		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-		// this.camera.position.z = 5
-		this.camera.position.set(-1, 0.8, 5)
+		this.camera.position.z = 5
+		// this.camera.position.set(-1, 0.8, 5)
 	}
 
-	setupRenderer() {
+	createRenderer() {
 		const canvas = document.querySelector("#scene")
 		if (!canvas) throw new Error("Canvas element not found")
+		this.canvas = canvas
+
+		this.scene = new Scene()
 
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+		this.renderer.toneMapping = ACESFilmicToneMapping
 		this.renderer.setClearColor(0xffffff, 1)
 
 		const room = new RoomEnvironment()
 		const pmremGenerator = new PMREMGenerator(this.renderer)
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
+
+		// this.canvas.appendChild(this.renderer.domElement)
+	}
+
+	createControls() {
+		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+		this.controls.enableDamping = true
+		this.controls.minDistance = 2.5
+		this.controls.maxDistance = 5
+		this.controls.minAzimuthAngle = -Math.PI / 2
+		this.controls.maxAzimuthAngle = Math.PI / 2
+		this.controls.maxPolarAngle = Math.PI / 1.8
+		this.controls.target.set(0, 0.15, -0.2)
+
+		this.controls.enableDamping = true
+		this.controls.dampingFactor = 0.05
+		this.controls.screenSpacePanning = true
 	}
 
 	setupCube() {
@@ -126,12 +185,20 @@ class App {
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 	}
 
-	animate() {
-		requestAnimationFrame(() => this.animate())
+	render() {
+		const delta = this.clock.getDelta()
+
+		if (this.mixer) {
+			this.mixer.update(delta)
+		}
 
 		// Rotate the cube
 		this.cube.rotation.x += 0.01
 		this.cube.rotation.y += 0.01
+
+		if (this.controls) {
+			this.controls.update()
+		}
 
 		this.renderer.render(this.scene, this.camera)
 	}
@@ -208,66 +275,62 @@ class App {
 		// point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
 		// point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
 		// point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
-		this.gui.close()
+
+		// Add camera controls
+		const cameraFolder = this.gui.addFolder("Camera")
+		cameraFolder.add(this.camera.position, "x", -5, 5, 0.1).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -5, 5, 0.1).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -5, 5, 0.1).name("Position Z")
+		cameraFolder.close()
+
+		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
+		this.morphTargetFolder.close()
+
+		// this.gui.close()
 	}
 
-	// async loadModel() {
-	// 	// const ktx2Loader = new KTX2Loader(loadingManager)
-	// 	//   .setTranscoderPath("three/examples/jsm/libs/basis/")
-	// 	//   .detectSupport(this.renderer)
-	// 	const ktx2Loader = new KTX2Loader(loadingManager).setTranscoderPath("/libs/basis/").detectSupport(this.renderer)
-
-	// 	const dracoLoader = new DRACOLoader(loadingManager)
-	// 	dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/")
-
-	// 	const loader = new GLTFLoader(loadingManager)
-	// 	loader.setDRACOLoader(dracoLoader)
-	// 	loader.setKTX2Loader(ktx2Loader)
-	// 	loader.setMeshoptDecoder(MeshoptDecoder)
-
-	// 	loader.load(MODEL_PATH, (gltf) => {
-	// 		//   this.model = gltf.scene
-	// 		const mesh = gltf.scene.children[0]
-	// 		this.mixer = new THREE.AnimationMixer(mesh)
-	// 		this.mixer.clipAction(gltf.animations[0]).play()
-	// 		const head = mesh.getObjectByName("mesh_2")
-	// 		const influences = head.morphTargetInfluences
-
-	// 		//   // Center the model
-	// 		//   const box = new THREE.Box3().setFromObject(this.model)
-	// 		//   const center = box.getCenter(new THREE.Vector3())
-	// 		//   this.model.position.sub(center)
-
-	// 		//   // Setup morph targets
-	// 		//   this.model.traverse((node) => {
-	// 		//     if (node.isMesh && node.morphTargetDictionary) {
-	// 		//       this.meshWithMorphTargets = node
-	// 		//     }
-	// 		//   })
-
-	// 		// // Handle animations
-	// 		// if (gltf.animations?.length) {
-	// 		//   this.mixer = new THREE.AnimationMixer(this.model)
-	// 		//   this.animations = gltf.animations
-	// 		//   this.animations.forEach((clip) => {
-	// 		//     this.mixer.clipAction(clip).play()
-	// 		//   })
-	// 		// }
-
-	// 		for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
-	// 			this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
-	// 		}
-	// 		//   this.gui.close()
-	// 		this.scene.add(mesh)
-
-	// 		//   this.scene.add(this.model)
-
-	// 		// Update GUI after model is loaded
-	// 		if (this.meshWithMorphTargets) {
-	// 			this.updateMorphTargetGUI()
-	// 		}
-	// 	})
-	// }
+	async loadModel() {
+		const ktx2Loader = new KTX2Loader(loadingManager).setTranscoderPath("/").detectSupport(this.renderer)
+		const loader = new GLTFLoader(loadingManager)
+		loader.setKTX2Loader(ktx2Loader)
+		loader.setMeshoptDecoder(MeshoptDecoder)
+		console.log("MODEL_PATH", MODEL_PATH)
+		loader.load(MODEL_PATH, (gltf) => {
+			const mesh = gltf.scene.children[0]
+			this.mixer = new AnimationMixer(mesh)
+			this.mixer.clipAction(gltf.animations[0]).play()
+			const head = mesh.getObjectByName("mesh_2")
+			const influences = head.morphTargetInfluences
+			//   // Center the model
+			//   const box = new THREE.Box3().setFromObject(this.model)
+			//   const center = box.getCenter(new THREE.Vector3())
+			//   this.model.position.sub(center)
+			//   // Setup morph targets
+			//   this.model.traverse((node) => {
+			//     if (node.isMesh && node.morphTargetDictionary) {
+			//       this.meshWithMorphTargets = node
+			//     }
+			//   })
+			// // Handle animations
+			// if (gltf.animations?.length) {
+			//   this.mixer = new THREE.AnimationMixer(this.model)
+			//   this.animations = gltf.animations
+			//   this.animations.forEach((clip) => {
+			//     this.mixer.clipAction(clip).play()
+			//   })
+			// }
+			// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+			// 	this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+			// }
+			//   this.gui.close()
+			this.scene.add(mesh)
+			//   this.scene.add(this.model)
+			// Update GUI after model is loaded
+			if (this.meshWithMorphTargets) {
+				this.updateMorphTargetGUI()
+			}
+		})
+	}
 }
 
 // Initialize the app
