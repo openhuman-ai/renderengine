@@ -1,7 +1,7 @@
-import { Material } from './Material.js';
-import { MultiplyOperation } from '../constants.js';
-import { Color } from '../math/Color.js';
-import { Euler } from '../math/Euler.js';
+import { Material } from "./Material.js"
+import { MultiplyOperation } from "../constants.js"
+import { Color } from "../math/Color.js"
+import { Euler } from "../math/Euler.js"
 
 /**
  * A material for drawing geometries in a simple shaded (flat or wireframe) way.
@@ -11,7 +11,6 @@ import { Euler } from '../math/Euler.js';
  * @augments Material
  */
 class MeshBasicMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh basic material.
 	 *
@@ -21,9 +20,8 @@ class MeshBasicMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -32,9 +30,9 @@ class MeshBasicMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshBasicMaterial = true;
+		this.isMeshBasicMaterial = true
 
-		this.type = 'MeshBasicMaterial';
+		this.type = "MeshBasicMaterial"
 
 		/**
 		 * Color of the material.
@@ -42,7 +40,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.color = new Color( 0xffffff ); // emissive
+		this.color = new Color(0xffffff) // emissive
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -52,7 +50,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The light map. Requires a second set of UVs.
@@ -60,7 +58,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.lightMap = null;
+		this.lightMap = null
 
 		/**
 		 * Intensity of the baked light.
@@ -68,7 +66,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.lightMapIntensity = 1.0;
+		this.lightMapIntensity = 1.0
 
 		/**
 		 * The red channel of this texture is used as the ambient occlusion map.
@@ -77,7 +75,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.aoMap = null;
+		this.aoMap = null
 
 		/**
 		 * Intensity of the ambient occlusion effect. Range is `[0,1]`, where `0`
@@ -87,7 +85,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.aoMapIntensity = 1.0;
+		this.aoMapIntensity = 1.0
 
 		/**
 		 * Specular map used by the material.
@@ -95,7 +93,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.specularMap = null;
+		this.specularMap = null
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -110,7 +108,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * The environment map.
@@ -118,7 +116,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.envMap = null;
+		this.envMap = null
 
 		/**
 		 * The rotation of the environment map in radians.
@@ -126,7 +124,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {Euler}
 		 * @default (0,0,0)
 		 */
-		this.envMapRotation = new Euler();
+		this.envMapRotation = new Euler()
 
 		/**
 		 * How to combine the result of the surface's color with the environment map, if any.
@@ -137,7 +135,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {(MultiplyOperation|MixOperation|AddOperation)}
 		 * @default MultiplyOperation
 		 */
-		this.combine = MultiplyOperation;
+		this.combine = MultiplyOperation
 
 		/**
 		 * How much the environment map affects the surface.
@@ -146,7 +144,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.reflectivity = 1;
+		this.reflectivity = 1
 
 		/**
 		 * The index of refraction (IOR) of air (approximately 1) divided by the
@@ -157,7 +155,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 0.98
 		 */
-		this.refractionRatio = 0.98;
+		this.refractionRatio = 0.98
 
 		/**
 		 * Renders the geometry as a wireframe.
@@ -165,7 +163,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.wireframe = false;
+		this.wireframe = false
 
 		/**
 		 * Controls the thickness of the wireframe.
@@ -175,7 +173,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.wireframeLinewidth = 1;
+		this.wireframeLinewidth = 1
 
 		/**
 		 * Defines appearance of wireframe ends.
@@ -185,7 +183,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {('round'|'bevel'|'miter')}
 		 * @default 'round'
 		 */
-		this.wireframeLinecap = 'round';
+		this.wireframeLinecap = "round"
 
 		/**
 		 * Defines appearance of wireframe joints.
@@ -195,7 +193,7 @@ class MeshBasicMaterial extends Material {
 		 * @type {('round'|'bevel'|'miter')}
 		 * @default 'round'
 		 */
-		this.wireframeLinejoin = 'round';
+		this.wireframeLinejoin = "round"
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -203,47 +201,43 @@ class MeshBasicMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.color.copy( source.color );
+		this.map = source.map
 
-		this.map = source.map;
+		this.lightMap = source.lightMap
+		this.lightMapIntensity = source.lightMapIntensity
 
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
+		this.aoMap = source.aoMap
+		this.aoMapIntensity = source.aoMapIntensity
 
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
+		this.specularMap = source.specularMap
 
-		this.specularMap = source.specularMap;
+		this.alphaMap = source.alphaMap
 
-		this.alphaMap = source.alphaMap;
+		this.envMap = source.envMap
+		this.envMapRotation.copy(source.envMapRotation)
+		this.combine = source.combine
+		this.reflectivity = source.reflectivity
+		this.refractionRatio = source.refractionRatio
 
-		this.envMap = source.envMap;
-		this.envMapRotation.copy( source.envMapRotation );
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
+		this.wireframe = source.wireframe
+		this.wireframeLinewidth = source.wireframeLinewidth
+		this.wireframeLinecap = source.wireframeLinecap
+		this.wireframeLinejoin = source.wireframeLinejoin
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
+		this.fog = source.fog
 
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshBasicMaterial };
+export { MeshBasicMaterial }

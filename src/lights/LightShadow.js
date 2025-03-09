@@ -1,12 +1,12 @@
-import { Matrix4 } from '../math/Matrix4.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Vector4 } from '../math/Vector4.js';
-import { Frustum } from '../math/Frustum.js';
+import { Matrix4 } from "../math/Matrix4.js"
+import { Vector2 } from "../math/Vector2.js"
+import { Vector3 } from "../math/Vector3.js"
+import { Vector4 } from "../math/Vector4.js"
+import { Frustum } from "../math/Frustum.js"
 
-const _projScreenMatrix = /*@__PURE__*/ new Matrix4();
-const _lightPositionWorld = /*@__PURE__*/ new Vector3();
-const _lookTarget = /*@__PURE__*/ new Vector3();
+const _projScreenMatrix = /*@__PURE__*/ new Matrix4()
+const _lightPositionWorld = /*@__PURE__*/ new Vector3()
+const _lookTarget = /*@__PURE__*/ new Vector3()
 
 /**
  * Abstract base class for light shadow classes. These classes
@@ -15,20 +15,18 @@ const _lookTarget = /*@__PURE__*/ new Vector3();
  * @abstract
  */
 class LightShadow {
-
 	/**
 	 * Constructs a new light shadow.
 	 *
 	 * @param {Camera} camera - The light's view of the world.
 	 */
-	constructor( camera ) {
-
+	constructor(camera) {
 		/**
 		 * The light's view of the world.
 		 *
 		 * @type {Camera}
 		 */
-		this.camera = camera;
+		this.camera = camera
 
 		/**
 		 * The intensity of the shadow. The default is `1`.
@@ -37,7 +35,7 @@ class LightShadow {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.intensity = 1;
+		this.intensity = 1
 
 		/**
 		 * Shadow map bias, how much to add or subtract from the normalized depth
@@ -49,7 +47,7 @@ class LightShadow {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.bias = 0;
+		this.bias = 0
 
 		/**
 		 * Defines how much the position used to query the shadow map is offset along
@@ -60,7 +58,7 @@ class LightShadow {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.normalBias = 0;
+		this.normalBias = 0
 
 		/**
 		 * Setting this to values greater than 1 will blur the edges of the shadow.
@@ -76,7 +74,7 @@ class LightShadow {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.radius = 1;
+		this.radius = 1
 
 		/**
 		 * The amount of samples to use when blurring a VSM shadow map.
@@ -84,7 +82,7 @@ class LightShadow {
 		 * @type {number}
 		 * @default 8
 		 */
-		this.blurSamples = 8;
+		this.blurSamples = 8
 
 		/**
 		 * Defines the width and height of the shadow map. Higher values give better quality
@@ -93,7 +91,7 @@ class LightShadow {
 		 * @type {Vector2}
 		 * @default (512,512)
 		 */
-		this.mapSize = new Vector2( 512, 512 );
+		this.mapSize = new Vector2(512, 512)
 
 		/**
 		 * The depth map generated using the internal camera; a location beyond a
@@ -102,7 +100,7 @@ class LightShadow {
 		 * @type {?RenderTarget}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The distribution map generated using the internal camera; an occlusion is
@@ -112,7 +110,7 @@ class LightShadow {
 		 * @type {?RenderTarget}
 		 * @default null
 		 */
-		this.mapPass = null;
+		this.mapPass = null
 
 		/**
 		 * Model to shadow camera space, to compute location and depth in shadow map.
@@ -120,7 +118,7 @@ class LightShadow {
 		 *
 		 * @type {Matrix4}
 		 */
-		this.matrix = new Matrix4();
+		this.matrix = new Matrix4()
 
 		/**
 		 * Enables automatic updates of the light's shadow. If you do not require dynamic
@@ -129,7 +127,7 @@ class LightShadow {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.autoUpdate = true;
+		this.autoUpdate = true
 
 		/**
 		 * When set to `true`, shadow maps will be updated in the next `render` call.
@@ -139,19 +137,14 @@ class LightShadow {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.needsUpdate = false;
+		this.needsUpdate = false
 
-		this._frustum = new Frustum();
-		this._frameExtents = new Vector2( 1, 1 );
+		this._frustum = new Frustum()
+		this._frameExtents = new Vector2(1, 1)
 
-		this._viewportCount = 1;
+		this._viewportCount = 1
 
-		this._viewports = [
-
-			new Vector4( 0, 0, 1, 1 )
-
-		];
-
+		this._viewports = [new Vector4(0, 0, 1, 1)]
 	}
 
 	/**
@@ -161,9 +154,7 @@ class LightShadow {
 	 * @return {number} The viewport count.
 	 */
 	getViewportCount() {
-
-		return this._viewportCount;
-
+		return this._viewportCount
 	}
 
 	/**
@@ -172,9 +163,7 @@ class LightShadow {
 	 * @return {Frustum} The shadow camera frustum.
 	 */
 	getFrustum() {
-
-		return this._frustum;
-
+		return this._frustum
 	}
 
 	/**
@@ -182,30 +171,23 @@ class LightShadow {
 	 *
 	 * @param {Light} light - The light for which the shadow is being rendered.
 	 */
-	updateMatrices( light ) {
+	updateMatrices(light) {
+		const shadowCamera = this.camera
+		const shadowMatrix = this.matrix
 
-		const shadowCamera = this.camera;
-		const shadowMatrix = this.matrix;
+		_lightPositionWorld.setFromMatrixPosition(light.matrixWorld)
+		shadowCamera.position.copy(_lightPositionWorld)
 
-		_lightPositionWorld.setFromMatrixPosition( light.matrixWorld );
-		shadowCamera.position.copy( _lightPositionWorld );
+		_lookTarget.setFromMatrixPosition(light.target.matrixWorld)
+		shadowCamera.lookAt(_lookTarget)
+		shadowCamera.updateMatrixWorld()
 
-		_lookTarget.setFromMatrixPosition( light.target.matrixWorld );
-		shadowCamera.lookAt( _lookTarget );
-		shadowCamera.updateMatrixWorld();
+		_projScreenMatrix.multiplyMatrices(shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse)
+		this._frustum.setFromProjectionMatrix(_projScreenMatrix)
 
-		_projScreenMatrix.multiplyMatrices( shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse );
-		this._frustum.setFromProjectionMatrix( _projScreenMatrix );
+		shadowMatrix.set(0.5, 0.0, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 1.0)
 
-		shadowMatrix.set(
-			0.5, 0.0, 0.0, 0.5,
-			0.0, 0.5, 0.0, 0.5,
-			0.0, 0.0, 0.5, 0.5,
-			0.0, 0.0, 0.0, 1.0
-		);
-
-		shadowMatrix.multiply( _projScreenMatrix );
-
+		shadowMatrix.multiply(_projScreenMatrix)
 	}
 
 	/**
@@ -214,10 +196,8 @@ class LightShadow {
 	 * @param {number} viewportIndex - The viewport index.
 	 * @return {Vector4} The viewport.
 	 */
-	getViewport( viewportIndex ) {
-
-		return this._viewports[ viewportIndex ];
-
+	getViewport(viewportIndex) {
+		return this._viewports[viewportIndex]
 	}
 
 	/**
@@ -226,9 +206,7 @@ class LightShadow {
 	 * @return {Vector2} The frame extends.
 	 */
 	getFrameExtents() {
-
-		return this._frameExtents;
-
+		return this._frameExtents
 	}
 
 	/**
@@ -236,19 +214,13 @@ class LightShadow {
 	 * method whenever this instance is no longer used in your app.
 	 */
 	dispose() {
-
-		if ( this.map ) {
-
-			this.map.dispose();
-
+		if (this.map) {
+			this.map.dispose()
 		}
 
-		if ( this.mapPass ) {
-
-			this.mapPass.dispose();
-
+		if (this.mapPass) {
+			this.mapPass.dispose()
 		}
-
 	}
 
 	/**
@@ -257,19 +229,17 @@ class LightShadow {
 	 * @param {LightShadow} source - The light shadow to copy.
 	 * @return {LightShadow} A reference to this light shadow instance.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.camera = source.camera.clone()
 
-		this.camera = source.camera.clone();
+		this.intensity = source.intensity
 
-		this.intensity = source.intensity;
+		this.bias = source.bias
+		this.radius = source.radius
 
-		this.bias = source.bias;
-		this.radius = source.radius;
+		this.mapSize.copy(source.mapSize)
 
-		this.mapSize.copy( source.mapSize );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -278,9 +248,7 @@ class LightShadow {
 	 * @return {LightShadow} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
 
 	/**
@@ -290,22 +258,19 @@ class LightShadow {
 	 * @see {@link ObjectLoader#parse}
 	 */
 	toJSON() {
+		const object = {}
 
-		const object = {};
+		if (this.intensity !== 1) object.intensity = this.intensity
+		if (this.bias !== 0) object.bias = this.bias
+		if (this.normalBias !== 0) object.normalBias = this.normalBias
+		if (this.radius !== 1) object.radius = this.radius
+		if (this.mapSize.x !== 512 || this.mapSize.y !== 512) object.mapSize = this.mapSize.toArray()
 
-		if ( this.intensity !== 1 ) object.intensity = this.intensity;
-		if ( this.bias !== 0 ) object.bias = this.bias;
-		if ( this.normalBias !== 0 ) object.normalBias = this.normalBias;
-		if ( this.radius !== 1 ) object.radius = this.radius;
-		if ( this.mapSize.x !== 512 || this.mapSize.y !== 512 ) object.mapSize = this.mapSize.toArray();
+		object.camera = this.camera.toJSON(false).object
+		delete object.camera.matrix
 
-		object.camera = this.camera.toJSON( false ).object;
-		delete object.camera.matrix;
-
-		return object;
-
+		return object
 	}
-
 }
 
-export { LightShadow };
+export { LightShadow }

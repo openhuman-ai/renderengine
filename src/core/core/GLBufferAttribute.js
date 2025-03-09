@@ -10,7 +10,6 @@
  * Notice that this class can only be used with {@link WebGLRenderer}.
  */
 class GLBufferAttribute {
-
 	/**
 	 * Constructs a new GL buffer attribute.
 	 *
@@ -20,8 +19,7 @@ class GLBufferAttribute {
 	 * @param {number} elementSize - The corresponding size (in bytes) for the given `type` parameter.
 	 * @param {number} count - The expected number of vertices in VBO.
 	 */
-	constructor( buffer, type, itemSize, elementSize, count ) {
-
+	constructor(buffer, type, itemSize, elementSize, count) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -29,57 +27,56 @@ class GLBufferAttribute {
 		 * @readonly
 		 * @default true
 		 */
-		this.isGLBufferAttribute = true;
+		this.isGLBufferAttribute = true
 
 		/**
 		 * The name of the buffer attribute.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The native WebGL buffer.
 		 *
 		 * @type {WebGLBuffer}
 		 */
-		this.buffer = buffer;
+		this.buffer = buffer
 
 		/**
 		 * The native data type.
 		 *
 		 * @type {number}
 		 */
-		this.type = type;
+		this.type = type
 
 		/**
 		 * The item size, see {@link BufferAttribute#itemSize}.
 		 *
 		 * @type {number}
 		 */
-		this.itemSize = itemSize;
+		this.itemSize = itemSize
 
 		/**
 		 * The corresponding size (in bytes) for the given `type` parameter.
 		 *
 		 * @type {number}
 		 */
-		this.elementSize = elementSize;
+		this.elementSize = elementSize
 
 		/**
 		 * The expected number of vertices in VBO.
 		 *
 		 * @type {number}
 		 */
-		this.count = count;
+		this.count = count
 
 		/**
 		 * A version number, incremented every time the `needsUpdate` is set to `true`.
 		 *
 		 * @type {number}
 		 */
-		this.version = 0;
-
+		this.version = 0
 	}
 
 	/**
@@ -90,10 +87,8 @@ class GLBufferAttribute {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsUpdate( value ) {
-
-		if ( value === true ) this.version ++;
-
+	set needsUpdate(value) {
+		if (value === true) this.version++
 	}
 
 	/**
@@ -102,12 +97,10 @@ class GLBufferAttribute {
 	 * @param {WebGLBuffer} buffer - The buffer to set.
 	 * @return {BufferAttribute} A reference to this instance.
 	 */
-	setBuffer( buffer ) {
+	setBuffer(buffer) {
+		this.buffer = buffer
 
-		this.buffer = buffer;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -117,13 +110,11 @@ class GLBufferAttribute {
 	 * @param {number} elementSize - The corresponding size (in bytes) for the given `type` parameter.
 	 * @return {BufferAttribute} A reference to this instance.
 	 */
-	setType( type, elementSize ) {
+	setType(type, elementSize) {
+		this.type = type
+		this.elementSize = elementSize
 
-		this.type = type;
-		this.elementSize = elementSize;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -132,12 +123,10 @@ class GLBufferAttribute {
 	 * @param {number} itemSize - The item size.
 	 * @return {BufferAttribute} A reference to this instance.
 	 */
-	setItemSize( itemSize ) {
+	setItemSize(itemSize) {
+		this.itemSize = itemSize
 
-		this.itemSize = itemSize;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -146,14 +135,11 @@ class GLBufferAttribute {
 	 * @param {number} count - The count.
 	 * @return {BufferAttribute} A reference to this instance.
 	 */
-	setCount( count ) {
+	setCount(count) {
+		this.count = count
 
-		this.count = count;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { GLBufferAttribute };
+export { GLBufferAttribute }

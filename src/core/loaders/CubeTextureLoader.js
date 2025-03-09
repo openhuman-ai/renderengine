@@ -1,7 +1,7 @@
-import { ImageLoader } from './ImageLoader.js';
-import { CubeTexture } from '../textures/CubeTexture.js';
-import { Loader } from './Loader.js';
-import { SRGBColorSpace } from '../constants.js';
+import { ImageLoader } from "./ImageLoader.js"
+import { CubeTexture } from "../textures/CubeTexture.js"
+import { Loader } from "./Loader.js"
+import { SRGBColorSpace } from "../constants.js"
 
 /**
  * Class for loading cube textures. Images are internally loaded via {@link ImageLoader}.
@@ -30,16 +30,13 @@ import { SRGBColorSpace } from '../constants.js';
  * @augments Loader
  */
 class CubeTextureLoader extends Loader {
-
 	/**
 	 * Constructs a new cube texture loader.
 	 *
 	 * @param {LoadingManager} [manager] - The loading manager.
 	 */
-	constructor( manager ) {
-
-		super( manager );
-
+	constructor(manager) {
+		super(manager)
 	}
 
 	/**
@@ -56,48 +53,41 @@ class CubeTextureLoader extends Loader {
 	 * @param {onErrorCallback} onError - Executed when errors occur.
 	 * @return {CubeTexture} The cube texture.
 	 */
-	load( urls, onLoad, onProgress, onError ) {
+	load(urls, onLoad, onProgress, onError) {
+		const texture = new CubeTexture()
+		texture.colorSpace = SRGBColorSpace
 
-		const texture = new CubeTexture();
-		texture.colorSpace = SRGBColorSpace;
+		const loader = new ImageLoader(this.manager)
+		loader.setCrossOrigin(this.crossOrigin)
+		loader.setPath(this.path)
 
-		const loader = new ImageLoader( this.manager );
-		loader.setCrossOrigin( this.crossOrigin );
-		loader.setPath( this.path );
+		let loaded = 0
 
-		let loaded = 0;
+		function loadTexture(i) {
+			loader.load(
+				urls[i],
+				function (image) {
+					texture.images[i] = image
 
-		function loadTexture( i ) {
+					loaded++
 
-			loader.load( urls[ i ], function ( image ) {
+					if (loaded === 6) {
+						texture.needsUpdate = true
 
-				texture.images[ i ] = image;
-
-				loaded ++;
-
-				if ( loaded === 6 ) {
-
-					texture.needsUpdate = true;
-
-					if ( onLoad ) onLoad( texture );
-
-				}
-
-			}, undefined, onError );
-
+						if (onLoad) onLoad(texture)
+					}
+				},
+				undefined,
+				onError
+			)
 		}
 
-		for ( let i = 0; i < urls.length; ++ i ) {
-
-			loadTexture( i );
-
+		for (let i = 0; i < urls.length; ++i) {
+			loadTexture(i)
 		}
 
-		return texture;
-
+		return texture
 	}
-
 }
 
-
-export { CubeTextureLoader };
+export { CubeTextureLoader }

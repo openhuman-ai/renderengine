@@ -1,6 +1,6 @@
-import { Curve } from '../core/Curve.js';
-import { QuadraticBezier } from '../core/Interpolations.js';
-import { Vector2 } from '../../math/Vector2.js';
+import { Curve } from "../core/Curve.js"
+import { QuadraticBezier } from "../core/Interpolations.js"
+import { Vector2 } from "../../math/Vector2.js"
 
 /**
  * A curve representing a 2D Quadratic Bezier curve.
@@ -24,7 +24,6 @@ import { Vector2 } from '../../math/Vector2.js';
  * @augments Curve
  */
 class QuadraticBezierCurve extends Curve {
-
 	/**
 	 * Constructs a new Quadratic Bezier curve.
 	 *
@@ -32,9 +31,8 @@ class QuadraticBezierCurve extends Curve {
 	 * @param {Vector2} [v1] - The control point.
 	 * @param {Vector2} [v2] - The end point.
 	 */
-	constructor( v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2() ) {
-
-		super();
+	constructor(v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2()) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -43,31 +41,30 @@ class QuadraticBezierCurve extends Curve {
 		 * @readonly
 		 * @default true
 		 */
-		this.isQuadraticBezierCurve = true;
+		this.isQuadraticBezierCurve = true
 
-		this.type = 'QuadraticBezierCurve';
+		this.type = "QuadraticBezierCurve"
 
 		/**
 		 * The start point.
 		 *
 		 * @type {Vector2}
 		 */
-		this.v0 = v0;
+		this.v0 = v0
 
 		/**
 		 * The control point.
 		 *
 		 * @type {Vector2}
 		 */
-		this.v1 = v1;
+		this.v1 = v1
 
 		/**
 		 * The end point.
 		 *
 		 * @type {Vector2}
 		 */
-		this.v2 = v2;
-
+		this.v2 = v2
 	}
 
 	/**
@@ -77,57 +74,47 @@ class QuadraticBezierCurve extends Curve {
 	 * @param {Vector2} [optionalTarget] - The optional target vector the result is written to.
 	 * @return {Vector2} The position on the curve.
 	 */
-	getPoint( t, optionalTarget = new Vector2() ) {
+	getPoint(t, optionalTarget = new Vector2()) {
+		const point = optionalTarget
 
-		const point = optionalTarget;
+		const v0 = this.v0,
+			v1 = this.v1,
+			v2 = this.v2
 
-		const v0 = this.v0, v1 = this.v1, v2 = this.v2;
+		point.set(QuadraticBezier(t, v0.x, v1.x, v2.x), QuadraticBezier(t, v0.y, v1.y, v2.y))
 
-		point.set(
-			QuadraticBezier( t, v0.x, v1.x, v2.x ),
-			QuadraticBezier( t, v0.y, v1.y, v2.y )
-		);
-
-		return point;
-
+		return point
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.v0.copy(source.v0)
+		this.v1.copy(source.v1)
+		this.v2.copy(source.v2)
 
-		this.v0.copy( source.v0 );
-		this.v1.copy( source.v1 );
-		this.v2.copy( source.v2 );
-
-		return this;
-
+		return this
 	}
 
 	toJSON() {
+		const data = super.toJSON()
 
-		const data = super.toJSON();
+		data.v0 = this.v0.toArray()
+		data.v1 = this.v1.toArray()
+		data.v2 = this.v2.toArray()
 
-		data.v0 = this.v0.toArray();
-		data.v1 = this.v1.toArray();
-		data.v2 = this.v2.toArray();
-
-		return data;
-
+		return data
 	}
 
-	fromJSON( json ) {
+	fromJSON(json) {
+		super.fromJSON(json)
 
-		super.fromJSON( json );
+		this.v0.fromArray(json.v0)
+		this.v1.fromArray(json.v1)
+		this.v2.fromArray(json.v2)
 
-		this.v0.fromArray( json.v0 );
-		this.v1.fromArray( json.v1 );
-		this.v2.fromArray( json.v2 );
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { QuadraticBezierCurve };
+export { QuadraticBezierCurve }

@@ -1,5 +1,5 @@
-import { LinearFilter } from '../constants.js';
-import { Texture } from './Texture.js';
+import { LinearFilter } from "../constants.js"
+import { Texture } from "./Texture.js"
 
 /**
  * A texture for use with a video.
@@ -16,7 +16,6 @@ import { Texture } from './Texture.js';
  * @augments Texture
  */
 class VideoTexture extends Texture {
-
 	/**
 	 * Constructs a new video texture.
 	 *
@@ -30,9 +29,8 @@ class VideoTexture extends Texture {
 	 * @param {number} [type=UnsignedByteType] - The texture type.
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 */
-	constructor( video, mapping, wrapS, wrapT, magFilter = LinearFilter, minFilter = LinearFilter, format, type, anisotropy ) {
-
-		super( video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+	constructor(video, mapping, wrapS, wrapT, magFilter = LinearFilter, minFilter = LinearFilter, format, type, anisotropy) {
+		super(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy)
 
 		/**
 		 * This flag can be used for type testing.
@@ -41,7 +39,7 @@ class VideoTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isVideoTexture = true;
+		this.isVideoTexture = true
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -51,29 +49,22 @@ class VideoTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
-		const scope = this;
+		const scope = this
 
 		function updateVideo() {
-
-			scope.needsUpdate = true;
-			video.requestVideoFrameCallback( updateVideo );
-
+			scope.needsUpdate = true
+			video.requestVideoFrameCallback(updateVideo)
 		}
 
-		if ( 'requestVideoFrameCallback' in video ) {
-
-			video.requestVideoFrameCallback( updateVideo );
-
+		if ("requestVideoFrameCallback" in video) {
+			video.requestVideoFrameCallback(updateVideo)
 		}
-
 	}
 
 	clone() {
-
-		return new this.constructor( this.image ).copy( this );
-
+		return new this.constructor(this.image).copy(this)
 	}
 
 	/**
@@ -83,18 +74,13 @@ class VideoTexture extends Texture {
 	 * Only relevant if `requestVideoFrameCallback` is not supported in the browser.
 	 */
 	update() {
+		const video = this.image
+		const hasVideoFrameCallback = "requestVideoFrameCallback" in video
 
-		const video = this.image;
-		const hasVideoFrameCallback = 'requestVideoFrameCallback' in video;
-
-		if ( hasVideoFrameCallback === false && video.readyState >= video.HAVE_CURRENT_DATA ) {
-
-			this.needsUpdate = true;
-
+		if (hasVideoFrameCallback === false && video.readyState >= video.HAVE_CURRENT_DATA) {
+			this.needsUpdate = true
 		}
-
 	}
-
 }
 
-export { VideoTexture };
+export { VideoTexture }

@@ -1,5 +1,5 @@
-import { Texture } from './Texture.js';
-import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
+import { Texture } from "./Texture.js"
+import { ClampToEdgeWrapping, NearestFilter } from "../constants.js"
 
 /**
  * Creates an array of textures directly from raw buffer data.
@@ -7,7 +7,6 @@ import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
  * @augments Texture
  */
 class DataArrayTexture extends Texture {
-
 	/**
 	 * Constructs a new data array texture.
 	 *
@@ -16,9 +15,8 @@ class DataArrayTexture extends Texture {
 	 * @param {number} [height=1] - The height of the texture.
 	 * @param {number} [depth=1] - The depth of the texture.
 	 */
-	constructor( data = null, width = 1, height = 1, depth = 1 ) {
-
-		super( null );
+	constructor(data = null, width = 1, height = 1, depth = 1) {
+		super(null)
 
 		/**
 		 * This flag can be used for type testing.
@@ -27,14 +25,14 @@ class DataArrayTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isDataArrayTexture = true;
+		this.isDataArrayTexture = true
 
 		/**
 		 * The image definition of a data texture.
 		 *
 		 * @type {{data:TypedArray,width:number,height:number,depth:number}}
 		 */
-		this.image = { data, width, height, depth };
+		this.image = { data, width, height, depth }
 
 		/**
 		 * How the texture is sampled when a texel covers more than one pixel.
@@ -44,7 +42,7 @@ class DataArrayTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.magFilter = NearestFilter;
+		this.magFilter = NearestFilter
 
 		/**
 		 * How the texture is sampled when a texel covers less than one pixel.
@@ -54,7 +52,7 @@ class DataArrayTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.minFilter = NearestFilter;
+		this.minFilter = NearestFilter
 
 		/**
 		 * This defines how the texture is wrapped in the depth and corresponds to
@@ -63,7 +61,7 @@ class DataArrayTexture extends Texture {
 		 * @type {(RepeatWrapping|ClampToEdgeWrapping|MirroredRepeatWrapping)}
 		 * @default ClampToEdgeWrapping
 		 */
-		this.wrapR = ClampToEdgeWrapping;
+		this.wrapR = ClampToEdgeWrapping
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -73,7 +71,7 @@ class DataArrayTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -84,7 +82,7 @@ class DataArrayTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flipY = false;
+		this.flipY = false
 
 		/**
 		 * Specifies the alignment requirements for the start of each pixel row in memory.
@@ -94,15 +92,14 @@ class DataArrayTexture extends Texture {
 		 * @type {boolean}
 		 * @default 1
 		 */
-		this.unpackAlignment = 1;
+		this.unpackAlignment = 1
 
 		/**
 		 * A set of all layers which need to be updated in the texture.
 		 *
 		 * @type {Set<number>}
 		 */
-		this.layerUpdates = new Set();
-
+		this.layerUpdates = new Set()
 	}
 
 	/**
@@ -114,21 +111,16 @@ class DataArrayTexture extends Texture {
 	 *
 	 * @param {number} layerIndex - The layer index that should be updated.
 	 */
-	addLayerUpdate( layerIndex ) {
-
-		this.layerUpdates.add( layerIndex );
-
+	addLayerUpdate(layerIndex) {
+		this.layerUpdates.add(layerIndex)
 	}
 
 	/**
 	 * Resets the layer updates registry.
 	 */
 	clearLayerUpdates() {
-
-		this.layerUpdates.clear();
-
+		this.layerUpdates.clear()
 	}
-
 }
 
-export { DataArrayTexture };
+export { DataArrayTexture }

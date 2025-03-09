@@ -1,5 +1,5 @@
-import { clamp } from './MathUtils.js';
-import { Quaternion } from './Quaternion.js';
+import { clamp } from "./MathUtils.js"
+import { Quaternion } from "./Quaternion.js"
 
 /**
  * Class representing a 3D vector. A 3D vector is an ordered triplet of numbers
@@ -27,7 +27,6 @@ import { Quaternion } from './Quaternion.js';
  * ```
  */
 class Vector3 {
-
 	/**
 	 * Constructs a new 3D vector.
 	 *
@@ -35,8 +34,7 @@ class Vector3 {
 	 * @param {number} [y=0] - The y value of this vector.
 	 * @param {number} [z=0] - The z value of this vector.
 	 */
-	constructor( x = 0, y = 0, z = 0 ) {
-
+	constructor(x = 0, y = 0, z = 0) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -44,29 +42,28 @@ class Vector3 {
 		 * @readonly
 		 * @default true
 		 */
-		Vector3.prototype.isVector3 = true;
+		Vector3.prototype.isVector3 = true
 
 		/**
 		 * The x value of this vector.
 		 *
 		 * @type {number}
 		 */
-		this.x = x;
+		this.x = x
 
 		/**
 		 * The y value of this vector.
 		 *
 		 * @type {number}
 		 */
-		this.y = y;
+		this.y = y
 
 		/**
 		 * The z value of this vector.
 		 *
 		 * @type {number}
 		 */
-		this.z = z;
-
+		this.z = z
 	}
 
 	/**
@@ -77,16 +74,14 @@ class Vector3 {
 	 * @param {number} z - The value of the z component.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	set( x, y, z ) {
+	set(x, y, z) {
+		if (z === undefined) z = this.z // sprite.scale.set(x,y)
 
-		if ( z === undefined ) z = this.z; // sprite.scale.set(x,y)
+		this.x = x
+		this.y = y
+		this.z = z
 
-		this.x = x;
-		this.y = y;
-		this.z = z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -95,14 +90,12 @@ class Vector3 {
 	 * @param {number} scalar - The value to set for all vector components.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setScalar( scalar ) {
+	setScalar(scalar) {
+		this.x = scalar
+		this.y = scalar
+		this.z = scalar
 
-		this.x = scalar;
-		this.y = scalar;
-		this.z = scalar;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -111,12 +104,10 @@ class Vector3 {
 	 * @param {number} x - The value to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setX( x ) {
+	setX(x) {
+		this.x = x
 
-		this.x = x;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -125,12 +116,10 @@ class Vector3 {
 	 * @param {number} y - The value to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setY( y ) {
+	setY(y) {
+		this.y = y
 
-		this.y = y;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -139,12 +128,10 @@ class Vector3 {
 	 * @param {number} z - The value to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setZ( z ) {
+	setZ(z) {
+		this.z = z
 
-		this.z = z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -154,19 +141,22 @@ class Vector3 {
 	 * @param {number} value - The value to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setComponent( index, value ) {
-
-		switch ( index ) {
-
-			case 0: this.x = value; break;
-			case 1: this.y = value; break;
-			case 2: this.z = value; break;
-			default: throw new Error( 'index is out of range: ' + index );
-
+	setComponent(index, value) {
+		switch (index) {
+			case 0:
+				this.x = value
+				break
+			case 1:
+				this.y = value
+				break
+			case 2:
+				this.z = value
+				break
+			default:
+				throw new Error("index is out of range: " + index)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -175,17 +165,17 @@ class Vector3 {
 	 * @param {number} index - The component index. `0` equals to x, `1` equals to y, `2` equals to z.
 	 * @return {number} A vector component value.
 	 */
-	getComponent( index ) {
-
-		switch ( index ) {
-
-			case 0: return this.x;
-			case 1: return this.y;
-			case 2: return this.z;
-			default: throw new Error( 'index is out of range: ' + index );
-
+	getComponent(index) {
+		switch (index) {
+			case 0:
+				return this.x
+			case 1:
+				return this.y
+			case 2:
+				return this.z
+			default:
+				throw new Error("index is out of range: " + index)
 		}
-
 	}
 
 	/**
@@ -194,9 +184,7 @@ class Vector3 {
 	 * @return {Vector3} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor( this.x, this.y, this.z );
-
+		return new this.constructor(this.x, this.y, this.z)
 	}
 
 	/**
@@ -205,14 +193,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to copy.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	copy( v ) {
+	copy(v) {
+		this.x = v.x
+		this.y = v.y
+		this.z = v.z
 
-		this.x = v.x;
-		this.y = v.y;
-		this.z = v.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -221,14 +207,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to add.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	add( v ) {
+	add(v) {
+		this.x += v.x
+		this.y += v.y
+		this.z += v.z
 
-		this.x += v.x;
-		this.y += v.y;
-		this.z += v.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -237,14 +221,12 @@ class Vector3 {
 	 * @param {number} s - The scalar to add.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	addScalar( s ) {
+	addScalar(s) {
+		this.x += s
+		this.y += s
+		this.z += s
 
-		this.x += s;
-		this.y += s;
-		this.z += s;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -254,14 +236,12 @@ class Vector3 {
 	 * @param {Vector3} b - The second vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	addVectors( a, b ) {
+	addVectors(a, b) {
+		this.x = a.x + b.x
+		this.y = a.y + b.y
+		this.z = a.z + b.z
 
-		this.x = a.x + b.x;
-		this.y = a.y + b.y;
-		this.z = a.z + b.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -271,14 +251,12 @@ class Vector3 {
 	 * @param {number} s - The factor that scales `v`.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	addScaledVector( v, s ) {
+	addScaledVector(v, s) {
+		this.x += v.x * s
+		this.y += v.y * s
+		this.z += v.z * s
 
-		this.x += v.x * s;
-		this.y += v.y * s;
-		this.z += v.z * s;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -287,14 +265,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to subtract.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	sub( v ) {
+	sub(v) {
+		this.x -= v.x
+		this.y -= v.y
+		this.z -= v.z
 
-		this.x -= v.x;
-		this.y -= v.y;
-		this.z -= v.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -303,14 +279,12 @@ class Vector3 {
 	 * @param {number} s - The scalar to subtract.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	subScalar( s ) {
+	subScalar(s) {
+		this.x -= s
+		this.y -= s
+		this.z -= s
 
-		this.x -= s;
-		this.y -= s;
-		this.z -= s;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -320,14 +294,12 @@ class Vector3 {
 	 * @param {Vector3} b - The second vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	subVectors( a, b ) {
+	subVectors(a, b) {
+		this.x = a.x - b.x
+		this.y = a.y - b.y
+		this.z = a.z - b.z
 
-		this.x = a.x - b.x;
-		this.y = a.y - b.y;
-		this.z = a.z - b.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -336,14 +308,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to multiply.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	multiply( v ) {
+	multiply(v) {
+		this.x *= v.x
+		this.y *= v.y
+		this.z *= v.z
 
-		this.x *= v.x;
-		this.y *= v.y;
-		this.z *= v.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -352,14 +322,12 @@ class Vector3 {
 	 * @param {number} scalar - The scalar to multiply.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	multiplyScalar( scalar ) {
+	multiplyScalar(scalar) {
+		this.x *= scalar
+		this.y *= scalar
+		this.z *= scalar
 
-		this.x *= scalar;
-		this.y *= scalar;
-		this.z *= scalar;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -369,14 +337,12 @@ class Vector3 {
 	 * @param {Vector3} b - The second vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	multiplyVectors( a, b ) {
+	multiplyVectors(a, b) {
+		this.x = a.x * b.x
+		this.y = a.y * b.y
+		this.z = a.z * b.z
 
-		this.x = a.x * b.x;
-		this.y = a.y * b.y;
-		this.z = a.z * b.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -385,10 +351,8 @@ class Vector3 {
 	 * @param {Euler} euler - The Euler angles.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyEuler( euler ) {
-
-		return this.applyQuaternion( _quaternion.setFromEuler( euler ) );
-
+	applyEuler(euler) {
+		return this.applyQuaternion(_quaternion.setFromEuler(euler))
 	}
 
 	/**
@@ -398,10 +362,8 @@ class Vector3 {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyAxisAngle( axis, angle ) {
-
-		return this.applyQuaternion( _quaternion.setFromAxisAngle( axis, angle ) );
-
+	applyAxisAngle(axis, angle) {
+		return this.applyQuaternion(_quaternion.setFromAxisAngle(axis, angle))
 	}
 
 	/**
@@ -410,17 +372,17 @@ class Vector3 {
 	 * @param {Matrix3} m - The 3x3 matrix.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyMatrix3( m ) {
+	applyMatrix3(m) {
+		const x = this.x,
+			y = this.y,
+			z = this.z
+		const e = m.elements
 
-		const x = this.x, y = this.y, z = this.z;
-		const e = m.elements;
+		this.x = e[0] * x + e[3] * y + e[6] * z
+		this.y = e[1] * x + e[4] * y + e[7] * z
+		this.z = e[2] * x + e[5] * y + e[8] * z
 
-		this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ] * z;
-		this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ] * z;
-		this.z = e[ 2 ] * x + e[ 5 ] * y + e[ 8 ] * z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -430,10 +392,8 @@ class Vector3 {
 	 * @param {Matrix3} m - The normal matrix.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyNormalMatrix( m ) {
-
-		return this.applyMatrix3( m ).normalize();
-
+	applyNormalMatrix(m) {
+		return this.applyMatrix3(m).normalize()
 	}
 
 	/**
@@ -443,19 +403,19 @@ class Vector3 {
 	 * @param {Matrix4} m - The matrix to apply.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyMatrix4( m ) {
+	applyMatrix4(m) {
+		const x = this.x,
+			y = this.y,
+			z = this.z
+		const e = m.elements
 
-		const x = this.x, y = this.y, z = this.z;
-		const e = m.elements;
+		const w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15])
 
-		const w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
+		this.x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w
+		this.y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w
+		this.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w
 
-		this.x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] ) * w;
-		this.y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] ) * w;
-		this.z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * w;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -464,25 +424,28 @@ class Vector3 {
 	 * @param {Quaternion} q - The Quaternion.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	applyQuaternion( q ) {
-
+	applyQuaternion(q) {
 		// quaternion q is assumed to have unit length
 
-		const vx = this.x, vy = this.y, vz = this.z;
-		const qx = q.x, qy = q.y, qz = q.z, qw = q.w;
+		const vx = this.x,
+			vy = this.y,
+			vz = this.z
+		const qx = q.x,
+			qy = q.y,
+			qz = q.z,
+			qw = q.w
 
 		// t = 2 * cross( q.xyz, v );
-		const tx = 2 * ( qy * vz - qz * vy );
-		const ty = 2 * ( qz * vx - qx * vz );
-		const tz = 2 * ( qx * vy - qy * vx );
+		const tx = 2 * (qy * vz - qz * vy)
+		const ty = 2 * (qz * vx - qx * vz)
+		const tz = 2 * (qx * vy - qy * vx)
 
 		// v + q.w * t + cross( q.xyz, t );
-		this.x = vx + qw * tx + qy * tz - qz * ty;
-		this.y = vy + qw * ty + qz * tx - qx * tz;
-		this.z = vz + qw * tz + qx * ty - qy * tx;
+		this.x = vx + qw * tx + qy * tz - qz * ty
+		this.y = vy + qw * ty + qz * tx - qx * tz
+		this.z = vz + qw * tz + qx * ty - qy * tx
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -492,10 +455,8 @@ class Vector3 {
 	 * @param {Camera} camera - The camera.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	project( camera ) {
-
-		return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
-
+	project(camera) {
+		return this.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix)
 	}
 
 	/**
@@ -505,10 +466,8 @@ class Vector3 {
 	 * @param {Camera} camera - The camera.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	unproject( camera ) {
-
-		return this.applyMatrix4( camera.projectionMatrixInverse ).applyMatrix4( camera.matrixWorld );
-
+	unproject(camera) {
+		return this.applyMatrix4(camera.projectionMatrixInverse).applyMatrix4(camera.matrixWorld)
 	}
 
 	/**
@@ -518,20 +477,20 @@ class Vector3 {
 	 * @param {Matrix4} m - The matrix.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	transformDirection( m ) {
-
+	transformDirection(m) {
 		// input: THREE.Matrix4 affine matrix
 		// vector interpreted as a direction
 
-		const x = this.x, y = this.y, z = this.z;
-		const e = m.elements;
+		const x = this.x,
+			y = this.y,
+			z = this.z
+		const e = m.elements
 
-		this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
-		this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
-		this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+		this.x = e[0] * x + e[4] * y + e[8] * z
+		this.y = e[1] * x + e[5] * y + e[9] * z
+		this.z = e[2] * x + e[6] * y + e[10] * z
 
-		return this.normalize();
-
+		return this.normalize()
 	}
 
 	/**
@@ -540,14 +499,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to divide.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	divide( v ) {
+	divide(v) {
+		this.x /= v.x
+		this.y /= v.y
+		this.z /= v.z
 
-		this.x /= v.x;
-		this.y /= v.y;
-		this.z /= v.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -556,10 +513,8 @@ class Vector3 {
 	 * @param {number} scalar - The scalar to divide.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	divideScalar( scalar ) {
-
-		return this.multiplyScalar( 1 / scalar );
-
+	divideScalar(scalar) {
+		return this.multiplyScalar(1 / scalar)
 	}
 
 	/**
@@ -569,14 +524,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	min( v ) {
+	min(v) {
+		this.x = Math.min(this.x, v.x)
+		this.y = Math.min(this.y, v.y)
+		this.z = Math.min(this.z, v.z)
 
-		this.x = Math.min( this.x, v.x );
-		this.y = Math.min( this.y, v.y );
-		this.z = Math.min( this.z, v.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -586,14 +539,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	max( v ) {
+	max(v) {
+		this.x = Math.max(this.x, v.x)
+		this.y = Math.max(this.y, v.y)
+		this.z = Math.max(this.z, v.z)
 
-		this.x = Math.max( this.x, v.x );
-		this.y = Math.max( this.y, v.y );
-		this.z = Math.max( this.z, v.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -606,16 +557,14 @@ class Vector3 {
 	 * @param {Vector3} max - The maximum x, y and z values in the desired range.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	clamp( min, max ) {
-
+	clamp(min, max) {
 		// assumes min < max, componentwise
 
-		this.x = clamp( this.x, min.x, max.x );
-		this.y = clamp( this.y, min.y, max.y );
-		this.z = clamp( this.z, min.z, max.z );
+		this.x = clamp(this.x, min.x, max.x)
+		this.y = clamp(this.y, min.y, max.y)
+		this.z = clamp(this.z, min.z, max.z)
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -628,14 +577,12 @@ class Vector3 {
 	 * @param {number} maxVal - The maximum value the components will be clamped to.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	clampScalar( minVal, maxVal ) {
+	clampScalar(minVal, maxVal) {
+		this.x = clamp(this.x, minVal, maxVal)
+		this.y = clamp(this.y, minVal, maxVal)
+		this.z = clamp(this.z, minVal, maxVal)
 
-		this.x = clamp( this.x, minVal, maxVal );
-		this.y = clamp( this.y, minVal, maxVal );
-		this.z = clamp( this.z, minVal, maxVal );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -648,12 +595,10 @@ class Vector3 {
 	 * @param {number} max - The maximum value the vector length will be clamped to.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	clampLength( min, max ) {
+	clampLength(min, max) {
+		const length = this.length()
 
-		const length = this.length();
-
-		return this.divideScalar( length || 1 ).multiplyScalar( clamp( length, min, max ) );
-
+		return this.divideScalar(length || 1).multiplyScalar(clamp(length, min, max))
 	}
 
 	/**
@@ -662,13 +607,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	floor() {
+		this.x = Math.floor(this.x)
+		this.y = Math.floor(this.y)
+		this.z = Math.floor(this.z)
 
-		this.x = Math.floor( this.x );
-		this.y = Math.floor( this.y );
-		this.z = Math.floor( this.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -677,13 +620,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	ceil() {
+		this.x = Math.ceil(this.x)
+		this.y = Math.ceil(this.y)
+		this.z = Math.ceil(this.z)
 
-		this.x = Math.ceil( this.x );
-		this.y = Math.ceil( this.y );
-		this.z = Math.ceil( this.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -692,13 +633,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	round() {
+		this.x = Math.round(this.x)
+		this.y = Math.round(this.y)
+		this.z = Math.round(this.z)
 
-		this.x = Math.round( this.x );
-		this.y = Math.round( this.y );
-		this.z = Math.round( this.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -708,13 +647,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	roundToZero() {
+		this.x = Math.trunc(this.x)
+		this.y = Math.trunc(this.y)
+		this.z = Math.trunc(this.z)
 
-		this.x = Math.trunc( this.x );
-		this.y = Math.trunc( this.y );
-		this.z = Math.trunc( this.z );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -723,13 +660,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	negate() {
+		this.x = -this.x
+		this.y = -this.y
+		this.z = -this.z
 
-		this.x = - this.x;
-		this.y = - this.y;
-		this.z = - this.z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -738,10 +673,8 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the dot product with.
 	 * @return {number} The result of the dot product.
 	 */
-	dot( v ) {
-
-		return this.x * v.x + this.y * v.y + this.z * v.z;
-
+	dot(v) {
+		return this.x * v.x + this.y * v.y + this.z * v.z
 	}
 
 	// TODO lengthSquared?
@@ -754,9 +687,7 @@ class Vector3 {
 	 * @return {number} The square length of this vector.
 	 */
 	lengthSq() {
-
-		return this.x * this.x + this.y * this.y + this.z * this.z;
-
+		return this.x * this.x + this.y * this.y + this.z * this.z
 	}
 
 	/**
@@ -765,9 +696,7 @@ class Vector3 {
 	 * @return {number} The length of this vector.
 	 */
 	length() {
-
-		return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
-
+		return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
 	}
 
 	/**
@@ -776,9 +705,7 @@ class Vector3 {
 	 * @return {number} The length of this vector.
 	 */
 	manhattanLength() {
-
-		return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
-
+		return Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z)
 	}
 
 	/**
@@ -788,9 +715,7 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	normalize() {
-
-		return this.divideScalar( this.length() || 1 );
-
+		return this.divideScalar(this.length() || 1)
 	}
 
 	/**
@@ -800,10 +725,8 @@ class Vector3 {
 	 * @param {number} length - The new length of this vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setLength( length ) {
-
-		return this.normalize().multiplyScalar( length );
-
+	setLength(length) {
+		return this.normalize().multiplyScalar(length)
 	}
 
 	/**
@@ -815,14 +738,12 @@ class Vector3 {
 	 * @param {number} alpha - The interpolation factor, typically in the closed interval `[0, 1]`.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	lerp( v, alpha ) {
+	lerp(v, alpha) {
+		this.x += (v.x - this.x) * alpha
+		this.y += (v.y - this.y) * alpha
+		this.z += (v.z - this.z) * alpha
 
-		this.x += ( v.x - this.x ) * alpha;
-		this.y += ( v.y - this.y ) * alpha;
-		this.z += ( v.z - this.z ) * alpha;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -835,14 +756,12 @@ class Vector3 {
 	 * @param {number} alpha - The interpolation factor, typically in the closed interval `[0, 1]`.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	lerpVectors( v1, v2, alpha ) {
+	lerpVectors(v1, v2, alpha) {
+		this.x = v1.x + (v2.x - v1.x) * alpha
+		this.y = v1.y + (v2.y - v1.y) * alpha
+		this.z = v1.z + (v2.z - v1.z) * alpha
 
-		this.x = v1.x + ( v2.x - v1.x ) * alpha;
-		this.y = v1.y + ( v2.y - v1.y ) * alpha;
-		this.z = v1.z + ( v2.z - v1.z ) * alpha;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -851,10 +770,8 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the cross product with.
 	 * @return {Vector3} The result of the cross product.
 	 */
-	cross( v ) {
-
-		return this.crossVectors( this, v );
-
+	cross(v) {
+		return this.crossVectors(this, v)
 	}
 
 	/**
@@ -865,17 +782,19 @@ class Vector3 {
 	 * @param {Vector3} b - The second vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	crossVectors( a, b ) {
+	crossVectors(a, b) {
+		const ax = a.x,
+			ay = a.y,
+			az = a.z
+		const bx = b.x,
+			by = b.y,
+			bz = b.z
 
-		const ax = a.x, ay = a.y, az = a.z;
-		const bx = b.x, by = b.y, bz = b.z;
+		this.x = ay * bz - az * by
+		this.y = az * bx - ax * bz
+		this.z = ax * by - ay * bx
 
-		this.x = ay * bz - az * by;
-		this.y = az * bx - ax * bz;
-		this.z = ax * by - ay * bx;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -884,16 +803,14 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to project to.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	projectOnVector( v ) {
+	projectOnVector(v) {
+		const denominator = v.lengthSq()
 
-		const denominator = v.lengthSq();
+		if (denominator === 0) return this.set(0, 0, 0)
 
-		if ( denominator === 0 ) return this.set( 0, 0, 0 );
+		const scalar = v.dot(this) / denominator
 
-		const scalar = v.dot( this ) / denominator;
-
-		return this.copy( v ).multiplyScalar( scalar );
-
+		return this.copy(v).multiplyScalar(scalar)
 	}
 
 	/**
@@ -903,12 +820,10 @@ class Vector3 {
 	 * @param {Vector3} planeNormal - The plane normal.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	projectOnPlane( planeNormal ) {
+	projectOnPlane(planeNormal) {
+		_vector.copy(this).projectOnVector(planeNormal)
 
-		_vector.copy( this ).projectOnVector( planeNormal );
-
-		return this.sub( _vector );
-
+		return this.sub(_vector)
 	}
 
 	/**
@@ -917,10 +832,8 @@ class Vector3 {
 	 * @param {Vector3} normal - The (normalized) normal vector.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	reflect( normal ) {
-
-		return this.sub( _vector.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
-
+	reflect(normal) {
+		return this.sub(_vector.copy(normal).multiplyScalar(2 * this.dot(normal)))
 	}
 	/**
 	 * Returns the angle between the given vector and this instance in radians.
@@ -928,18 +841,16 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the angle with.
 	 * @return {number} The angle in radians.
 	 */
-	angleTo( v ) {
+	angleTo(v) {
+		const denominator = Math.sqrt(this.lengthSq() * v.lengthSq())
 
-		const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
+		if (denominator === 0) return Math.PI / 2
 
-		if ( denominator === 0 ) return Math.PI / 2;
-
-		const theta = this.dot( v ) / denominator;
+		const theta = this.dot(v) / denominator
 
 		// clamp, to handle numerical problems
 
-		return Math.acos( clamp( theta, - 1, 1 ) );
-
+		return Math.acos(clamp(theta, -1, 1))
 	}
 
 	/**
@@ -948,10 +859,8 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the distance to.
 	 * @return {number} The distance.
 	 */
-	distanceTo( v ) {
-
-		return Math.sqrt( this.distanceToSquared( v ) );
-
+	distanceTo(v) {
+		return Math.sqrt(this.distanceToSquared(v))
 	}
 
 	/**
@@ -962,12 +871,12 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the squared distance to.
 	 * @return {number} The squared distance.
 	 */
-	distanceToSquared( v ) {
+	distanceToSquared(v) {
+		const dx = this.x - v.x,
+			dy = this.y - v.y,
+			dz = this.z - v.z
 
-		const dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
-
-		return dx * dx + dy * dy + dz * dz;
-
+		return dx * dx + dy * dy + dz * dz
 	}
 
 	/**
@@ -976,10 +885,8 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to compute the Manhattan distance to.
 	 * @return {number} The Manhattan distance.
 	 */
-	manhattanDistanceTo( v ) {
-
-		return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y ) + Math.abs( this.z - v.z );
-
+	manhattanDistanceTo(v) {
+		return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) + Math.abs(this.z - v.z)
 	}
 
 	/**
@@ -988,10 +895,8 @@ class Vector3 {
 	 * @param {Spherical} s - The spherical coordinates.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromSpherical( s ) {
-
-		return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
-
+	setFromSpherical(s) {
+		return this.setFromSphericalCoords(s.radius, s.phi, s.theta)
 	}
 
 	/**
@@ -1002,16 +907,14 @@ class Vector3 {
 	 * @param {number} theta - The theta angle in radians.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromSphericalCoords( radius, phi, theta ) {
+	setFromSphericalCoords(radius, phi, theta) {
+		const sinPhiRadius = Math.sin(phi) * radius
 
-		const sinPhiRadius = Math.sin( phi ) * radius;
+		this.x = sinPhiRadius * Math.sin(theta)
+		this.y = Math.cos(phi) * radius
+		this.z = sinPhiRadius * Math.cos(theta)
 
-		this.x = sinPhiRadius * Math.sin( theta );
-		this.y = Math.cos( phi ) * radius;
-		this.z = sinPhiRadius * Math.cos( theta );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1020,10 +923,8 @@ class Vector3 {
 	 * @param {Cylindrical} c - The cylindrical coordinates.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromCylindrical( c ) {
-
-		return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
-
+	setFromCylindrical(c) {
+		return this.setFromCylindricalCoords(c.radius, c.theta, c.y)
 	}
 
 	/**
@@ -1034,14 +935,12 @@ class Vector3 {
 	 * @param {number} y - The y value.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromCylindricalCoords( radius, theta, y ) {
+	setFromCylindricalCoords(radius, theta, y) {
+		this.x = radius * Math.sin(theta)
+		this.y = y
+		this.z = radius * Math.cos(theta)
 
-		this.x = radius * Math.sin( theta );
-		this.y = y;
-		this.z = radius * Math.cos( theta );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1051,16 +950,14 @@ class Vector3 {
 	 * @param {Matrix4} m - The 4x4 matrix.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromMatrixPosition( m ) {
+	setFromMatrixPosition(m) {
+		const e = m.elements
 
-		const e = m.elements;
+		this.x = e[12]
+		this.y = e[13]
+		this.z = e[14]
 
-		this.x = e[ 12 ];
-		this.y = e[ 13 ];
-		this.z = e[ 14 ];
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1070,18 +967,16 @@ class Vector3 {
 	 * @param {Matrix4} m - The 4x4 matrix.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromMatrixScale( m ) {
+	setFromMatrixScale(m) {
+		const sx = this.setFromMatrixColumn(m, 0).length()
+		const sy = this.setFromMatrixColumn(m, 1).length()
+		const sz = this.setFromMatrixColumn(m, 2).length()
 
-		const sx = this.setFromMatrixColumn( m, 0 ).length();
-		const sy = this.setFromMatrixColumn( m, 1 ).length();
-		const sz = this.setFromMatrixColumn( m, 2 ).length();
+		this.x = sx
+		this.y = sy
+		this.z = sz
 
-		this.x = sx;
-		this.y = sy;
-		this.z = sz;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1091,10 +986,8 @@ class Vector3 {
 	 * @param {number} index - The column index.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromMatrixColumn( m, index ) {
-
-		return this.fromArray( m.elements, index * 4 );
-
+	setFromMatrixColumn(m, index) {
+		return this.fromArray(m.elements, index * 4)
 	}
 
 	/**
@@ -1104,10 +997,8 @@ class Vector3 {
 	 * @param {number} index - The column index.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromMatrix3Column( m, index ) {
-
-		return this.fromArray( m.elements, index * 3 );
-
+	setFromMatrix3Column(m, index) {
+		return this.fromArray(m.elements, index * 3)
 	}
 
 	/**
@@ -1116,14 +1007,12 @@ class Vector3 {
 	 * @param {Euler} e - The Euler angles to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromEuler( e ) {
+	setFromEuler(e) {
+		this.x = e._x
+		this.y = e._y
+		this.z = e._z
 
-		this.x = e._x;
-		this.y = e._y;
-		this.z = e._z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1133,14 +1022,12 @@ class Vector3 {
 	 * @param {Color} c - The color to set.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	setFromColor( c ) {
+	setFromColor(c) {
+		this.x = c.r
+		this.y = c.g
+		this.z = c.b
 
-		this.x = c.r;
-		this.y = c.g;
-		this.z = c.b;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1149,10 +1036,8 @@ class Vector3 {
 	 * @param {Vector3} v - The vector to test for equality.
 	 * @return {boolean} Whether this vector is equal with the given one.
 	 */
-	equals( v ) {
-
-		return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
-
+	equals(v) {
+		return v.x === this.x && v.y === this.y && v.z === this.z
 	}
 
 	/**
@@ -1163,14 +1048,12 @@ class Vector3 {
 	 * @param {number} [offset=0] - The offset into the array.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	fromArray( array, offset = 0 ) {
+	fromArray(array, offset = 0) {
+		this.x = array[offset]
+		this.y = array[offset + 1]
+		this.z = array[offset + 2]
 
-		this.x = array[ offset ];
-		this.y = array[ offset + 1 ];
-		this.z = array[ offset + 2 ];
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1181,14 +1064,12 @@ class Vector3 {
 	 * @param {number} [offset=0] - Index of the first element in the array.
 	 * @return {Array<number>} The vector components.
 	 */
-	toArray( array = [], offset = 0 ) {
+	toArray(array = [], offset = 0) {
+		array[offset] = this.x
+		array[offset + 1] = this.y
+		array[offset + 2] = this.z
 
-		array[ offset ] = this.x;
-		array[ offset + 1 ] = this.y;
-		array[ offset + 2 ] = this.z;
-
-		return array;
-
+		return array
 	}
 
 	/**
@@ -1198,14 +1079,12 @@ class Vector3 {
 	 * @param {number} index - The index into the attribute.
 	 * @return {Vector3} A reference to this vector.
 	 */
-	fromBufferAttribute( attribute, index ) {
+	fromBufferAttribute(attribute, index) {
+		this.x = attribute.getX(index)
+		this.y = attribute.getY(index)
+		this.z = attribute.getZ(index)
 
-		this.x = attribute.getX( index );
-		this.y = attribute.getY( index );
-		this.z = attribute.getZ( index );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1215,13 +1094,11 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	random() {
+		this.x = Math.random()
+		this.y = Math.random()
+		this.z = Math.random()
 
-		this.x = Math.random();
-		this.y = Math.random();
-		this.z = Math.random();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -1230,32 +1107,27 @@ class Vector3 {
 	 * @return {Vector3} A reference to this vector.
 	 */
 	randomDirection() {
-
 		// https://mathworld.wolfram.com/SpherePointPicking.html
 
-		const theta = Math.random() * Math.PI * 2;
-		const u = Math.random() * 2 - 1;
-		const c = Math.sqrt( 1 - u * u );
+		const theta = Math.random() * Math.PI * 2
+		const u = Math.random() * 2 - 1
+		const c = Math.sqrt(1 - u * u)
 
-		this.x = c * Math.cos( theta );
-		this.y = u;
-		this.z = c * Math.sin( theta );
+		this.x = c * Math.cos(theta)
+		this.y = u
+		this.z = c * Math.sin(theta)
 
-		return this;
-
+		return this
 	}
 
-	*[ Symbol.iterator ]() {
-
-		yield this.x;
-		yield this.y;
-		yield this.z;
-
+	*[Symbol.iterator]() {
+		yield this.x
+		yield this.y
+		yield this.z
 	}
-
 }
 
-const _vector = /*@__PURE__*/ new Vector3();
-const _quaternion = /*@__PURE__*/ new Quaternion();
+const _vector = /*@__PURE__*/ new Vector3()
+const _quaternion = /*@__PURE__*/ new Quaternion()
 
-export { Vector3 };
+export { Vector3 }

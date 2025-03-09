@@ -1,8 +1,8 @@
-import { Material } from './Material.js';
-import { cloneUniforms, cloneUniformsGroups } from '../renderers/shaders/UniformsUtils.js';
+import { Material } from "./Material.js"
+import { cloneUniforms, cloneUniformsGroups } from "../renderers/shaders/UniformsUtils.js"
 
-import default_vertex from '../renderers/shaders/ShaderChunk/default_vertex.glsl.js';
-import default_fragment from '../renderers/shaders/ShaderChunk/default_fragment.glsl.js';
+import default_vertex from "../renderers/shaders/ShaderChunk/default_vertex.glsl.js"
+import default_fragment from "../renderers/shaders/ShaderChunk/default_fragment.glsl.js"
 
 /**
  * A material rendered with custom shaders. A shader is a small program written in GLSL.
@@ -37,7 +37,6 @@ import default_fragment from '../renderers/shaders/ShaderChunk/default_fragment.
  * @augments Material
  */
 class ShaderMaterial extends Material {
-
 	/**
 	 * Constructs a new shader material.
 	 *
@@ -47,9 +46,8 @@ class ShaderMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -58,9 +56,9 @@ class ShaderMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isShaderMaterial = true;
+		this.isShaderMaterial = true
 
-		this.type = 'ShaderMaterial';
+		this.type = "ShaderMaterial"
 
 		/**
 		 * Defines custom constants using `#define` directives within the GLSL code
@@ -80,7 +78,7 @@ class ShaderMaterial extends Material {
 		 *
 		 * @type {Object}
 		 */
-		this.defines = {};
+		this.defines = {}
 
 		/**
 		 * An object of the form:
@@ -104,28 +102,28 @@ class ShaderMaterial extends Material {
 		 *
 		 * @type {Object}
 		 */
-		this.uniforms = {};
+		this.uniforms = {}
 
 		/**
 		 * An array holding uniforms groups for configuring UBOs.
 		 *
 		 * @type {Array<UniformsGroup>}
 		 */
-		this.uniformsGroups = [];
+		this.uniformsGroups = []
 
 		/**
 		 * Vertex shader GLSL code. This is the actual code for the shader.
 		 *
 		 * @type {string}
 		 */
-		this.vertexShader = default_vertex;
+		this.vertexShader = default_vertex
 
 		/**
 		 * Fragment shader GLSL code. This is the actual code for the shader.
 		 *
 		 * @type {string}
 		 */
-		this.fragmentShader = default_fragment;
+		this.fragmentShader = default_fragment
 
 		/**
 		 * Controls line thickness or lines.
@@ -136,7 +134,7 @@ class ShaderMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.linewidth = 1;
+		this.linewidth = 1
 
 		/**
 		 * Renders the geometry as a wireframe.
@@ -144,7 +142,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.wireframe = false;
+		this.wireframe = false
 
 		/**
 		 * Controls the thickness of the wireframe.
@@ -155,7 +153,7 @@ class ShaderMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.wireframeLinewidth = 1;
+		this.wireframeLinewidth = 1
 
 		/**
 		 * Define whether the material color is affected by global fog settings; `true`
@@ -164,7 +162,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.fog = false;
+		this.fog = false
 
 		/**
 		 * Defines whether this material uses lighting; `true` to pass uniform data
@@ -173,7 +171,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.lights = false;
+		this.lights = false
 
 		/**
 		 * Defines whether this material supports clipping; `true` to let the renderer
@@ -182,7 +180,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.clipping = false;
+		this.clipping = false
 
 		/**
 		 * Overwritten and set to `true` by default.
@@ -190,7 +188,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.forceSinglePass = true;
+		this.forceSinglePass = true
 
 		/**
 		 * This object allows to enable certain WebGL 2 extensions.
@@ -202,8 +200,8 @@ class ShaderMaterial extends Material {
 		 */
 		this.extensions = {
 			clipCullDistance: false, // set to use vertex shader clipping
-			multiDraw: false // set to use vertex shader multi_draw / enable gl_DrawID
-		};
+			multiDraw: false, // set to use vertex shader multi_draw / enable gl_DrawID
+		}
 
 		/**
 		 * When the rendered geometry doesn't include these attributes but the
@@ -217,10 +215,10 @@ class ShaderMaterial extends Material {
 		 * @type {Object}
 		 */
 		this.defaultAttributeValues = {
-			'color': [ 1, 1, 1 ],
-			'uv': [ 0, 0 ],
-			'uv1': [ 0, 0 ]
-		};
+			color: [1, 1, 1],
+			uv: [0, 0],
+			uv1: [0, 0],
+		}
 
 		/**
 		 * If set, this calls [gl.bindAttribLocation]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bindAttribLocation}
@@ -229,7 +227,7 @@ class ShaderMaterial extends Material {
 		 * @type {string|undefined}
 		 * @default undefined
 		 */
-		this.index0AttributeName = undefined;
+		this.index0AttributeName = undefined
 
 		/**
 		 * Can be used to force a uniform update while changing uniforms in
@@ -238,7 +236,7 @@ class ShaderMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.uniformsNeedUpdate = false;
+		this.uniformsNeedUpdate = false
 
 		/**
 		 * Defines the GLSL version of custom shader code.
@@ -246,138 +244,110 @@ class ShaderMaterial extends Material {
 		 * @type {?(GLSL1|GLSL3)}
 		 * @default null
 		 */
-		this.glslVersion = null;
+		this.glslVersion = null
 
-		if ( parameters !== undefined ) {
-
-			this.setValues( parameters );
-
+		if (parameters !== undefined) {
+			this.setValues(parameters)
 		}
-
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.fragmentShader = source.fragmentShader
+		this.vertexShader = source.vertexShader
 
-		this.fragmentShader = source.fragmentShader;
-		this.vertexShader = source.vertexShader;
+		this.uniforms = cloneUniforms(source.uniforms)
+		this.uniformsGroups = cloneUniformsGroups(source.uniformsGroups)
 
-		this.uniforms = cloneUniforms( source.uniforms );
-		this.uniformsGroups = cloneUniformsGroups( source.uniformsGroups );
+		this.defines = Object.assign({}, source.defines)
 
-		this.defines = Object.assign( {}, source.defines );
+		this.wireframe = source.wireframe
+		this.wireframeLinewidth = source.wireframeLinewidth
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.fog = source.fog
+		this.lights = source.lights
+		this.clipping = source.clipping
 
-		this.fog = source.fog;
-		this.lights = source.lights;
-		this.clipping = source.clipping;
+		this.extensions = Object.assign({}, source.extensions)
 
-		this.extensions = Object.assign( {}, source.extensions );
+		this.glslVersion = source.glslVersion
 
-		this.glslVersion = source.glslVersion;
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.glslVersion = this.glslVersion
+		data.uniforms = {}
 
-		data.glslVersion = this.glslVersion;
-		data.uniforms = {};
+		for (const name in this.uniforms) {
+			const uniform = this.uniforms[name]
+			const value = uniform.value
 
-		for ( const name in this.uniforms ) {
-
-			const uniform = this.uniforms[ name ];
-			const value = uniform.value;
-
-			if ( value && value.isTexture ) {
-
-				data.uniforms[ name ] = {
-					type: 't',
-					value: value.toJSON( meta ).uuid
-				};
-
-			} else if ( value && value.isColor ) {
-
-				data.uniforms[ name ] = {
-					type: 'c',
-					value: value.getHex()
-				};
-
-			} else if ( value && value.isVector2 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v2',
-					value: value.toArray()
-				};
-
-			} else if ( value && value.isVector3 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v3',
-					value: value.toArray()
-				};
-
-			} else if ( value && value.isVector4 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v4',
-					value: value.toArray()
-				};
-
-			} else if ( value && value.isMatrix3 ) {
-
-				data.uniforms[ name ] = {
-					type: 'm3',
-					value: value.toArray()
-				};
-
-			} else if ( value && value.isMatrix4 ) {
-
-				data.uniforms[ name ] = {
-					type: 'm4',
-					value: value.toArray()
-				};
-
+			if (value && value.isTexture) {
+				data.uniforms[name] = {
+					type: "t",
+					value: value.toJSON(meta).uuid,
+				}
+			} else if (value && value.isColor) {
+				data.uniforms[name] = {
+					type: "c",
+					value: value.getHex(),
+				}
+			} else if (value && value.isVector2) {
+				data.uniforms[name] = {
+					type: "v2",
+					value: value.toArray(),
+				}
+			} else if (value && value.isVector3) {
+				data.uniforms[name] = {
+					type: "v3",
+					value: value.toArray(),
+				}
+			} else if (value && value.isVector4) {
+				data.uniforms[name] = {
+					type: "v4",
+					value: value.toArray(),
+				}
+			} else if (value && value.isMatrix3) {
+				data.uniforms[name] = {
+					type: "m3",
+					value: value.toArray(),
+				}
+			} else if (value && value.isMatrix4) {
+				data.uniforms[name] = {
+					type: "m4",
+					value: value.toArray(),
+				}
 			} else {
-
-				data.uniforms[ name ] = {
-					value: value
-				};
+				data.uniforms[name] = {
+					value: value,
+				}
 
 				// note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
-
 			}
-
 		}
 
-		if ( Object.keys( this.defines ).length > 0 ) data.defines = this.defines;
+		if (Object.keys(this.defines).length > 0) data.defines = this.defines
 
-		data.vertexShader = this.vertexShader;
-		data.fragmentShader = this.fragmentShader;
+		data.vertexShader = this.vertexShader
+		data.fragmentShader = this.fragmentShader
 
-		data.lights = this.lights;
-		data.clipping = this.clipping;
+		data.lights = this.lights
+		data.clipping = this.clipping
 
-		const extensions = {};
+		const extensions = {}
 
-		for ( const key in this.extensions ) {
-
-			if ( this.extensions[ key ] === true ) extensions[ key ] = true;
-
+		for (const key in this.extensions) {
+			if (this.extensions[key] === true) extensions[key] = true
 		}
 
-		if ( Object.keys( extensions ).length > 0 ) data.extensions = extensions;
+		if (Object.keys(extensions).length > 0) data.extensions = extensions
 
-		return data;
-
+		return data
 	}
-
 }
 
-export { ShaderMaterial };
+export { ShaderMaterial }

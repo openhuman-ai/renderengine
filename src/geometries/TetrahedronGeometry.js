@@ -1,4 +1,4 @@
-import { PolyhedronGeometry } from './PolyhedronGeometry.js';
+import { PolyhedronGeometry } from "./PolyhedronGeometry.js"
 
 /**
  * A geometry class for representing an tetrahedron.
@@ -13,26 +13,20 @@ import { PolyhedronGeometry } from './PolyhedronGeometry.js';
  * @augments PolyhedronGeometry
  */
 class TetrahedronGeometry extends PolyhedronGeometry {
-
 	/**
 	 * Constructs a new tetrahedron geometry.
 	 *
 	 * @param {number} [radius=1] - Radius of the tetrahedron.
 	 * @param {number} [detail=0] - Setting this to a value greater than `0` adds vertices making it no longer a tetrahedron.
 	 */
-	constructor( radius = 1, detail = 0 ) {
+	constructor(radius = 1, detail = 0) {
+		const vertices = [1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1]
 
-		const vertices = [
-			1, 1, 1, 	- 1, - 1, 1, 	- 1, 1, - 1, 	1, - 1, - 1
-		];
+		const indices = [2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1]
 
-		const indices = [
-			2, 1, 0, 	0, 3, 2,	1, 3, 0,	2, 3, 1
-		];
+		super(vertices, indices, radius, detail)
 
-		super( vertices, indices, radius, detail );
-
-		this.type = 'TetrahedronGeometry';
+		this.type = "TetrahedronGeometry"
 
 		/**
 		 * Holds the constructor parameters that have been
@@ -43,9 +37,8 @@ class TetrahedronGeometry extends PolyhedronGeometry {
 		 */
 		this.parameters = {
 			radius: radius,
-			detail: detail
-		};
-
+			detail: detail,
+		}
 	}
 
 	/**
@@ -55,12 +48,9 @@ class TetrahedronGeometry extends PolyhedronGeometry {
 	 * @param {Object} data - A JSON object representing the serialized geometry.
 	 * @return {TetrahedronGeometry} A new instance.
 	 */
-	static fromJSON( data ) {
-
-		return new TetrahedronGeometry( data.radius, data.detail );
-
+	static fromJSON(data) {
+		return new TetrahedronGeometry(data.radius, data.detail)
 	}
-
 }
 
-export { TetrahedronGeometry };
+export { TetrahedronGeometry }

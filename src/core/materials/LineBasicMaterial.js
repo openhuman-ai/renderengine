@@ -1,5 +1,5 @@
-import { Material } from './Material.js';
-import { Color } from '../math/Color.js';
+import { Material } from "./Material.js"
+import { Color } from "../math/Color.js"
 
 /**
  * A material for rendering line primitives.
@@ -13,7 +13,6 @@ import { Color } from '../math/Color.js';
  * @augments Material
  */
 class LineBasicMaterial extends Material {
-
 	/**
 	 * Constructs a new line basic material.
 	 *
@@ -23,9 +22,8 @@ class LineBasicMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -34,9 +32,9 @@ class LineBasicMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isLineBasicMaterial = true;
+		this.isLineBasicMaterial = true
 
-		this.type = 'LineBasicMaterial';
+		this.type = "LineBasicMaterial"
 
 		/**
 		 * Color of the material.
@@ -44,7 +42,7 @@ class LineBasicMaterial extends Material {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.color = new Color( 0xffffff );
+		this.color = new Color(0xffffff)
 
 		/**
 		 * Sets the color of the lines using data from a texture. The texture map
@@ -53,7 +51,7 @@ class LineBasicMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * Controls line thickness or lines.
@@ -65,7 +63,7 @@ class LineBasicMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.linewidth = 1;
+		this.linewidth = 1
 
 		/**
 		 * Defines appearance of line ends.
@@ -75,7 +73,7 @@ class LineBasicMaterial extends Material {
 		 * @type {('butt'|'round'|'square')}
 		 * @default 'round'
 		 */
-		this.linecap = 'round';
+		this.linecap = "round"
 
 		/**
 		 * Defines appearance of line joints.
@@ -85,7 +83,7 @@ class LineBasicMaterial extends Material {
 		 * @type {('round'|'bevel'|'miter')}
 		 * @default 'round'
 		 */
-		this.linejoin = 'round';
+		this.linejoin = "round"
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -93,30 +91,26 @@ class LineBasicMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.color.copy( source.color );
+		this.map = source.map
 
-		this.map = source.map;
+		this.linewidth = source.linewidth
+		this.linecap = source.linecap
+		this.linejoin = source.linejoin
 
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
+		this.fog = source.fog
 
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { LineBasicMaterial };
+export { LineBasicMaterial }

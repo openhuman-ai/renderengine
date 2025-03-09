@@ -1,5 +1,5 @@
-import { RenderTarget } from './RenderTarget.js';
-import { DataArrayTexture } from '../textures/DataArrayTexture.js';
+import { RenderTarget } from "./RenderTarget.js"
+import { DataArrayTexture } from "../textures/DataArrayTexture.js"
 
 /**
  * Represents an array render target.
@@ -7,7 +7,6 @@ import { DataArrayTexture } from '../textures/DataArrayTexture.js';
  * @augments RenderTarget
  */
 class RenderTargetArray extends RenderTarget {
-
 	/**
 	 * Constructs a new 3D render target.
 	 *
@@ -16,25 +15,22 @@ class RenderTargetArray extends RenderTarget {
 	 * @param {number} [depth=1] - The height of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( width = 1, height = 1, depth = 1, options = {} ) {
+	constructor(width = 1, height = 1, depth = 1, options = {}) {
+		super(width, height, options)
 
-		super( width, height, options );
+		this.isRenderTargetArray = true
 
-		this.isRenderTargetArray = true;
-
-		this.depth = depth;
+		this.depth = depth
 
 		/**
 		 * Overwritten with a different texture type.
 		 *
 		 * @type {DataArrayTexture}
 		 */
-		this.texture = new DataArrayTexture( null, width, height, depth );
+		this.texture = new DataArrayTexture(null, width, height, depth)
 
-		this.texture.isRenderTargetTexture = true;
-
+		this.texture.isRenderTargetTexture = true
 	}
-
 }
 
-export { RenderTargetArray };
+export { RenderTargetArray }

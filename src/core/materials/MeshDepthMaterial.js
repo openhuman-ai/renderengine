@@ -1,5 +1,5 @@
-import { Material } from './Material.js';
-import { BasicDepthPacking } from '../constants.js';
+import { Material } from "./Material.js"
+import { BasicDepthPacking } from "../constants.js"
 
 /**
  * A material for drawing geometry by depth. Depth is based off of the camera
@@ -8,7 +8,6 @@ import { BasicDepthPacking } from '../constants.js';
  * @augments Material
  */
 class MeshDepthMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh depth material.
 	 *
@@ -18,9 +17,8 @@ class MeshDepthMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -29,9 +27,9 @@ class MeshDepthMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshDepthMaterial = true;
+		this.isMeshDepthMaterial = true
 
-		this.type = 'MeshDepthMaterial';
+		this.type = "MeshDepthMaterial"
 
 		/**
 		 * Type for depth packing.
@@ -39,7 +37,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {(BasicDepthPacking|RGBADepthPacking|RGBDepthPacking|RGDepthPacking)}
 		 * @default BasicDepthPacking
 		 */
-		this.depthPacking = BasicDepthPacking;
+		this.depthPacking = BasicDepthPacking
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -48,7 +46,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -63,7 +61,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * The displacement map affects the position of the mesh's vertices. Unlike
@@ -76,7 +74,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.displacementMap = null;
+		this.displacementMap = null
 
 		/**
 		 * How much the displacement map affects the mesh (where black is no
@@ -86,7 +84,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementScale = 1;
+		this.displacementScale = 1
 
 		/**
 		 * The offset of the displacement map's values on the mesh's vertices.
@@ -96,7 +94,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementBias = 0;
+		this.displacementBias = 0
 
 		/**
 		 * Renders the geometry as a wireframe.
@@ -104,7 +102,7 @@ class MeshDepthMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.wireframe = false;
+		this.wireframe = false
 
 		/**
 		 * Controls the thickness of the wireframe.
@@ -115,33 +113,29 @@ class MeshDepthMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.wireframeLinewidth = 1;
+		this.wireframeLinewidth = 1
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.depthPacking = source.depthPacking
 
-		this.depthPacking = source.depthPacking;
+		this.map = source.map
 
-		this.map = source.map;
+		this.alphaMap = source.alphaMap
 
-		this.alphaMap = source.alphaMap;
+		this.displacementMap = source.displacementMap
+		this.displacementScale = source.displacementScale
+		this.displacementBias = source.displacementBias
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
+		this.wireframe = source.wireframe
+		this.wireframeLinewidth = source.wireframeLinewidth
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshDepthMaterial };
+export { MeshDepthMaterial }

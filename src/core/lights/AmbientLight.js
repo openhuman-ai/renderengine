@@ -1,4 +1,4 @@
-import { Light } from './Light.js';
+import { Light } from "./Light.js"
 
 /**
  * This light globally illuminates all objects in the scene equally.
@@ -13,16 +13,14 @@ import { Light } from './Light.js';
  * @augments Light
  */
 class AmbientLight extends Light {
-
 	/**
 	 * Constructs a new ambient light.
 	 *
 	 * @param {(number|Color|string)} [color=0xffffff] - The light's color.
 	 * @param {number} [intensity=1] - The light's strength/intensity.
 	 */
-	constructor( color, intensity ) {
-
-		super( color, intensity );
+	constructor(color, intensity) {
+		super(color, intensity)
 
 		/**
 		 * This flag can be used for type testing.
@@ -31,12 +29,10 @@ class AmbientLight extends Light {
 		 * @readonly
 		 * @default true
 		 */
-		this.isAmbientLight = true;
+		this.isAmbientLight = true
 
-		this.type = 'AmbientLight';
-
+		this.type = "AmbientLight"
 	}
-
 }
 
-export { AmbientLight };
+export { AmbientLight }

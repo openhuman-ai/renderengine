@@ -1,6 +1,6 @@
-import NodeMaterial from './NodeMaterial.js';
-import VolumetricLightingModel from '../../nodes/functions/VolumetricLightingModel.js';
-import { BackSide } from '../../constants.js';
+import NodeMaterial from "./NodeMaterial.js"
+import VolumetricLightingModel from "../../nodes/functions/VolumetricLightingModel.js"
+import { BackSide } from "../../constants.js"
 
 /**
  * Volume node material.
@@ -8,11 +8,8 @@ import { BackSide } from '../../constants.js';
  * @augments NodeMaterial
  */
 class VolumeNodeMaterial extends NodeMaterial {
-
 	static get type() {
-
-		return 'VolumeNodeMaterial';
-
+		return "VolumeNodeMaterial"
 	}
 
 	/**
@@ -20,9 +17,8 @@ class VolumeNodeMaterial extends NodeMaterial {
 	 *
 	 * @param {Object} [parameters] - The configuration parameter.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -31,7 +27,7 @@ class VolumeNodeMaterial extends NodeMaterial {
 		 * @readonly
 		 * @default true
 		 */
-		this.isVolumeNodeMaterial = true;
+		this.isVolumeNodeMaterial = true
 
 		/**
 		 * Number of steps used for raymarching.
@@ -39,7 +35,7 @@ class VolumeNodeMaterial extends NodeMaterial {
 		 * @type {number}
 		 * @default 25
 		 */
-		this.steps = 25;
+		this.steps = 25
 
 		/**
 		 * Node used for scattering calculations.
@@ -47,26 +43,22 @@ class VolumeNodeMaterial extends NodeMaterial {
 		 * @type {Function|FunctionNode<vec4>}
 		 * @default null
 		 */
-		this.scatteringNode = null;
+		this.scatteringNode = null
 
-		this.lights = true;
+		this.lights = true
 
-		this.transparent = true;
-		this.side = BackSide;
+		this.transparent = true
+		this.side = BackSide
 
-		this.depthTest = false;
-		this.depthWrite = false;
+		this.depthTest = false
+		this.depthWrite = false
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
 	setupLightingModel() {
-
-		return new VolumetricLightingModel();
-
+		return new VolumetricLightingModel()
 	}
-
 }
 
-export default VolumeNodeMaterial;
+export default VolumeNodeMaterial

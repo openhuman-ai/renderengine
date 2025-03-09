@@ -1,26 +1,26 @@
-import { Quaternion } from '../math/Quaternion.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { EventDispatcher } from './EventDispatcher.js';
-import { Euler } from '../math/Euler.js';
-import { Layers } from './Layers.js';
-import { Matrix3 } from '../math/Matrix3.js';
-import { generateUUID } from '../math/MathUtils.js';
+import { Quaternion } from "../math/Quaternion.js"
+import { Vector3 } from "../math/Vector3.js"
+import { Matrix4 } from "../math/Matrix4.js"
+import { EventDispatcher } from "./EventDispatcher.js"
+import { Euler } from "../math/Euler.js"
+import { Layers } from "./Layers.js"
+import { Matrix3 } from "../math/Matrix3.js"
+import { generateUUID } from "../math/MathUtils.js"
 
-let _object3DId = 0;
+let _object3DId = 0
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _q1 = /*@__PURE__*/ new Quaternion();
-const _m1 = /*@__PURE__*/ new Matrix4();
-const _target = /*@__PURE__*/ new Vector3();
+const _v1 = /*@__PURE__*/ new Vector3()
+const _q1 = /*@__PURE__*/ new Quaternion()
+const _m1 = /*@__PURE__*/ new Matrix4()
+const _target = /*@__PURE__*/ new Vector3()
 
-const _position = /*@__PURE__*/ new Vector3();
-const _scale = /*@__PURE__*/ new Vector3();
-const _quaternion = /*@__PURE__*/ new Quaternion();
+const _position = /*@__PURE__*/ new Vector3()
+const _scale = /*@__PURE__*/ new Vector3()
+const _quaternion = /*@__PURE__*/ new Quaternion()
 
-const _xAxis = /*@__PURE__*/ new Vector3( 1, 0, 0 );
-const _yAxis = /*@__PURE__*/ new Vector3( 0, 1, 0 );
-const _zAxis = /*@__PURE__*/ new Vector3( 0, 0, 1 );
+const _xAxis = /*@__PURE__*/ new Vector3(1, 0, 0)
+const _yAxis = /*@__PURE__*/ new Vector3(0, 1, 0)
+const _zAxis = /*@__PURE__*/ new Vector3(0, 0, 1)
 
 /**
  * Fires when the object has been added to its parent object.
@@ -28,7 +28,7 @@ const _zAxis = /*@__PURE__*/ new Vector3( 0, 0, 1 );
  * @event Object3D#added
  * @type {Object}
  */
-const _addedEvent = { type: 'added' };
+const _addedEvent = { type: "added" }
 
 /**
  * Fires when the object has been removed from its parent object.
@@ -36,7 +36,7 @@ const _addedEvent = { type: 'added' };
  * @event Object3D#removed
  * @type {Object}
  */
-const _removedEvent = { type: 'removed' };
+const _removedEvent = { type: "removed" }
 
 /**
  * Fires when a new child object has been added.
@@ -44,7 +44,7 @@ const _removedEvent = { type: 'removed' };
  * @event Object3D#childadded
  * @type {Object}
  */
-const _childaddedEvent = { type: 'childadded', child: null };
+const _childaddedEvent = { type: "childadded", child: null }
 
 /**
  * Fires when a new child object has been added.
@@ -52,7 +52,7 @@ const _childaddedEvent = { type: 'childadded', child: null };
  * @event Object3D#childremoved
  * @type {Object}
  */
-const _childremovedEvent = { type: 'childremoved', child: null };
+const _childremovedEvent = { type: "childremoved", child: null }
 
 /**
  * This is the base class for most objects in three.js and provides a set of
@@ -61,13 +61,11 @@ const _childremovedEvent = { type: 'childremoved', child: null };
  * @augments EventDispatcher
  */
 class Object3D extends EventDispatcher {
-
 	/**
 	 * Constructs a new 3D object.
 	 */
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -76,7 +74,7 @@ class Object3D extends EventDispatcher {
 		 * @readonly
 		 * @default true
 		 */
-		this.isObject3D = true;
+		this.isObject3D = true
 
 		/**
 		 * The ID of the 3D object.
@@ -85,7 +83,7 @@ class Object3D extends EventDispatcher {
 		 * @type {number}
 		 * @readonly
 		 */
-		Object.defineProperty( this, 'id', { value: _object3DId ++ } );
+		Object.defineProperty(this, "id", { value: _object3DId++ })
 
 		/**
 		 * The UUID of the 3D object.
@@ -93,14 +91,14 @@ class Object3D extends EventDispatcher {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.uuid = generateUUID();
+		this.uuid = generateUUID()
 
 		/**
 		 * The name of the 3D object.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The type property is used for detecting the object type
@@ -109,7 +107,7 @@ class Object3D extends EventDispatcher {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.type = 'Object3D';
+		this.type = "Object3D"
 
 		/**
 		 * A reference to the parent object.
@@ -117,14 +115,14 @@ class Object3D extends EventDispatcher {
 		 * @type {?Object3D}
 		 * @default null
 		 */
-		this.parent = null;
+		this.parent = null
 
 		/**
 		 * An array holding the child 3D objects of this instance.
 		 *
 		 * @type {Array<Object3D>}
 		 */
-		this.children = [];
+		this.children = []
 
 		/**
 		 * Defines the `up` direction of the 3D object which influences
@@ -134,29 +132,25 @@ class Object3D extends EventDispatcher {
 		 *
 		 * @type {Vector3}
 		 */
-		this.up = Object3D.DEFAULT_UP.clone();
+		this.up = Object3D.DEFAULT_UP.clone()
 
-		const position = new Vector3();
-		const rotation = new Euler();
-		const quaternion = new Quaternion();
-		const scale = new Vector3( 1, 1, 1 );
+		const position = new Vector3()
+		const rotation = new Euler()
+		const quaternion = new Quaternion()
+		const scale = new Vector3(1, 1, 1)
 
 		function onRotationChange() {
-
-			quaternion.setFromEuler( rotation, false );
-
+			quaternion.setFromEuler(rotation, false)
 		}
 
 		function onQuaternionChange() {
-
-			rotation.setFromQuaternion( quaternion, undefined, false );
-
+			rotation.setFromQuaternion(quaternion, undefined, false)
 		}
 
-		rotation._onChange( onRotationChange );
-		quaternion._onChange( onQuaternionChange );
+		rotation._onChange(onRotationChange)
+		quaternion._onChange(onQuaternionChange)
 
-		Object.defineProperties( this, {
+		Object.defineProperties(this, {
 			/**
 			 * Represents the object's local position.
 			 *
@@ -167,7 +161,7 @@ class Object3D extends EventDispatcher {
 			position: {
 				configurable: true,
 				enumerable: true,
-				value: position
+				value: position,
 			},
 			/**
 			 * Represents the object's local rotation as Euler angles, in radians.
@@ -179,7 +173,7 @@ class Object3D extends EventDispatcher {
 			rotation: {
 				configurable: true,
 				enumerable: true,
-				value: rotation
+				value: rotation,
 			},
 			/**
 			 * Represents the object's local rotation as Quaternions.
@@ -190,7 +184,7 @@ class Object3D extends EventDispatcher {
 			quaternion: {
 				configurable: true,
 				enumerable: true,
-				value: quaternion
+				value: quaternion,
 			},
 			/**
 			 * Represents the object's local scale.
@@ -202,7 +196,7 @@ class Object3D extends EventDispatcher {
 			scale: {
 				configurable: true,
 				enumerable: true,
-				value: scale
+				value: scale,
 			},
 			/**
 			 * Represents the object's model-view matrix.
@@ -211,7 +205,7 @@ class Object3D extends EventDispatcher {
 			 * @type {Matrix4}
 			 */
 			modelViewMatrix: {
-				value: new Matrix4()
+				value: new Matrix4(),
 			},
 			/**
 			 * Represents the object's normal matrix.
@@ -220,16 +214,16 @@ class Object3D extends EventDispatcher {
 			 * @type {Matrix3}
 			 */
 			normalMatrix: {
-				value: new Matrix3()
-			}
-		} );
+				value: new Matrix3(),
+			},
+		})
 
 		/**
 		 * Represents the object's transformation matrix in local space.
 		 *
 		 * @type {Matrix4}
 		 */
-		this.matrix = new Matrix4();
+		this.matrix = new Matrix4()
 
 		/**
 		 * Represents the object's transformation matrix in world space.
@@ -237,7 +231,7 @@ class Object3D extends EventDispatcher {
 		 *
 		 * @type {Matrix4}
 		 */
-		this.matrixWorld = new Matrix4();
+		this.matrixWorld = new Matrix4()
 
 		/**
 		 * When set to `true`, the engine automatically computes the local matrix from position,
@@ -248,7 +242,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.matrixAutoUpdate = Object3D.DEFAULT_MATRIX_AUTO_UPDATE;
+		this.matrixAutoUpdate = Object3D.DEFAULT_MATRIX_AUTO_UPDATE
 
 		/**
 		 * When set to `true`, the engine automatically computes the world matrix from the current local
@@ -259,7 +253,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.matrixWorldAutoUpdate = Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE; // checked by the renderer
+		this.matrixWorldAutoUpdate = Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE // checked by the renderer
 
 		/**
 		 * When set to `true`, it calculates the world matrix in that frame and resets this property
@@ -268,7 +262,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.matrixWorldNeedsUpdate = false;
+		this.matrixWorldNeedsUpdate = false
 
 		/**
 		 * The layer membership of the 3D object. The 3D object is only visible if it has
@@ -277,7 +271,7 @@ class Object3D extends EventDispatcher {
 		 *
 		 * @type {Layers}
 		 */
-		this.layers = new Layers();
+		this.layers = new Layers()
 
 		/**
 		 * When set to `true`, the 3D object gets rendered.
@@ -285,7 +279,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.visible = true;
+		this.visible = true
 
 		/**
 		 * When set to `true`, the 3D object gets rendered into shadow maps.
@@ -293,7 +287,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.castShadow = false;
+		this.castShadow = false
 
 		/**
 		 * When set to `true`, the 3D object is affected by shadows in the scene.
@@ -301,7 +295,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.receiveShadow = false;
+		this.receiveShadow = false
 
 		/**
 		 * When set to `true`, the 3D object is honored by view frustum culling.
@@ -309,7 +303,7 @@ class Object3D extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.frustumCulled = true;
+		this.frustumCulled = true
 
 		/**
 		 * This value allows the default rendering order of scene graph objects to be
@@ -321,14 +315,14 @@ class Object3D extends EventDispatcher {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.renderOrder = 0;
+		this.renderOrder = 0
 
 		/**
 		 * An array holding the animation clips of the 3D object.
 		 *
 		 * @type {Array<AnimationClip>}
 		 */
-		this.animations = [];
+		this.animations = []
 
 		/**
 		 * Custom depth material to be used when rendering to the depth map. Can only be used
@@ -341,7 +335,7 @@ class Object3D extends EventDispatcher {
 		 * @type {(Material|undefined)}
 		 * @default undefined
 		 */
-		this.customDepthMaterial = undefined;
+		this.customDepthMaterial = undefined
 
 		/**
 		 * Same as {@link Object3D#customDepthMaterial}, but used with {@link PointLight}.
@@ -351,7 +345,7 @@ class Object3D extends EventDispatcher {
 		 * @type {(Material|undefined)}
 		 * @default undefined
 		 */
-		this.customDistanceMaterial = undefined;
+		this.customDistanceMaterial = undefined
 
 		/**
 		 * An object that can be used to store custom data about the 3D object. It
@@ -359,8 +353,7 @@ class Object3D extends EventDispatcher {
 		 *
 		 * @type {Object}
 		 */
-		this.userData = {};
-
+		this.userData = {}
 	}
 
 	/**
@@ -374,7 +367,7 @@ class Object3D extends EventDispatcher {
 	 * @param {Material} depthMaterial - The depth material.
 	 * @param {Object} group - The geometry group data.
 	 */
-	onBeforeShadow( /* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */ ) {}
+	onBeforeShadow(/* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */) {}
 
 	/**
 	 * A callback that is executed immediately after a 3D object is rendered to a shadow map.
@@ -387,7 +380,7 @@ class Object3D extends EventDispatcher {
 	 * @param {Material} depthMaterial - The depth material.
 	 * @param {Object} group - The geometry group data.
 	 */
-	onAfterShadow( /* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */ ) {}
+	onAfterShadow(/* renderer, object, camera, shadowCamera, geometry, depthMaterial, group */) {}
 
 	/**
 	 * A callback that is executed immediately before a 3D object is rendered.
@@ -399,7 +392,7 @@ class Object3D extends EventDispatcher {
 	 * @param {Material} material - The 3D object's material.
 	 * @param {Object} group - The geometry group data.
 	 */
-	onBeforeRender( /* renderer, scene, camera, geometry, material, group */ ) {}
+	onBeforeRender(/* renderer, scene, camera, geometry, material, group */) {}
 
 	/**
 	 * A callback that is executed immediately after a 3D object is rendered.
@@ -411,7 +404,7 @@ class Object3D extends EventDispatcher {
 	 * @param {Material} material - The 3D object's material.
 	 * @param {Object} group - The geometry group data.
 	 */
-	onAfterRender( /* renderer, scene, camera, geometry, material, group */ ) {}
+	onAfterRender(/* renderer, scene, camera, geometry, material, group */) {}
 
 	/**
 	 * Applies the given transformation matrix to the object and updates the object's position,
@@ -419,14 +412,12 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Matrix4} matrix - The transformation matrix.
 	 */
-	applyMatrix4( matrix ) {
+	applyMatrix4(matrix) {
+		if (this.matrixAutoUpdate) this.updateMatrix()
 
-		if ( this.matrixAutoUpdate ) this.updateMatrix();
+		this.matrix.premultiply(matrix)
 
-		this.matrix.premultiply( matrix );
-
-		this.matrix.decompose( this.position, this.quaternion, this.scale );
-
+		this.matrix.decompose(this.position, this.quaternion, this.scale)
 	}
 
 	/**
@@ -435,12 +426,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Quaternion} q - The quaternion.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	applyQuaternion( q ) {
+	applyQuaternion(q) {
+		this.quaternion.premultiply(q)
 
-		this.quaternion.premultiply( q );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -449,12 +438,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} axis - The (normalized) axis vector.
 	 * @param {number} angle - The angle in radians.
 	 */
-	setRotationFromAxisAngle( axis, angle ) {
-
+	setRotationFromAxisAngle(axis, angle) {
 		// assumes axis is normalized
 
-		this.quaternion.setFromAxisAngle( axis, angle );
-
+		this.quaternion.setFromAxisAngle(axis, angle)
 	}
 
 	/**
@@ -462,10 +449,8 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Euler} euler - The Euler angles.
 	 */
-	setRotationFromEuler( euler ) {
-
-		this.quaternion.setFromEuler( euler, true );
-
+	setRotationFromEuler(euler) {
+		this.quaternion.setFromEuler(euler, true)
 	}
 
 	/**
@@ -474,12 +459,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Matrix4} m - Although a 4x4 matrix is expected, the upper 3x3 portion must be
 	 * a pure rotation matrix (i.e, unscaled).
 	 */
-	setRotationFromMatrix( m ) {
-
+	setRotationFromMatrix(m) {
 		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
-		this.quaternion.setFromRotationMatrix( m );
-
+		this.quaternion.setFromRotationMatrix(m)
 	}
 
 	/**
@@ -487,12 +470,10 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Quaternion} q - The Quaternion
 	 */
-	setRotationFromQuaternion( q ) {
-
+	setRotationFromQuaternion(q) {
 		// assumes q is normalized
 
-		this.quaternion.copy( q );
-
+		this.quaternion.copy(q)
 	}
 
 	/**
@@ -502,17 +483,15 @@ class Object3D extends EventDispatcher {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	rotateOnAxis( axis, angle ) {
-
+	rotateOnAxis(axis, angle) {
 		// rotate object on axis in object space
 		// axis is assumed to be normalized
 
-		_q1.setFromAxisAngle( axis, angle );
+		_q1.setFromAxisAngle(axis, angle)
 
-		this.quaternion.multiply( _q1 );
+		this.quaternion.multiply(_q1)
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -522,18 +501,16 @@ class Object3D extends EventDispatcher {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	rotateOnWorldAxis( axis, angle ) {
-
+	rotateOnWorldAxis(axis, angle) {
 		// rotate object on axis in world space
 		// axis is assumed to be normalized
 		// method assumes no rotated parent
 
-		_q1.setFromAxisAngle( axis, angle );
+		_q1.setFromAxisAngle(axis, angle)
 
-		this.quaternion.premultiply( _q1 );
+		this.quaternion.premultiply(_q1)
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -542,10 +519,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	rotateX( angle ) {
-
-		return this.rotateOnAxis( _xAxis, angle );
-
+	rotateX(angle) {
+		return this.rotateOnAxis(_xAxis, angle)
 	}
 
 	/**
@@ -554,10 +529,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	rotateY( angle ) {
-
-		return this.rotateOnAxis( _yAxis, angle );
-
+	rotateY(angle) {
+		return this.rotateOnAxis(_yAxis, angle)
 	}
 
 	/**
@@ -566,10 +539,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} angle - The angle in radians.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	rotateZ( angle ) {
-
-		return this.rotateOnAxis( _zAxis, angle );
-
+	rotateZ(angle) {
+		return this.rotateOnAxis(_zAxis, angle)
 	}
 
 	/**
@@ -579,17 +550,15 @@ class Object3D extends EventDispatcher {
 	 * @param {number} distance - The distance in world units.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	translateOnAxis( axis, distance ) {
-
+	translateOnAxis(axis, distance) {
 		// translate object by distance along axis in object space
 		// axis is assumed to be normalized
 
-		_v1.copy( axis ).applyQuaternion( this.quaternion );
+		_v1.copy(axis).applyQuaternion(this.quaternion)
 
-		this.position.add( _v1.multiplyScalar( distance ) );
+		this.position.add(_v1.multiplyScalar(distance))
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -598,10 +567,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} distance - The distance in world units.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	translateX( distance ) {
-
-		return this.translateOnAxis( _xAxis, distance );
-
+	translateX(distance) {
+		return this.translateOnAxis(_xAxis, distance)
 	}
 
 	/**
@@ -610,10 +577,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} distance - The distance in world units.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	translateY( distance ) {
-
-		return this.translateOnAxis( _yAxis, distance );
-
+	translateY(distance) {
+		return this.translateOnAxis(_yAxis, distance)
 	}
 
 	/**
@@ -622,10 +587,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} distance - The distance in world units.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	translateZ( distance ) {
-
-		return this.translateOnAxis( _zAxis, distance );
-
+	translateZ(distance) {
+		return this.translateOnAxis(_zAxis, distance)
 	}
 
 	/**
@@ -634,12 +597,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} vector - The vector to convert.
 	 * @return {Vector3} The converted vector.
 	 */
-	localToWorld( vector ) {
+	localToWorld(vector) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
-
-		return vector.applyMatrix4( this.matrixWorld );
-
+		return vector.applyMatrix4(this.matrixWorld)
 	}
 
 	/**
@@ -648,12 +609,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} vector - The vector to convert.
 	 * @return {Vector3} The converted vector.
 	 */
-	worldToLocal( vector ) {
+	worldToLocal(vector) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
-
-		return vector.applyMatrix4( _m1.copy( this.matrixWorld ).invert() );
-
+		return vector.applyMatrix4(_m1.copy(this.matrixWorld).invert())
 	}
 
 	/**
@@ -665,46 +624,34 @@ class Object3D extends EventDispatcher {
 	 * @param {number} [y] - The y coordinate in world space.
 	 * @param {number} [z] - The z coordinate in world space.
 	 */
-	lookAt( x, y, z ) {
-
+	lookAt(x, y, z) {
 		// This method does not support objects having non-uniformly-scaled parent(s)
 
-		if ( x.isVector3 ) {
-
-			_target.copy( x );
-
+		if (x.isVector3) {
+			_target.copy(x)
 		} else {
-
-			_target.set( x, y, z );
-
+			_target.set(x, y, z)
 		}
 
-		const parent = this.parent;
+		const parent = this.parent
 
-		this.updateWorldMatrix( true, false );
+		this.updateWorldMatrix(true, false)
 
-		_position.setFromMatrixPosition( this.matrixWorld );
+		_position.setFromMatrixPosition(this.matrixWorld)
 
-		if ( this.isCamera || this.isLight ) {
-
-			_m1.lookAt( _position, _target, this.up );
-
+		if (this.isCamera || this.isLight) {
+			_m1.lookAt(_position, _target, this.up)
 		} else {
-
-			_m1.lookAt( _target, _position, this.up );
-
+			_m1.lookAt(_target, _position, this.up)
 		}
 
-		this.quaternion.setFromRotationMatrix( _m1 );
+		this.quaternion.setFromRotationMatrix(_m1)
 
-		if ( parent ) {
-
-			_m1.extractRotation( parent.matrixWorld );
-			_q1.setFromRotationMatrix( _m1 );
-			this.quaternion.premultiply( _q1.invert() );
-
+		if (parent) {
+			_m1.extractRotation(parent.matrixWorld)
+			_q1.setFromRotationMatrix(_m1)
+			this.quaternion.premultiply(_q1.invert())
 		}
-
 	}
 
 	/**
@@ -717,47 +664,35 @@ class Object3D extends EventDispatcher {
 	 * @param {Object3D} object - The 3D object to add.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	add( object ) {
-
-		if ( arguments.length > 1 ) {
-
-			for ( let i = 0; i < arguments.length; i ++ ) {
-
-				this.add( arguments[ i ] );
-
+	add(object) {
+		if (arguments.length > 1) {
+			for (let i = 0; i < arguments.length; i++) {
+				this.add(arguments[i])
 			}
 
-			return this;
-
+			return this
 		}
 
-		if ( object === this ) {
-
-			console.error( 'THREE.Object3D.add: object can\'t be added as a child of itself.', object );
-			return this;
-
+		if (object === this) {
+			console.error("THREE.Object3D.add: object can't be added as a child of itself.", object)
+			return this
 		}
 
-		if ( object && object.isObject3D ) {
+		if (object && object.isObject3D) {
+			object.removeFromParent()
+			object.parent = this
+			this.children.push(object)
 
-			object.removeFromParent();
-			object.parent = this;
-			this.children.push( object );
+			object.dispatchEvent(_addedEvent)
 
-			object.dispatchEvent( _addedEvent );
-
-			_childaddedEvent.child = object;
-			this.dispatchEvent( _childaddedEvent );
-			_childaddedEvent.child = null;
-
+			_childaddedEvent.child = object
+			this.dispatchEvent(_childaddedEvent)
+			_childaddedEvent.child = null
 		} else {
-
-			console.error( 'THREE.Object3D.add: object not an instance of THREE.Object3D.', object );
-
+			console.error("THREE.Object3D.add: object not an instance of THREE.Object3D.", object)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -769,37 +704,29 @@ class Object3D extends EventDispatcher {
 	 * @param {Object3D} object - The 3D object to remove.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	remove( object ) {
-
-		if ( arguments.length > 1 ) {
-
-			for ( let i = 0; i < arguments.length; i ++ ) {
-
-				this.remove( arguments[ i ] );
-
+	remove(object) {
+		if (arguments.length > 1) {
+			for (let i = 0; i < arguments.length; i++) {
+				this.remove(arguments[i])
 			}
 
-			return this;
-
+			return this
 		}
 
-		const index = this.children.indexOf( object );
+		const index = this.children.indexOf(object)
 
-		if ( index !== - 1 ) {
+		if (index !== -1) {
+			object.parent = null
+			this.children.splice(index, 1)
 
-			object.parent = null;
-			this.children.splice( index, 1 );
+			object.dispatchEvent(_removedEvent)
 
-			object.dispatchEvent( _removedEvent );
-
-			_childremovedEvent.child = object;
-			this.dispatchEvent( _childremovedEvent );
-			_childremovedEvent.child = null;
-
+			_childremovedEvent.child = object
+			this.dispatchEvent(_childremovedEvent)
+			_childremovedEvent.child = null
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -810,17 +737,13 @@ class Object3D extends EventDispatcher {
 	 * @return {Object3D} A reference to this instance.
 	 */
 	removeFromParent() {
+		const parent = this.parent
 
-		const parent = this.parent;
-
-		if ( parent !== null ) {
-
-			parent.remove( this );
-
+		if (parent !== null) {
+			parent.remove(this)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -831,9 +754,7 @@ class Object3D extends EventDispatcher {
 	 * @return {Object3D} A reference to this instance.
 	 */
 	clear() {
-
-		return this.remove( ... this.children );
-
+		return this.remove(...this.children)
 	}
 
 	/**
@@ -845,40 +766,36 @@ class Object3D extends EventDispatcher {
 	 * @param {Object3D} object - The 3D object to attach.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	attach( object ) {
-
+	attach(object) {
 		// adds object as a child of this, while maintaining the object's world transform
 
 		// Note: This method does not support scene graphs having non-uniformly-scaled nodes(s)
 
-		this.updateWorldMatrix( true, false );
+		this.updateWorldMatrix(true, false)
 
-		_m1.copy( this.matrixWorld ).invert();
+		_m1.copy(this.matrixWorld).invert()
 
-		if ( object.parent !== null ) {
+		if (object.parent !== null) {
+			object.parent.updateWorldMatrix(true, false)
 
-			object.parent.updateWorldMatrix( true, false );
-
-			_m1.multiply( object.parent.matrixWorld );
-
+			_m1.multiply(object.parent.matrixWorld)
 		}
 
-		object.applyMatrix4( _m1 );
+		object.applyMatrix4(_m1)
 
-		object.removeFromParent();
-		object.parent = this;
-		this.children.push( object );
+		object.removeFromParent()
+		object.parent = this
+		this.children.push(object)
 
-		object.updateWorldMatrix( false, true );
+		object.updateWorldMatrix(false, true)
 
-		object.dispatchEvent( _addedEvent );
+		object.dispatchEvent(_addedEvent)
 
-		_childaddedEvent.child = object;
-		this.dispatchEvent( _childaddedEvent );
-		_childaddedEvent.child = null;
+		_childaddedEvent.child = object
+		this.dispatchEvent(_childaddedEvent)
+		_childaddedEvent.child = null
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -888,10 +805,8 @@ class Object3D extends EventDispatcher {
 	 * @param {number} id - The id.
 	 * @return {Object3D|undefined} The found 3D object. Returns `undefined` if no 3D object has been found.
 	 */
-	getObjectById( id ) {
-
-		return this.getObjectByProperty( 'id', id );
-
+	getObjectById(id) {
+		return this.getObjectByProperty("id", id)
 	}
 
 	/**
@@ -901,10 +816,8 @@ class Object3D extends EventDispatcher {
 	 * @param {string} name - The name.
 	 * @return {Object3D|undefined} The found 3D object. Returns `undefined` if no 3D object has been found.
 	 */
-	getObjectByName( name ) {
-
-		return this.getObjectByProperty( 'name', name );
-
+	getObjectByName(name) {
+		return this.getObjectByProperty("name", name)
 	}
 
 	/**
@@ -915,25 +828,19 @@ class Object3D extends EventDispatcher {
 	 * @param {any} value - The value.
 	 * @return {Object3D|undefined} The found 3D object. Returns `undefined` if no 3D object has been found.
 	 */
-	getObjectByProperty( name, value ) {
+	getObjectByProperty(name, value) {
+		if (this[name] === value) return this
 
-		if ( this[ name ] === value ) return this;
+		for (let i = 0, l = this.children.length; i < l; i++) {
+			const child = this.children[i]
+			const object = child.getObjectByProperty(name, value)
 
-		for ( let i = 0, l = this.children.length; i < l; i ++ ) {
-
-			const child = this.children[ i ];
-			const object = child.getObjectByProperty( name, value );
-
-			if ( object !== undefined ) {
-
-				return object;
-
+			if (object !== undefined) {
+				return object
 			}
-
 		}
 
-		return undefined;
-
+		return undefined
 	}
 
 	/**
@@ -945,20 +852,16 @@ class Object3D extends EventDispatcher {
 	 * @param {Array<Object3D>} result - The method stores the result in this array.
 	 * @return {Array<Object3D>} The found 3D objects.
 	 */
-	getObjectsByProperty( name, value, result = [] ) {
+	getObjectsByProperty(name, value, result = []) {
+		if (this[name] === value) result.push(this)
 
-		if ( this[ name ] === value ) result.push( this );
+		const children = this.children
 
-		const children = this.children;
-
-		for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-			children[ i ].getObjectsByProperty( name, value, result );
-
+		for (let i = 0, l = children.length; i < l; i++) {
+			children[i].getObjectsByProperty(name, value, result)
 		}
 
-		return result;
-
+		return result
 	}
 
 	/**
@@ -967,12 +870,10 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} target - The target vector the result is stored to.
 	 * @return {Vector3} The 3D object's position in world space.
 	 */
-	getWorldPosition( target ) {
+	getWorldPosition(target) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
-
-		return target.setFromMatrixPosition( this.matrixWorld );
-
+		return target.setFromMatrixPosition(this.matrixWorld)
 	}
 
 	/**
@@ -981,14 +882,12 @@ class Object3D extends EventDispatcher {
 	 * @param {Quaternion} target - The target Quaternion the result is stored to.
 	 * @return {Quaternion} The 3D object's rotation in world space.
 	 */
-	getWorldQuaternion( target ) {
+	getWorldQuaternion(target) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
+		this.matrixWorld.decompose(_position, target, _scale)
 
-		this.matrixWorld.decompose( _position, target, _scale );
-
-		return target;
-
+		return target
 	}
 
 	/**
@@ -997,14 +896,12 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} target - The target vector the result is stored to.
 	 * @return {Vector3} The 3D object's scale in world space.
 	 */
-	getWorldScale( target ) {
+	getWorldScale(target) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
+		this.matrixWorld.decompose(_position, _quaternion, target)
 
-		this.matrixWorld.decompose( _position, _quaternion, target );
-
-		return target;
-
+		return target
 	}
 
 	/**
@@ -1013,14 +910,12 @@ class Object3D extends EventDispatcher {
 	 * @param {Vector3} target - The target vector the result is stored to.
 	 * @return {Vector3} The 3D object's direction in world space.
 	 */
-	getWorldDirection( target ) {
+	getWorldDirection(target) {
+		this.updateWorldMatrix(true, false)
 
-		this.updateWorldMatrix( true, false );
+		const e = this.matrixWorld.elements
 
-		const e = this.matrixWorld.elements;
-
-		return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
-
+		return target.set(e[8], e[9], e[10]).normalize()
 	}
 
 	/**
@@ -1032,7 +927,7 @@ class Object3D extends EventDispatcher {
 	 * @param {Raycaster} raycaster - The raycaster.
 	 * @param {Array<Object>} intersects - An array holding the result of the method.
 	 */
-	raycast( /* raycaster, intersects */ ) {}
+	raycast(/* raycaster, intersects */) {}
 
 	/**
 	 * Executes the callback on this 3D object and all descendants.
@@ -1041,18 +936,14 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Function} callback - A callback function that allows to process the current 3D object.
 	 */
-	traverse( callback ) {
+	traverse(callback) {
+		callback(this)
 
-		callback( this );
+		const children = this.children
 
-		const children = this.children;
-
-		for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-			children[ i ].traverse( callback );
-
+		for (let i = 0, l = children.length; i < l; i++) {
+			children[i].traverse(callback)
 		}
-
 	}
 
 	/**
@@ -1063,20 +954,16 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Function} callback - A callback function that allows to process the current 3D object.
 	 */
-	traverseVisible( callback ) {
+	traverseVisible(callback) {
+		if (this.visible === false) return
 
-		if ( this.visible === false ) return;
+		callback(this)
 
-		callback( this );
+		const children = this.children
 
-		const children = this.children;
-
-		for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-			children[ i ].traverseVisible( callback );
-
+		for (let i = 0, l = children.length; i < l; i++) {
+			children[i].traverseVisible(callback)
 		}
-
 	}
 
 	/**
@@ -1086,18 +973,14 @@ class Object3D extends EventDispatcher {
 	 *
 	 * @param {Function} callback - A callback function that allows to process the current 3D object.
 	 */
-	traverseAncestors( callback ) {
+	traverseAncestors(callback) {
+		const parent = this.parent
 
-		const parent = this.parent;
+		if (parent !== null) {
+			callback(parent)
 
-		if ( parent !== null ) {
-
-			callback( parent );
-
-			parent.traverseAncestors( callback );
-
+			parent.traverseAncestors(callback)
 		}
-
 	}
 
 	/**
@@ -1105,11 +988,9 @@ class Object3D extends EventDispatcher {
 	 * position, rotation and scale values.
 	 */
 	updateMatrix() {
+		this.matrix.compose(this.position, this.quaternion, this.scale)
 
-		this.matrix.compose( this.position, this.quaternion, this.scale );
-
-		this.matrixWorldNeedsUpdate = true;
-
+		this.matrixWorldNeedsUpdate = true
 	}
 
 	/**
@@ -1123,44 +1004,32 @@ class Object3D extends EventDispatcher {
 	 * @param {boolean} [force=false] - When set to `true`, a recomputation of world matrices is forced even
 	 * when {@link Object3D#matrixWorldAutoUpdate} is set to `false`.
 	 */
-	updateMatrixWorld( force ) {
+	updateMatrixWorld(force) {
+		if (this.matrixAutoUpdate) this.updateMatrix()
 
-		if ( this.matrixAutoUpdate ) this.updateMatrix();
-
-		if ( this.matrixWorldNeedsUpdate || force ) {
-
-			if ( this.matrixWorldAutoUpdate === true ) {
-
-				if ( this.parent === null ) {
-
-					this.matrixWorld.copy( this.matrix );
-
+		if (this.matrixWorldNeedsUpdate || force) {
+			if (this.matrixWorldAutoUpdate === true) {
+				if (this.parent === null) {
+					this.matrixWorld.copy(this.matrix)
 				} else {
-
-					this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
-
+					this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix)
 				}
-
 			}
 
-			this.matrixWorldNeedsUpdate = false;
+			this.matrixWorldNeedsUpdate = false
 
-			force = true;
-
+			force = true
 		}
 
 		// make sure descendants are updated if required
 
-		const children = this.children;
+		const children = this.children
 
-		for ( let i = 0, l = children.length; i < l; i ++ ) {
+		for (let i = 0, l = children.length; i < l; i++) {
+			const child = children[i]
 
-			const child = children[ i ];
-
-			child.updateMatrixWorld( force );
-
+			child.updateMatrixWorld(force)
 		}
-
 	}
 
 	/**
@@ -1170,48 +1039,34 @@ class Object3D extends EventDispatcher {
 	 * @param {boolean} [updateParents=false] Whether ancestor nodes should be updated or not.
 	 * @param {boolean} [updateChildren=false] Whether descendant nodes should be updated or not.
 	 */
-	updateWorldMatrix( updateParents, updateChildren ) {
+	updateWorldMatrix(updateParents, updateChildren) {
+		const parent = this.parent
 
-		const parent = this.parent;
-
-		if ( updateParents === true && parent !== null ) {
-
-			parent.updateWorldMatrix( true, false );
-
+		if (updateParents === true && parent !== null) {
+			parent.updateWorldMatrix(true, false)
 		}
 
-		if ( this.matrixAutoUpdate ) this.updateMatrix();
+		if (this.matrixAutoUpdate) this.updateMatrix()
 
-		if ( this.matrixWorldAutoUpdate === true ) {
-
-			if ( this.parent === null ) {
-
-				this.matrixWorld.copy( this.matrix );
-
+		if (this.matrixWorldAutoUpdate === true) {
+			if (this.parent === null) {
+				this.matrixWorld.copy(this.matrix)
 			} else {
-
-				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
-
+				this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix)
 			}
-
 		}
 
 		// make sure descendants are updated
 
-		if ( updateChildren === true ) {
+		if (updateChildren === true) {
+			const children = this.children
 
-			const children = this.children;
+			for (let i = 0, l = children.length; i < l; i++) {
+				const child = children[i]
 
-			for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-				const child = children[ i ];
-
-				child.updateWorldMatrix( false, true );
-
+				child.updateWorldMatrix(false, true)
 			}
-
 		}
-
 	}
 
 	/**
@@ -1221,18 +1076,16 @@ class Object3D extends EventDispatcher {
 	 * @return {Object} A JSON object representing the serialized 3D object.
 	 * @see {@link ObjectLoader#parse}
 	 */
-	toJSON( meta ) {
-
+	toJSON(meta) {
 		// meta is a string when called from JSON.stringify
-		const isRootObject = ( meta === undefined || typeof meta === 'string' );
+		const isRootObject = meta === undefined || typeof meta === "string"
 
-		const output = {};
+		const output = {}
 
 		// meta is a hash used to collect geometries, materials.
 		// not providing it implies that this is the root object
 		// being serialized.
-		if ( isRootObject ) {
-
+		if (isRootObject) {
 			// initialize meta obj
 			meta = {
 				geometries: {},
@@ -1242,278 +1095,218 @@ class Object3D extends EventDispatcher {
 				shapes: {},
 				skeletons: {},
 				animations: {},
-				nodes: {}
-			};
+				nodes: {},
+			}
 
 			output.metadata = {
 				version: 4.6,
-				type: 'Object',
-				generator: 'Object3D.toJSON'
-			};
-
+				type: "Object",
+				generator: "Object3D.toJSON",
+			}
 		}
 
 		// standard Object3D serialization
 
-		const object = {};
+		const object = {}
 
-		object.uuid = this.uuid;
-		object.type = this.type;
+		object.uuid = this.uuid
+		object.type = this.type
 
-		if ( this.name !== '' ) object.name = this.name;
-		if ( this.castShadow === true ) object.castShadow = true;
-		if ( this.receiveShadow === true ) object.receiveShadow = true;
-		if ( this.visible === false ) object.visible = false;
-		if ( this.frustumCulled === false ) object.frustumCulled = false;
-		if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
-		if ( Object.keys( this.userData ).length > 0 ) object.userData = this.userData;
+		if (this.name !== "") object.name = this.name
+		if (this.castShadow === true) object.castShadow = true
+		if (this.receiveShadow === true) object.receiveShadow = true
+		if (this.visible === false) object.visible = false
+		if (this.frustumCulled === false) object.frustumCulled = false
+		if (this.renderOrder !== 0) object.renderOrder = this.renderOrder
+		if (Object.keys(this.userData).length > 0) object.userData = this.userData
 
-		object.layers = this.layers.mask;
-		object.matrix = this.matrix.toArray();
-		object.up = this.up.toArray();
+		object.layers = this.layers.mask
+		object.matrix = this.matrix.toArray()
+		object.up = this.up.toArray()
 
-		if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+		if (this.matrixAutoUpdate === false) object.matrixAutoUpdate = false
 
 		// object specific properties
 
-		if ( this.isInstancedMesh ) {
-
-			object.type = 'InstancedMesh';
-			object.count = this.count;
-			object.instanceMatrix = this.instanceMatrix.toJSON();
-			if ( this.instanceColor !== null ) object.instanceColor = this.instanceColor.toJSON();
-
+		if (this.isInstancedMesh) {
+			object.type = "InstancedMesh"
+			object.count = this.count
+			object.instanceMatrix = this.instanceMatrix.toJSON()
+			if (this.instanceColor !== null) object.instanceColor = this.instanceColor.toJSON()
 		}
 
-		if ( this.isBatchedMesh ) {
+		if (this.isBatchedMesh) {
+			object.type = "BatchedMesh"
+			object.perObjectFrustumCulled = this.perObjectFrustumCulled
+			object.sortObjects = this.sortObjects
 
-			object.type = 'BatchedMesh';
-			object.perObjectFrustumCulled = this.perObjectFrustumCulled;
-			object.sortObjects = this.sortObjects;
+			object.drawRanges = this._drawRanges
+			object.reservedRanges = this._reservedRanges
 
-			object.drawRanges = this._drawRanges;
-			object.reservedRanges = this._reservedRanges;
-
-			object.visibility = this._visibility;
-			object.active = this._active;
-			object.bounds = this._bounds.map( bound => ( {
+			object.visibility = this._visibility
+			object.active = this._active
+			object.bounds = this._bounds.map((bound) => ({
 				boxInitialized: bound.boxInitialized,
 				boxMin: bound.box.min.toArray(),
 				boxMax: bound.box.max.toArray(),
 
 				sphereInitialized: bound.sphereInitialized,
 				sphereRadius: bound.sphere.radius,
-				sphereCenter: bound.sphere.center.toArray()
-			} ) );
+				sphereCenter: bound.sphere.center.toArray(),
+			}))
 
-			object.maxInstanceCount = this._maxInstanceCount;
-			object.maxVertexCount = this._maxVertexCount;
-			object.maxIndexCount = this._maxIndexCount;
+			object.maxInstanceCount = this._maxInstanceCount
+			object.maxVertexCount = this._maxVertexCount
+			object.maxIndexCount = this._maxIndexCount
 
-			object.geometryInitialized = this._geometryInitialized;
-			object.geometryCount = this._geometryCount;
+			object.geometryInitialized = this._geometryInitialized
+			object.geometryCount = this._geometryCount
 
-			object.matricesTexture = this._matricesTexture.toJSON( meta );
+			object.matricesTexture = this._matricesTexture.toJSON(meta)
 
-			if ( this._colorsTexture !== null ) object.colorsTexture = this._colorsTexture.toJSON( meta );
+			if (this._colorsTexture !== null) object.colorsTexture = this._colorsTexture.toJSON(meta)
 
-			if ( this.boundingSphere !== null ) {
-
+			if (this.boundingSphere !== null) {
 				object.boundingSphere = {
 					center: object.boundingSphere.center.toArray(),
-					radius: object.boundingSphere.radius
-				};
-
+					radius: object.boundingSphere.radius,
+				}
 			}
 
-			if ( this.boundingBox !== null ) {
-
+			if (this.boundingBox !== null) {
 				object.boundingBox = {
 					min: object.boundingBox.min.toArray(),
-					max: object.boundingBox.max.toArray()
-				};
-
+					max: object.boundingBox.max.toArray(),
+				}
 			}
-
 		}
 
 		//
 
-		function serialize( library, element ) {
-
-			if ( library[ element.uuid ] === undefined ) {
-
-				library[ element.uuid ] = element.toJSON( meta );
-
+		function serialize(library, element) {
+			if (library[element.uuid] === undefined) {
+				library[element.uuid] = element.toJSON(meta)
 			}
 
-			return element.uuid;
-
+			return element.uuid
 		}
 
-		if ( this.isScene ) {
-
-			if ( this.background ) {
-
-				if ( this.background.isColor ) {
-
-					object.background = this.background.toJSON();
-
-				} else if ( this.background.isTexture ) {
-
-					object.background = this.background.toJSON( meta ).uuid;
-
+		if (this.isScene) {
+			if (this.background) {
+				if (this.background.isColor) {
+					object.background = this.background.toJSON()
+				} else if (this.background.isTexture) {
+					object.background = this.background.toJSON(meta).uuid
 				}
-
 			}
 
-			if ( this.environment && this.environment.isTexture && this.environment.isRenderTargetTexture !== true ) {
-
-				object.environment = this.environment.toJSON( meta ).uuid;
-
+			if (this.environment && this.environment.isTexture && this.environment.isRenderTargetTexture !== true) {
+				object.environment = this.environment.toJSON(meta).uuid
 			}
+		} else if (this.isMesh || this.isLine || this.isPoints) {
+			object.geometry = serialize(meta.geometries, this.geometry)
 
-		} else if ( this.isMesh || this.isLine || this.isPoints ) {
+			const parameters = this.geometry.parameters
 
-			object.geometry = serialize( meta.geometries, this.geometry );
+			if (parameters !== undefined && parameters.shapes !== undefined) {
+				const shapes = parameters.shapes
 
-			const parameters = this.geometry.parameters;
+				if (Array.isArray(shapes)) {
+					for (let i = 0, l = shapes.length; i < l; i++) {
+						const shape = shapes[i]
 
-			if ( parameters !== undefined && parameters.shapes !== undefined ) {
-
-				const shapes = parameters.shapes;
-
-				if ( Array.isArray( shapes ) ) {
-
-					for ( let i = 0, l = shapes.length; i < l; i ++ ) {
-
-						const shape = shapes[ i ];
-
-						serialize( meta.shapes, shape );
-
+						serialize(meta.shapes, shape)
 					}
-
 				} else {
-
-					serialize( meta.shapes, shapes );
-
+					serialize(meta.shapes, shapes)
 				}
-
 			}
-
 		}
 
-		if ( this.isSkinnedMesh ) {
+		if (this.isSkinnedMesh) {
+			object.bindMode = this.bindMode
+			object.bindMatrix = this.bindMatrix.toArray()
 
-			object.bindMode = this.bindMode;
-			object.bindMatrix = this.bindMatrix.toArray();
+			if (this.skeleton !== undefined) {
+				serialize(meta.skeletons, this.skeleton)
 
-			if ( this.skeleton !== undefined ) {
-
-				serialize( meta.skeletons, this.skeleton );
-
-				object.skeleton = this.skeleton.uuid;
-
+				object.skeleton = this.skeleton.uuid
 			}
-
 		}
 
-		if ( this.material !== undefined ) {
+		if (this.material !== undefined) {
+			if (Array.isArray(this.material)) {
+				const uuids = []
 
-			if ( Array.isArray( this.material ) ) {
-
-				const uuids = [];
-
-				for ( let i = 0, l = this.material.length; i < l; i ++ ) {
-
-					uuids.push( serialize( meta.materials, this.material[ i ] ) );
-
+				for (let i = 0, l = this.material.length; i < l; i++) {
+					uuids.push(serialize(meta.materials, this.material[i]))
 				}
 
-				object.material = uuids;
-
+				object.material = uuids
 			} else {
-
-				object.material = serialize( meta.materials, this.material );
-
+				object.material = serialize(meta.materials, this.material)
 			}
-
 		}
 
 		//
 
-		if ( this.children.length > 0 ) {
+		if (this.children.length > 0) {
+			object.children = []
 
-			object.children = [];
-
-			for ( let i = 0; i < this.children.length; i ++ ) {
-
-				object.children.push( this.children[ i ].toJSON( meta ).object );
-
+			for (let i = 0; i < this.children.length; i++) {
+				object.children.push(this.children[i].toJSON(meta).object)
 			}
-
 		}
 
 		//
 
-		if ( this.animations.length > 0 ) {
+		if (this.animations.length > 0) {
+			object.animations = []
 
-			object.animations = [];
+			for (let i = 0; i < this.animations.length; i++) {
+				const animation = this.animations[i]
 
-			for ( let i = 0; i < this.animations.length; i ++ ) {
-
-				const animation = this.animations[ i ];
-
-				object.animations.push( serialize( meta.animations, animation ) );
-
+				object.animations.push(serialize(meta.animations, animation))
 			}
-
 		}
 
-		if ( isRootObject ) {
+		if (isRootObject) {
+			const geometries = extractFromCache(meta.geometries)
+			const materials = extractFromCache(meta.materials)
+			const textures = extractFromCache(meta.textures)
+			const images = extractFromCache(meta.images)
+			const shapes = extractFromCache(meta.shapes)
+			const skeletons = extractFromCache(meta.skeletons)
+			const animations = extractFromCache(meta.animations)
+			const nodes = extractFromCache(meta.nodes)
 
-			const geometries = extractFromCache( meta.geometries );
-			const materials = extractFromCache( meta.materials );
-			const textures = extractFromCache( meta.textures );
-			const images = extractFromCache( meta.images );
-			const shapes = extractFromCache( meta.shapes );
-			const skeletons = extractFromCache( meta.skeletons );
-			const animations = extractFromCache( meta.animations );
-			const nodes = extractFromCache( meta.nodes );
-
-			if ( geometries.length > 0 ) output.geometries = geometries;
-			if ( materials.length > 0 ) output.materials = materials;
-			if ( textures.length > 0 ) output.textures = textures;
-			if ( images.length > 0 ) output.images = images;
-			if ( shapes.length > 0 ) output.shapes = shapes;
-			if ( skeletons.length > 0 ) output.skeletons = skeletons;
-			if ( animations.length > 0 ) output.animations = animations;
-			if ( nodes.length > 0 ) output.nodes = nodes;
-
+			if (geometries.length > 0) output.geometries = geometries
+			if (materials.length > 0) output.materials = materials
+			if (textures.length > 0) output.textures = textures
+			if (images.length > 0) output.images = images
+			if (shapes.length > 0) output.shapes = shapes
+			if (skeletons.length > 0) output.skeletons = skeletons
+			if (animations.length > 0) output.animations = animations
+			if (nodes.length > 0) output.nodes = nodes
 		}
 
-		output.object = object;
+		output.object = object
 
-		return output;
+		return output
 
 		// extract data from the cache hash
 		// remove metadata on each item
 		// and return as array
-		function extractFromCache( cache ) {
-
-			const values = [];
-			for ( const key in cache ) {
-
-				const data = cache[ key ];
-				delete data.metadata;
-				values.push( data );
-
+		function extractFromCache(cache) {
+			const values = []
+			for (const key in cache) {
+				const data = cache[key]
+				delete data.metadata
+				values.push(data)
 			}
 
-			return values;
-
+			return values
 		}
-
 	}
 
 	/**
@@ -1522,10 +1315,8 @@ class Object3D extends EventDispatcher {
 	 * @param {boolean} [recursive=true] - When set to `true`, descendants of the 3D object are also cloned.
 	 * @return {Object3D} A clone of this instance.
 	 */
-	clone( recursive ) {
-
-		return new this.constructor().copy( this, recursive );
-
+	clone(recursive) {
+		return new this.constructor().copy(this, recursive)
 	}
 
 	/**
@@ -1535,53 +1326,46 @@ class Object3D extends EventDispatcher {
 	 * @param {boolean} [recursive=true] - When set to `true`, descendants of the 3D object are cloned.
 	 * @return {Object3D} A reference to this instance.
 	 */
-	copy( source, recursive = true ) {
+	copy(source, recursive = true) {
+		this.name = source.name
 
-		this.name = source.name;
+		this.up.copy(source.up)
 
-		this.up.copy( source.up );
+		this.position.copy(source.position)
+		this.rotation.order = source.rotation.order
+		this.quaternion.copy(source.quaternion)
+		this.scale.copy(source.scale)
 
-		this.position.copy( source.position );
-		this.rotation.order = source.rotation.order;
-		this.quaternion.copy( source.quaternion );
-		this.scale.copy( source.scale );
+		this.matrix.copy(source.matrix)
+		this.matrixWorld.copy(source.matrixWorld)
 
-		this.matrix.copy( source.matrix );
-		this.matrixWorld.copy( source.matrixWorld );
+		this.matrixAutoUpdate = source.matrixAutoUpdate
 
-		this.matrixAutoUpdate = source.matrixAutoUpdate;
+		this.matrixWorldAutoUpdate = source.matrixWorldAutoUpdate
+		this.matrixWorldNeedsUpdate = source.matrixWorldNeedsUpdate
 
-		this.matrixWorldAutoUpdate = source.matrixWorldAutoUpdate;
-		this.matrixWorldNeedsUpdate = source.matrixWorldNeedsUpdate;
+		this.layers.mask = source.layers.mask
+		this.visible = source.visible
 
-		this.layers.mask = source.layers.mask;
-		this.visible = source.visible;
+		this.castShadow = source.castShadow
+		this.receiveShadow = source.receiveShadow
 
-		this.castShadow = source.castShadow;
-		this.receiveShadow = source.receiveShadow;
+		this.frustumCulled = source.frustumCulled
+		this.renderOrder = source.renderOrder
 
-		this.frustumCulled = source.frustumCulled;
-		this.renderOrder = source.renderOrder;
+		this.animations = source.animations.slice()
 
-		this.animations = source.animations.slice();
+		this.userData = JSON.parse(JSON.stringify(source.userData))
 
-		this.userData = JSON.parse( JSON.stringify( source.userData ) );
-
-		if ( recursive === true ) {
-
-			for ( let i = 0; i < source.children.length; i ++ ) {
-
-				const child = source.children[ i ];
-				this.add( child.clone() );
-
+		if (recursive === true) {
+			for (let i = 0; i < source.children.length; i++) {
+				const child = source.children[i]
+				this.add(child.clone())
 			}
-
 		}
 
-		return this;
-
+		return this
 	}
-
 }
 
 /**
@@ -1592,7 +1376,7 @@ class Object3D extends EventDispatcher {
  * @type {Vector3}
  * @default (0,1,0)
  */
-Object3D.DEFAULT_UP = /*@__PURE__*/ new Vector3( 0, 1, 0 );
+Object3D.DEFAULT_UP = /*@__PURE__*/ new Vector3(0, 1, 0)
 
 /**
  * The default setting for {@link Object3D#matrixAutoUpdate} for
@@ -1602,7 +1386,7 @@ Object3D.DEFAULT_UP = /*@__PURE__*/ new Vector3( 0, 1, 0 );
  * @type {boolean}
  * @default true
  */
-Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true;
+Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true
 
 /**
  * The default setting for {@link Object3D#matrixWorldAutoUpdate} for
@@ -1612,6 +1396,6 @@ Object3D.DEFAULT_MATRIX_AUTO_UPDATE = true;
  * @type {boolean}
  * @default true
  */
-Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE = true;
+Object3D.DEFAULT_MATRIX_WORLD_AUTO_UPDATE = true
 
-export { Object3D };
+export { Object3D }

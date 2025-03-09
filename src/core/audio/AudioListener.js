@@ -1,13 +1,13 @@
-import { Vector3 } from '../math/Vector3.js';
-import { Quaternion } from '../math/Quaternion.js';
-import { Clock } from '../core/Clock.js';
-import { Object3D } from '../core/Object3D.js';
-import { AudioContext } from './AudioContext.js';
+import { Vector3 } from "../math/Vector3.js"
+import { Quaternion } from "../math/Quaternion.js"
+import { Clock } from "../core/Clock.js"
+import { Object3D } from "../core/Object3D.js"
+import { AudioContext } from "./AudioContext.js"
 
-const _position = /*@__PURE__*/ new Vector3();
-const _quaternion = /*@__PURE__*/ new Quaternion();
-const _scale = /*@__PURE__*/ new Vector3();
-const _orientation = /*@__PURE__*/ new Vector3();
+const _position = /*@__PURE__*/ new Vector3()
+const _quaternion = /*@__PURE__*/ new Quaternion()
+const _scale = /*@__PURE__*/ new Vector3()
+const _orientation = /*@__PURE__*/ new Vector3()
 
 /**
  * The class represents a virtual listener of the all positional and non-positional audio effects
@@ -20,15 +20,13 @@ const _orientation = /*@__PURE__*/ new Vector3();
  * @augments Object3D
  */
 class AudioListener extends Object3D {
-
 	/**
 	 * Constructs a new audio listener.
 	 */
 	constructor() {
+		super()
 
-		super();
-
-		this.type = 'AudioListener';
+		this.type = "AudioListener"
 
 		/**
 		 * The native audio context.
@@ -36,7 +34,7 @@ class AudioListener extends Object3D {
 		 * @type {AudioContext}
 		 * @readonly
 		 */
-		this.context = AudioContext.getContext();
+		this.context = AudioContext.getContext()
 
 		/**
 		 * The gain node used for volume control.
@@ -44,8 +42,8 @@ class AudioListener extends Object3D {
 		 * @type {GainNode}
 		 * @readonly
 		 */
-		this.gain = this.context.createGain();
-		this.gain.connect( this.context.destination );
+		this.gain = this.context.createGain()
+		this.gain.connect(this.context.destination)
 
 		/**
 		 * An optional filter.
@@ -56,7 +54,7 @@ class AudioListener extends Object3D {
 		 * @default null
 		 * @readonly
 		 */
-		this.filter = null;
+		this.filter = null
 
 		/**
 		 * Time delta values required for `linearRampToValueAtTime()` usage.
@@ -65,12 +63,11 @@ class AudioListener extends Object3D {
 		 * @default 0
 		 * @readonly
 		 */
-		this.timeDelta = 0;
+		this.timeDelta = 0
 
 		// private
 
-		this._clock = new Clock();
-
+		this._clock = new Clock()
 	}
 
 	/**
@@ -81,9 +78,7 @@ class AudioListener extends Object3D {
 	 * @return {GainNode} The input node.
 	 */
 	getInput() {
-
-		return this.gain;
-
+		return this.gain
 	}
 
 	/**
@@ -92,18 +87,14 @@ class AudioListener extends Object3D {
 	 * @return {AudioListener} A reference to this listener.
 	 */
 	removeFilter() {
-
-		if ( this.filter !== null ) {
-
-			this.gain.disconnect( this.filter );
-			this.filter.disconnect( this.context.destination );
-			this.gain.connect( this.context.destination );
-			this.filter = null;
-
+		if (this.filter !== null) {
+			this.gain.disconnect(this.filter)
+			this.filter.disconnect(this.context.destination)
+			this.gain.connect(this.context.destination)
+			this.filter = null
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -112,9 +103,7 @@ class AudioListener extends Object3D {
 	 * @return {?AudioNode} The filter.
 	 */
 	getFilter() {
-
-		return this.filter;
-
+		return this.filter
 	}
 
 	/**
@@ -123,25 +112,19 @@ class AudioListener extends Object3D {
 	 * @param {AudioNode} value - The filter to set.
 	 * @return {AudioListener} A reference to this listener.
 	 */
-	setFilter( value ) {
-
-		if ( this.filter !== null ) {
-
-			this.gain.disconnect( this.filter );
-			this.filter.disconnect( this.context.destination );
-
+	setFilter(value) {
+		if (this.filter !== null) {
+			this.gain.disconnect(this.filter)
+			this.filter.disconnect(this.context.destination)
 		} else {
-
-			this.gain.disconnect( this.context.destination );
-
+			this.gain.disconnect(this.context.destination)
 		}
 
-		this.filter = value;
-		this.gain.connect( this.filter );
-		this.filter.connect( this.context.destination );
+		this.filter = value
+		this.gain.connect(this.filter)
+		this.filter.connect(this.context.destination)
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -150,9 +133,7 @@ class AudioListener extends Object3D {
 	 * @return {number} The master volume.
 	 */
 	getMasterVolume() {
-
-		return this.gain.gain.value;
-
+		return this.gain.gain.value
 	}
 
 	/**
@@ -162,52 +143,43 @@ class AudioListener extends Object3D {
 	 * @param {number} value - The master volume to set.
 	 * @return {AudioListener} A reference to this listener.
 	 */
-	setMasterVolume( value ) {
+	setMasterVolume(value) {
+		this.gain.gain.setTargetAtTime(value, this.context.currentTime, 0.01)
 
-		this.gain.gain.setTargetAtTime( value, this.context.currentTime, 0.01 );
-
-		return this;
-
+		return this
 	}
 
-	updateMatrixWorld( force ) {
+	updateMatrixWorld(force) {
+		super.updateMatrixWorld(force)
 
-		super.updateMatrixWorld( force );
+		const listener = this.context.listener
+		const up = this.up
 
-		const listener = this.context.listener;
-		const up = this.up;
+		this.timeDelta = this._clock.getDelta()
 
-		this.timeDelta = this._clock.getDelta();
+		this.matrixWorld.decompose(_position, _quaternion, _scale)
 
-		this.matrixWorld.decompose( _position, _quaternion, _scale );
+		_orientation.set(0, 0, -1).applyQuaternion(_quaternion)
 
-		_orientation.set( 0, 0, - 1 ).applyQuaternion( _quaternion );
-
-		if ( listener.positionX ) {
-
+		if (listener.positionX) {
 			// code path for Chrome (see #14393)
 
-			const endTime = this.context.currentTime + this.timeDelta;
+			const endTime = this.context.currentTime + this.timeDelta
 
-			listener.positionX.linearRampToValueAtTime( _position.x, endTime );
-			listener.positionY.linearRampToValueAtTime( _position.y, endTime );
-			listener.positionZ.linearRampToValueAtTime( _position.z, endTime );
-			listener.forwardX.linearRampToValueAtTime( _orientation.x, endTime );
-			listener.forwardY.linearRampToValueAtTime( _orientation.y, endTime );
-			listener.forwardZ.linearRampToValueAtTime( _orientation.z, endTime );
-			listener.upX.linearRampToValueAtTime( up.x, endTime );
-			listener.upY.linearRampToValueAtTime( up.y, endTime );
-			listener.upZ.linearRampToValueAtTime( up.z, endTime );
-
+			listener.positionX.linearRampToValueAtTime(_position.x, endTime)
+			listener.positionY.linearRampToValueAtTime(_position.y, endTime)
+			listener.positionZ.linearRampToValueAtTime(_position.z, endTime)
+			listener.forwardX.linearRampToValueAtTime(_orientation.x, endTime)
+			listener.forwardY.linearRampToValueAtTime(_orientation.y, endTime)
+			listener.forwardZ.linearRampToValueAtTime(_orientation.z, endTime)
+			listener.upX.linearRampToValueAtTime(up.x, endTime)
+			listener.upY.linearRampToValueAtTime(up.y, endTime)
+			listener.upZ.linearRampToValueAtTime(up.z, endTime)
 		} else {
-
-			listener.setPosition( _position.x, _position.y, _position.z );
-			listener.setOrientation( _orientation.x, _orientation.y, _orientation.z, up.x, up.y, up.z );
-
+			listener.setPosition(_position.x, _position.y, _position.z)
+			listener.setOrientation(_orientation.x, _orientation.y, _orientation.z, up.x, up.y, up.z)
 		}
-
 	}
-
 }
 
-export { AudioListener };
+export { AudioListener }

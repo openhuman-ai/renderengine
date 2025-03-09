@@ -1,5 +1,5 @@
-import Node from '../core/Node.js';
-import { nodeProxy } from '../tsl/TSLCore.js';
+import Node from "../core/Node.js"
+import { nodeProxy } from "../tsl/TSLCore.js"
 
 /**
  * Represents a GPU control barrier that synchronizes compute operations within a given scope.
@@ -9,40 +9,30 @@ import { nodeProxy } from '../tsl/TSLCore.js';
  * @augments Node
  */
 class BarrierNode extends Node {
-
 	/**
 	 * Constructs a new barrier node.
 	 *
 	 * @param {string} scope - The scope defines the behavior of the node.
 	 */
-	constructor( scope ) {
+	constructor(scope) {
+		super()
 
-		super();
-
-		this.scope = scope;
-
+		this.scope = scope
 	}
 
-	generate( builder ) {
+	generate(builder) {
+		const { scope } = this
+		const { renderer } = builder
 
-		const { scope } = this;
-		const { renderer } = builder;
-
-		if ( renderer.backend.isWebGLBackend === true ) {
-
-			builder.addFlowCode( `\t// ${scope}Barrier \n` );
-
+		if (renderer.backend.isWebGLBackend === true) {
+			builder.addFlowCode(`\t// ${scope}Barrier \n`)
 		} else {
-
-			builder.addLineFlowCode( `${scope}Barrier()`, this );
-
+			builder.addLineFlowCode(`${scope}Barrier()`, this)
 		}
-
 	}
-
 }
 
-export default BarrierNode;
+export default BarrierNode
 
 /**
  * TSL function for creating a barrier node.
@@ -52,7 +42,7 @@ export default BarrierNode;
  * @param {string} scope - The scope defines the behavior of the node..
  * @returns {BarrierNode}
  */
-const barrier = nodeProxy( BarrierNode );
+const barrier = nodeProxy(BarrierNode)
 
 /**
  * TSL function for creating a workgroup barrier. All compute shader
@@ -63,7 +53,7 @@ const barrier = nodeProxy( BarrierNode );
  * @function
  * @returns {BarrierNode}
  */
-export const workgroupBarrier = () => barrier( 'workgroup' ).append();
+export const workgroupBarrier = () => barrier("workgroup").append()
 
 /**
  * TSL function for creating a storage barrier. All invocations must
@@ -74,7 +64,7 @@ export const workgroupBarrier = () => barrier( 'workgroup' ).append();
  * @function
  * @returns {BarrierNode}
  */
-export const storageBarrier = () => barrier( 'storage' ).append();
+export const storageBarrier = () => barrier("storage").append()
 
 /**
  * TSL function for creating a texture barrier. All invocations must
@@ -85,5 +75,4 @@ export const storageBarrier = () => barrier( 'storage' ).append();
  * @function
  * @returns {BarrierNode}
  */
-export const textureBarrier = () => barrier( 'texture' ).append();
-
+export const textureBarrier = () => barrier("texture").append()

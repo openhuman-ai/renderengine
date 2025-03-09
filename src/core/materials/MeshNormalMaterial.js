@@ -1,6 +1,6 @@
-import { TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.js';
-import { Vector2 } from '../math/Vector2.js';
+import { TangentSpaceNormalMap } from "../constants.js"
+import { Material } from "./Material.js"
+import { Vector2 } from "../math/Vector2.js"
 
 /**
  * A material that maps the normal vectors to RGB colors.
@@ -8,7 +8,6 @@ import { Vector2 } from '../math/Vector2.js';
  * @augments Material
  */
 class MeshNormalMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh normal material.
 	 *
@@ -18,9 +17,8 @@ class MeshNormalMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -29,9 +27,9 @@ class MeshNormalMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshNormalMaterial = true;
+		this.isMeshNormalMaterial = true
 
-		this.type = 'MeshNormalMaterial';
+		this.type = "MeshNormalMaterial"
 
 		/**
 		 * The texture to create a bump map. The black and white values map to the
@@ -42,7 +40,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.bumpMap = null;
+		this.bumpMap = null
 
 		/**
 		 * How much the bump map affects the material. Typical range is `[0,1]`.
@@ -50,7 +48,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.bumpScale = 1;
+		this.bumpScale = 1
 
 		/**
 		 * The texture to create a normal map. The RGB values affect the surface
@@ -63,7 +61,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.normalMap = null;
+		this.normalMap = null
 
 		/**
 		 * The type of normal map.
@@ -71,7 +69,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {(TangentSpaceNormalMap|ObjectSpaceNormalMap)}
 		 * @default TangentSpaceNormalMap
 		 */
-		this.normalMapType = TangentSpaceNormalMap;
+		this.normalMapType = TangentSpaceNormalMap
 
 		/**
 		 * How much the normal map affects the material. Typical value range is `[0,1]`.
@@ -79,7 +77,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {Vector2}
 		 * @default (1,1)
 		 */
-		this.normalScale = new Vector2( 1, 1 );
+		this.normalScale = new Vector2(1, 1)
 
 		/**
 		 * The displacement map affects the position of the mesh's vertices. Unlike
@@ -92,7 +90,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.displacementMap = null;
+		this.displacementMap = null
 
 		/**
 		 * How much the displacement map affects the mesh (where black is no
@@ -102,7 +100,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementScale = 1;
+		this.displacementScale = 1
 
 		/**
 		 * The offset of the displacement map's values on the mesh's vertices.
@@ -112,7 +110,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementBias = 0;
+		this.displacementBias = 0
 
 		/**
 		 * Renders the geometry as a wireframe.
@@ -120,7 +118,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.wireframe = false;
+		this.wireframe = false
 
 		/**
 		 * Controls the thickness of the wireframe.
@@ -131,7 +129,7 @@ class MeshNormalMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.wireframeLinewidth = 1;
+		this.wireframeLinewidth = 1
 
 		/**
 		 * Whether the material is rendered with flat shading or not.
@@ -139,36 +137,32 @@ class MeshNormalMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flatShading = false;
+		this.flatShading = false
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.bumpMap = source.bumpMap
+		this.bumpScale = source.bumpScale
 
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
+		this.normalMap = source.normalMap
+		this.normalMapType = source.normalMapType
+		this.normalScale.copy(source.normalScale)
 
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
+		this.displacementMap = source.displacementMap
+		this.displacementScale = source.displacementScale
+		this.displacementBias = source.displacementBias
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
+		this.wireframe = source.wireframe
+		this.wireframeLinewidth = source.wireframeLinewidth
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.flatShading = source.flatShading
 
-		this.flatShading = source.flatShading;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshNormalMaterial };
+export { MeshNormalMaterial }

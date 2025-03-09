@@ -1,4 +1,4 @@
-import { EventDispatcher } from '../core/EventDispatcher.js';
+import { EventDispatcher } from "../core/EventDispatcher.js"
 import {
 	MirroredRepeatWrapping,
 	ClampToEdgeWrapping,
@@ -9,13 +9,13 @@ import {
 	LinearFilter,
 	UVMapping,
 	NoColorSpace,
-} from '../constants.js';
-import { generateUUID } from '../math/MathUtils.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Matrix3 } from '../math/Matrix3.js';
-import { Source } from './Source.js';
+} from "../constants.js"
+import { generateUUID } from "../math/MathUtils.js"
+import { Vector2 } from "../math/Vector2.js"
+import { Matrix3 } from "../math/Matrix3.js"
+import { Source } from "./Source.js"
 
-let _textureId = 0;
+let _textureId = 0
 
 /**
  * Base class for all textures.
@@ -26,7 +26,6 @@ let _textureId = 0;
  * @augments EventDispatcher
  */
 class Texture extends EventDispatcher {
-
 	/**
 	 * Constructs a new texture.
 	 *
@@ -41,9 +40,19 @@ class Texture extends EventDispatcher {
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 * @param {string} [colorSpace=NoColorSpace] - The color space.
 	 */
-	constructor( image = Texture.DEFAULT_IMAGE, mapping = Texture.DEFAULT_MAPPING, wrapS = ClampToEdgeWrapping, wrapT = ClampToEdgeWrapping, magFilter = LinearFilter, minFilter = LinearMipmapLinearFilter, format = RGBAFormat, type = UnsignedByteType, anisotropy = Texture.DEFAULT_ANISOTROPY, colorSpace = NoColorSpace ) {
-
-		super();
+	constructor(
+		image = Texture.DEFAULT_IMAGE,
+		mapping = Texture.DEFAULT_MAPPING,
+		wrapS = ClampToEdgeWrapping,
+		wrapT = ClampToEdgeWrapping,
+		magFilter = LinearFilter,
+		minFilter = LinearMipmapLinearFilter,
+		format = RGBAFormat,
+		type = UnsignedByteType,
+		anisotropy = Texture.DEFAULT_ANISOTROPY,
+		colorSpace = NoColorSpace
+	) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -52,7 +61,7 @@ class Texture extends EventDispatcher {
 		 * @readonly
 		 * @default true
 		 */
-		this.isTexture = true;
+		this.isTexture = true
 
 		/**
 		 * The ID of the texture.
@@ -61,7 +70,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @readonly
 		 */
-		Object.defineProperty( this, 'id', { value: _textureId ++ } );
+		Object.defineProperty(this, "id", { value: _textureId++ })
 
 		/**
 		 * The UUID of the material.
@@ -69,14 +78,14 @@ class Texture extends EventDispatcher {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.uuid = generateUUID();
+		this.uuid = generateUUID()
 
 		/**
 		 * The name of the material.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The data definition of a texture. A reference to the data source can be
@@ -86,14 +95,14 @@ class Texture extends EventDispatcher {
 		 *
 		 * @type {Source}
 		 */
-		this.source = new Source( image );
+		this.source = new Source(image)
 
 		/**
 		 * An array holding user-defined mipmaps.
 		 *
 		 * @type {Array<Object>}
 		 */
-		this.mipmaps = [];
+		this.mipmaps = []
 
 		/**
 		 * How the texture is applied to the object. The value `UVMapping`
@@ -101,8 +110,8 @@ class Texture extends EventDispatcher {
 		 *
 		 * @type {(UVMapping|CubeReflectionMapping|CubeRefractionMapping|EquirectangularReflectionMapping|EquirectangularRefractionMapping|CubeUVReflectionMapping)}
 		 * @default UVMapping
-		*/
-		this.mapping = mapping;
+		 */
+		this.mapping = mapping
 
 		/**
 		 * Lets you select the uv attribute to map the texture to. `0` for `uv`,
@@ -111,7 +120,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.channel = 0;
+		this.channel = 0
 
 		/**
 		 * This defines how the texture is wrapped horizontally and corresponds to
@@ -120,7 +129,7 @@ class Texture extends EventDispatcher {
 		 * @type {(RepeatWrapping|ClampToEdgeWrapping|MirroredRepeatWrapping)}
 		 * @default ClampToEdgeWrapping
 		 */
-		this.wrapS = wrapS;
+		this.wrapS = wrapS
 
 		/**
 		 * This defines how the texture is wrapped horizontally and corresponds to
@@ -129,7 +138,7 @@ class Texture extends EventDispatcher {
 		 * @type {(RepeatWrapping|ClampToEdgeWrapping|MirroredRepeatWrapping)}
 		 * @default ClampToEdgeWrapping
 		 */
-		this.wrapT = wrapT;
+		this.wrapT = wrapT
 
 		/**
 		 * How the texture is sampled when a texel covers more than one pixel.
@@ -137,7 +146,7 @@ class Texture extends EventDispatcher {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default LinearFilter
 		 */
-		this.magFilter = magFilter;
+		this.magFilter = magFilter
 
 		/**
 		 * How the texture is sampled when a texel covers less than one pixel.
@@ -145,7 +154,7 @@ class Texture extends EventDispatcher {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default LinearMipmapLinearFilter
 		 */
-		this.minFilter = minFilter;
+		this.minFilter = minFilter
 
 		/**
 		 * The number of samples taken along the axis through the pixel that has the
@@ -156,7 +165,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.anisotropy = anisotropy;
+		this.anisotropy = anisotropy
 
 		/**
 		 * The format of the texture.
@@ -164,7 +173,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default RGBAFormat
 		 */
-		this.format = format;
+		this.format = format
 
 		/**
 		 * The default internal format is derived from {@link Texture#format} and {@link Texture#type} and
@@ -175,7 +184,7 @@ class Texture extends EventDispatcher {
 		 * @type {?string}
 		 * @default null
 		 */
-		this.internalFormat = null;
+		this.internalFormat = null
 
 		/**
 		 * The data type of the texture.
@@ -183,7 +192,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default UnsignedByteType
 		 */
-		this.type = type;
+		this.type = type
 
 		/**
 		 * How much a single repetition of the texture is offset from the beginning,
@@ -192,7 +201,7 @@ class Texture extends EventDispatcher {
 		 * @type {Vector2}
 		 * @default (0,0)
 		 */
-		this.offset = new Vector2( 0, 0 );
+		this.offset = new Vector2(0, 0)
 
 		/**
 		 * How many times the texture is repeated across the surface, in each
@@ -203,7 +212,7 @@ class Texture extends EventDispatcher {
 		 * @type {Vector2}
 		 * @default (1,1)
 		 */
-		this.repeat = new Vector2( 1, 1 );
+		this.repeat = new Vector2(1, 1)
 
 		/**
 		 * The point around which rotation occurs. A value of `(0.5, 0.5)` corresponds
@@ -212,7 +221,7 @@ class Texture extends EventDispatcher {
 		 * @type {Vector2}
 		 * @default (0,0)
 		 */
-		this.center = new Vector2( 0, 0 );
+		this.center = new Vector2(0, 0)
 
 		/**
 		 * How much the texture is rotated around the center point, in radians.
@@ -221,7 +230,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.rotation = 0;
+		this.rotation = 0
 
 		/**
 		 * Whether to update the texture's uv-transformation {@link Texture#matrix}
@@ -233,14 +242,14 @@ class Texture extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.matrixAutoUpdate = true;
+		this.matrixAutoUpdate = true
 
 		/**
 		 * The uv-transformation matrix of the texture.
 		 *
 		 * @type {Matrix3}
 		 */
-		this.matrix = new Matrix3();
+		this.matrix = new Matrix3()
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -250,7 +259,7 @@ class Texture extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.generateMipmaps = true;
+		this.generateMipmaps = true
 
 		/**
 		 * If set to `true`, the alpha channel, if present, is multiplied into the
@@ -262,7 +271,7 @@ class Texture extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.premultiplyAlpha = false;
+		this.premultiplyAlpha = false
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -274,7 +283,7 @@ class Texture extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.flipY = true;
+		this.flipY = true
 
 		/**
 		 * Specifies the alignment requirements for the start of each pixel row in memory.
@@ -284,7 +293,7 @@ class Texture extends EventDispatcher {
 		 * @type {number}
 		 * @default 4
 		 */
-		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
+		this.unpackAlignment = 4 // valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
 
 		/**
 		 * Textures containing color data should be annotated with `SRGBColorSpace` or `LinearSRGBColorSpace`.
@@ -292,7 +301,7 @@ class Texture extends EventDispatcher {
 		 * @type {string}
 		 * @default NoColorSpace
 		 */
-		this.colorSpace = colorSpace;
+		this.colorSpace = colorSpace
 
 		/**
 		 * An object that can be used to store custom data about the texture. It
@@ -300,7 +309,7 @@ class Texture extends EventDispatcher {
 		 *
 		 * @type {Object}
 		 */
-		this.userData = {};
+		this.userData = {}
 
 		/**
 		 * This starts at `0` and counts how many times {@link Texture#needsUpdate} is set to `true`.
@@ -309,7 +318,7 @@ class Texture extends EventDispatcher {
 		 * @readonly
 		 * @default 0
 		 */
-		this.version = 0;
+		this.version = 0
 
 		/**
 		 * A callback function, called when the texture is updated (e.g., when
@@ -318,7 +327,7 @@ class Texture extends EventDispatcher {
 		 * @type {?Function}
 		 * @default null
 		 */
-		this.onUpdate = null;
+		this.onUpdate = null
 
 		/**
 		 * An optional back reference to the textures render target.
@@ -326,7 +335,7 @@ class Texture extends EventDispatcher {
 		 * @type {?(RenderTarget|WebGLRenderTarget)}
 		 * @default null
 		 */
-		this.renderTarget = null;
+		this.renderTarget = null
 
 		/**
 		 * Indicates whether a texture belongs to a render target or not.
@@ -335,7 +344,7 @@ class Texture extends EventDispatcher {
 		 * @readonly
 		 * @default false
 		 */
-		this.isRenderTargetTexture = false;
+		this.isRenderTargetTexture = false
 
 		/**
 		 * Indicates whether this texture should be processed by `PMREMGenerator` or not
@@ -345,8 +354,7 @@ class Texture extends EventDispatcher {
 		 * @readonly
 		 * @default 0
 		 */
-		this.pmremVersion = 0;
-
+		this.pmremVersion = 0
 	}
 
 	/**
@@ -355,15 +363,11 @@ class Texture extends EventDispatcher {
 	 * @type {?Object}
 	 */
 	get image() {
-
-		return this.source.data;
-
+		return this.source.data
 	}
 
-	set image( value = null ) {
-
-		this.source.data = value;
-
+	set image(value = null) {
+		this.source.data = value
 	}
 
 	/**
@@ -371,9 +375,7 @@ class Texture extends EventDispatcher {
 	 * {@link Texture#repeat}, {@link Texture#rotation}, and {@link Texture#center}.
 	 */
 	updateMatrix() {
-
-		this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
-
+		this.matrix.setUvTransform(this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y)
 	}
 
 	/**
@@ -382,9 +384,7 @@ class Texture extends EventDispatcher {
 	 * @return {Texture} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
 
 	/**
@@ -393,51 +393,49 @@ class Texture extends EventDispatcher {
 	 * @param {Texture} source - The texture to copy.
 	 * @return {Texture} A reference to this instance.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.name = source.name
 
-		this.name = source.name;
+		this.source = source.source
+		this.mipmaps = source.mipmaps.slice(0)
 
-		this.source = source.source;
-		this.mipmaps = source.mipmaps.slice( 0 );
+		this.mapping = source.mapping
+		this.channel = source.channel
 
-		this.mapping = source.mapping;
-		this.channel = source.channel;
+		this.wrapS = source.wrapS
+		this.wrapT = source.wrapT
 
-		this.wrapS = source.wrapS;
-		this.wrapT = source.wrapT;
+		this.magFilter = source.magFilter
+		this.minFilter = source.minFilter
 
-		this.magFilter = source.magFilter;
-		this.minFilter = source.minFilter;
+		this.anisotropy = source.anisotropy
 
-		this.anisotropy = source.anisotropy;
+		this.format = source.format
+		this.internalFormat = source.internalFormat
+		this.type = source.type
 
-		this.format = source.format;
-		this.internalFormat = source.internalFormat;
-		this.type = source.type;
+		this.offset.copy(source.offset)
+		this.repeat.copy(source.repeat)
+		this.center.copy(source.center)
+		this.rotation = source.rotation
 
-		this.offset.copy( source.offset );
-		this.repeat.copy( source.repeat );
-		this.center.copy( source.center );
-		this.rotation = source.rotation;
+		this.matrixAutoUpdate = source.matrixAutoUpdate
+		this.matrix.copy(source.matrix)
 
-		this.matrixAutoUpdate = source.matrixAutoUpdate;
-		this.matrix.copy( source.matrix );
+		this.generateMipmaps = source.generateMipmaps
+		this.premultiplyAlpha = source.premultiplyAlpha
+		this.flipY = source.flipY
+		this.unpackAlignment = source.unpackAlignment
+		this.colorSpace = source.colorSpace
 
-		this.generateMipmaps = source.generateMipmaps;
-		this.premultiplyAlpha = source.premultiplyAlpha;
-		this.flipY = source.flipY;
-		this.unpackAlignment = source.unpackAlignment;
-		this.colorSpace = source.colorSpace;
+		this.renderTarget = source.renderTarget
+		this.isRenderTargetTexture = source.isRenderTargetTexture
 
-		this.renderTarget = source.renderTarget;
-		this.isRenderTargetTexture = source.isRenderTargetTexture;
+		this.userData = JSON.parse(JSON.stringify(source.userData))
 
-		this.userData = JSON.parse( JSON.stringify( source.userData ) );
+		this.needsUpdate = true
 
-		this.needsUpdate = true;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -447,38 +445,34 @@ class Texture extends EventDispatcher {
 	 * @return {Object} A JSON object representing the serialized texture.
 	 * @see {@link ObjectLoader#parse}
 	 */
-	toJSON( meta ) {
+	toJSON(meta) {
+		const isRootObject = meta === undefined || typeof meta === "string"
 
-		const isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		if ( ! isRootObject && meta.textures[ this.uuid ] !== undefined ) {
-
-			return meta.textures[ this.uuid ];
-
+		if (!isRootObject && meta.textures[this.uuid] !== undefined) {
+			return meta.textures[this.uuid]
 		}
 
 		const output = {
-
 			metadata: {
 				version: 4.6,
-				type: 'Texture',
-				generator: 'Texture.toJSON'
+				type: "Texture",
+				generator: "Texture.toJSON",
 			},
 
 			uuid: this.uuid,
 			name: this.name,
 
-			image: this.source.toJSON( meta ).uuid,
+			image: this.source.toJSON(meta).uuid,
 
 			mapping: this.mapping,
 			channel: this.channel,
 
-			repeat: [ this.repeat.x, this.repeat.y ],
-			offset: [ this.offset.x, this.offset.y ],
-			center: [ this.center.x, this.center.y ],
+			repeat: [this.repeat.x, this.repeat.y],
+			offset: [this.offset.x, this.offset.y],
+			center: [this.center.x, this.center.y],
 			rotation: this.rotation,
 
-			wrap: [ this.wrapS, this.wrapT ],
+			wrap: [this.wrapS, this.wrapT],
 
 			format: this.format,
 			internalFormat: this.internalFormat,
@@ -493,20 +487,16 @@ class Texture extends EventDispatcher {
 
 			generateMipmaps: this.generateMipmaps,
 			premultiplyAlpha: this.premultiplyAlpha,
-			unpackAlignment: this.unpackAlignment
-
-		};
-
-		if ( Object.keys( this.userData ).length > 0 ) output.userData = this.userData;
-
-		if ( ! isRootObject ) {
-
-			meta.textures[ this.uuid ] = output;
-
+			unpackAlignment: this.unpackAlignment,
 		}
 
-		return output;
+		if (Object.keys(this.userData).length > 0) output.userData = this.userData
 
+		if (!isRootObject) {
+			meta.textures[this.uuid] = output
+		}
+
+		return output
 	}
 
 	/**
@@ -516,15 +506,13 @@ class Texture extends EventDispatcher {
 	 * @fires Texture#dispose
 	 */
 	dispose() {
-
 		/**
 		 * Fires when the texture has been disposed of.
 		 *
 		 * @event Texture#dispose
 		 * @type {Object}
 		 */
-		this.dispatchEvent( { type: 'dispose' } );
-
+		this.dispatchEvent({ type: "dispose" })
 	}
 
 	/**
@@ -533,84 +521,58 @@ class Texture extends EventDispatcher {
 	 * @param {Vector2} uv - The uv vector.
 	 * @return {Vector2} The transformed uv vector.
 	 */
-	transformUv( uv ) {
+	transformUv(uv) {
+		if (this.mapping !== UVMapping) return uv
 
-		if ( this.mapping !== UVMapping ) return uv;
+		uv.applyMatrix3(this.matrix)
 
-		uv.applyMatrix3( this.matrix );
-
-		if ( uv.x < 0 || uv.x > 1 ) {
-
-			switch ( this.wrapS ) {
-
+		if (uv.x < 0 || uv.x > 1) {
+			switch (this.wrapS) {
 				case RepeatWrapping:
-
-					uv.x = uv.x - Math.floor( uv.x );
-					break;
+					uv.x = uv.x - Math.floor(uv.x)
+					break
 
 				case ClampToEdgeWrapping:
-
-					uv.x = uv.x < 0 ? 0 : 1;
-					break;
+					uv.x = uv.x < 0 ? 0 : 1
+					break
 
 				case MirroredRepeatWrapping:
-
-					if ( Math.abs( Math.floor( uv.x ) % 2 ) === 1 ) {
-
-						uv.x = Math.ceil( uv.x ) - uv.x;
-
+					if (Math.abs(Math.floor(uv.x) % 2) === 1) {
+						uv.x = Math.ceil(uv.x) - uv.x
 					} else {
-
-						uv.x = uv.x - Math.floor( uv.x );
-
+						uv.x = uv.x - Math.floor(uv.x)
 					}
 
-					break;
-
+					break
 			}
-
 		}
 
-		if ( uv.y < 0 || uv.y > 1 ) {
-
-			switch ( this.wrapT ) {
-
+		if (uv.y < 0 || uv.y > 1) {
+			switch (this.wrapT) {
 				case RepeatWrapping:
-
-					uv.y = uv.y - Math.floor( uv.y );
-					break;
+					uv.y = uv.y - Math.floor(uv.y)
+					break
 
 				case ClampToEdgeWrapping:
-
-					uv.y = uv.y < 0 ? 0 : 1;
-					break;
+					uv.y = uv.y < 0 ? 0 : 1
+					break
 
 				case MirroredRepeatWrapping:
-
-					if ( Math.abs( Math.floor( uv.y ) % 2 ) === 1 ) {
-
-						uv.y = Math.ceil( uv.y ) - uv.y;
-
+					if (Math.abs(Math.floor(uv.y) % 2) === 1) {
+						uv.y = Math.ceil(uv.y) - uv.y
 					} else {
-
-						uv.y = uv.y - Math.floor( uv.y );
-
+						uv.y = uv.y - Math.floor(uv.y)
 					}
 
-					break;
-
+					break
 			}
-
 		}
 
-		if ( this.flipY ) {
-
-			uv.y = 1 - uv.y;
-
+		if (this.flipY) {
+			uv.y = 1 - uv.y
 		}
 
-		return uv;
-
+		return uv
 	}
 
 	/**
@@ -622,15 +584,11 @@ class Texture extends EventDispatcher {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsUpdate( value ) {
-
-		if ( value === true ) {
-
-			this.version ++;
-			this.source.needsUpdate = true;
-
+	set needsUpdate(value) {
+		if (value === true) {
+			this.version++
+			this.source.needsUpdate = true
 		}
-
 	}
 
 	/**
@@ -641,16 +599,11 @@ class Texture extends EventDispatcher {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsPMREMUpdate( value ) {
-
-		if ( value === true ) {
-
-			this.pmremVersion ++;
-
+	set needsPMREMUpdate(value) {
+		if (value === true) {
+			this.pmremVersion++
 		}
-
 	}
-
 }
 
 /**
@@ -660,7 +613,7 @@ class Texture extends EventDispatcher {
  * @type {?Image}
  * @default null
  */
-Texture.DEFAULT_IMAGE = null;
+Texture.DEFAULT_IMAGE = null
 
 /**
  * The default mapping for all textures.
@@ -669,7 +622,7 @@ Texture.DEFAULT_IMAGE = null;
  * @type {number}
  * @default UVMapping
  */
-Texture.DEFAULT_MAPPING = UVMapping;
+Texture.DEFAULT_MAPPING = UVMapping
 
 /**
  * The default anisotropy value for all textures.
@@ -678,6 +631,6 @@ Texture.DEFAULT_MAPPING = UVMapping;
  * @type {number}
  * @default 1
  */
-Texture.DEFAULT_ANISOTROPY = 1;
+Texture.DEFAULT_ANISOTROPY = 1
 
-export { Texture };
+export { Texture }

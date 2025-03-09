@@ -1,52 +1,42 @@
-import TextureNode from './TextureNode.js';
-import { nodeProxy, vec3, Fn, If, int } from '../tsl/TSLBase.js';
-import { textureSize } from './TextureSizeNode.js';
+import TextureNode from "./TextureNode.js"
+import { nodeProxy, vec3, Fn, If, int } from "../tsl/TSLBase.js"
+import { textureSize } from "./TextureSizeNode.js"
 
-const normal = Fn( ( { texture, uv } ) => {
+const normal = Fn(({ texture, uv }) => {
+	const epsilon = 0.0001
 
-	const epsilon = 0.0001;
+	const ret = vec3().toVar()
 
-	const ret = vec3().toVar();
+	If(uv.x.lessThan(epsilon), () => {
+		ret.assign(vec3(1, 0, 0))
+	})
+		.ElseIf(uv.y.lessThan(epsilon), () => {
+			ret.assign(vec3(0, 1, 0))
+		})
+		.ElseIf(uv.z.lessThan(epsilon), () => {
+			ret.assign(vec3(0, 0, 1))
+		})
+		.ElseIf(uv.x.greaterThan(1 - epsilon), () => {
+			ret.assign(vec3(-1, 0, 0))
+		})
+		.ElseIf(uv.y.greaterThan(1 - epsilon), () => {
+			ret.assign(vec3(0, -1, 0))
+		})
+		.ElseIf(uv.z.greaterThan(1 - epsilon), () => {
+			ret.assign(vec3(0, 0, -1))
+		})
+		.Else(() => {
+			const step = 0.01
 
-	If( uv.x.lessThan( epsilon ), () => {
+			const x = texture.sample(uv.add(vec3(-step, 0.0, 0.0))).r.sub(texture.sample(uv.add(vec3(step, 0.0, 0.0))).r)
+			const y = texture.sample(uv.add(vec3(0.0, -step, 0.0))).r.sub(texture.sample(uv.add(vec3(0.0, step, 0.0))).r)
+			const z = texture.sample(uv.add(vec3(0.0, 0.0, -step))).r.sub(texture.sample(uv.add(vec3(0.0, 0.0, step))).r)
 
-		ret.assign( vec3( 1, 0, 0 ) );
+			ret.assign(vec3(x, y, z))
+		})
 
-	} ).ElseIf( uv.y.lessThan( epsilon ), () => {
-
-		ret.assign( vec3( 0, 1, 0 ) );
-
-	} ).ElseIf( uv.z.lessThan( epsilon ), () => {
-
-		ret.assign( vec3( 0, 0, 1 ) );
-
-	} ).ElseIf( uv.x.greaterThan( 1 - epsilon ), () => {
-
-		ret.assign( vec3( - 1, 0, 0 ) );
-
-	} ).ElseIf( uv.y.greaterThan( 1 - epsilon ), () => {
-
-		ret.assign( vec3( 0, - 1, 0 ) );
-
-	} ).ElseIf( uv.z.greaterThan( 1 - epsilon ), () => {
-
-		ret.assign( vec3( 0, 0, - 1 ) );
-
-	} ).Else( () => {
-
-		const step = 0.01;
-
-		const x = texture.sample( uv.add( vec3( - step, 0.0, 0.0 ) ) ).r.sub( texture.sample( uv.add( vec3( step, 0.0, 0.0 ) ) ).r );
-		const y = texture.sample( uv.add( vec3( 0.0, - step, 0.0 ) ) ).r.sub( texture.sample( uv.add( vec3( 0.0, step, 0.0 ) ) ).r );
-		const z = texture.sample( uv.add( vec3( 0.0, 0.0, - step ) ) ).r.sub( texture.sample( uv.add( vec3( 0.0, 0.0, step ) ) ).r );
-
-		ret.assign( vec3( x, y, z ) );
-
-	} );
-
-	return ret.normalize();
-
-} );
+	return ret.normalize()
+})
 
 /**
  * This type of uniform node represents a 3D texture.
@@ -54,11 +44,8 @@ const normal = Fn( ( { texture, uv } ) => {
  * @augments TextureNode
  */
 class Texture3DNode extends TextureNode {
-
 	static get type() {
-
-		return 'Texture3DNode';
-
+		return "Texture3DNode"
 	}
 
 	/**
@@ -68,9 +55,8 @@ class Texture3DNode extends TextureNode {
 	 * @param {?Node<vec2|vec3>} [uvNode=null] - The uv node.
 	 * @param {?Node<int>} [levelNode=null] - The level node.
 	 */
-	constructor( value, uvNode = null, levelNode = null ) {
-
-		super( value, uvNode, levelNode );
+	constructor(value, uvNode = null, levelNode = null) {
+		super(value, uvNode, levelNode)
 
 		/**
 		 * This flag can be used for type testing.
@@ -79,8 +65,7 @@ class Texture3DNode extends TextureNode {
 		 * @readonly
 		 * @default true
 		 */
-		this.isTexture3DNode = true;
-
+		this.isTexture3DNode = true
 	}
 
 	/**
@@ -89,10 +74,8 @@ class Texture3DNode extends TextureNode {
 	 * @param {NodeBuilder} builder - The current node builder.
 	 * @return {string} The input type.
 	 */
-	getInputType( /*builder*/ ) {
-
-		return 'texture3D';
-
+	getInputType(/*builder*/) {
+		return "texture3D"
 	}
 
 	/**
@@ -102,9 +85,7 @@ class Texture3DNode extends TextureNode {
 	 * @return {Node<vec3>} The default uv node.
 	 */
 	getDefaultUV() {
-
-		return vec3( 0.5, 0.5, 0.5 );
-
+		return vec3(0.5, 0.5, 0.5)
 	}
 
 	/**
@@ -113,7 +94,7 @@ class Texture3DNode extends TextureNode {
 	 *
 	 * @param {boolean} value - The update toggle.
 	 */
-	setUpdateMatrix( /*value*/ ) { } // Ignore .updateMatrix for 3d TextureNode
+	setUpdateMatrix(/*value*/) {} // Ignore .updateMatrix for 3d TextureNode
 
 	/**
 	 * Overwrites the default implementation to return the unmodified uv node.
@@ -122,26 +103,18 @@ class Texture3DNode extends TextureNode {
 	 * @param {Node} uvNode - The uv node to setup.
 	 * @return {Node} The unmodified uv node.
 	 */
-	setupUV( builder, uvNode ) {
+	setupUV(builder, uvNode) {
+		const texture = this.value
 
-		const texture = this.value;
-
-		if ( builder.isFlipY() && ( texture.isRenderTargetTexture === true || texture.isFramebufferTexture === true ) ) {
-
-			if ( this.sampler ) {
-
-				uvNode = uvNode.flipY();
-
+		if (builder.isFlipY() && (texture.isRenderTargetTexture === true || texture.isFramebufferTexture === true)) {
+			if (this.sampler) {
+				uvNode = uvNode.flipY()
 			} else {
-
-				uvNode = uvNode.setY( int( textureSize( this, this.levelNode ).y ).sub( uvNode.y ).sub( 1 ) );
-
+				uvNode = uvNode.setY(int(textureSize(this, this.levelNode).y).sub(uvNode.y).sub(1))
 			}
-
 		}
 
-		return uvNode;
-
+		return uvNode
 	}
 
 	/**
@@ -151,10 +124,8 @@ class Texture3DNode extends TextureNode {
 	 * @param {Node} uvNode - The uv node to generate code for.
 	 * @return {string} The generated code snippet.
 	 */
-	generateUV( builder, uvNode ) {
-
-		return uvNode.build( builder, 'vec3' );
-
+	generateUV(builder, uvNode) {
+		return uvNode.build(builder, "vec3")
 	}
 
 	/**
@@ -163,15 +134,12 @@ class Texture3DNode extends TextureNode {
 	 * @param {Node<vec3>} uvNode - The uv node .
 	 * @return {Node<vec3>} TODO.
 	 */
-	normal( uvNode ) {
-
-		return normal( { texture: this, uv: uvNode } );
-
+	normal(uvNode) {
+		return normal({ texture: this, uv: uvNode })
 	}
-
 }
 
-export default Texture3DNode;
+export default Texture3DNode
 
 /**
  * TSL function for creating a 3D texture node.
@@ -183,4 +151,4 @@ export default Texture3DNode;
  * @param {?Node<int>} [levelNode=null] - The level node.
  * @returns {Texture3DNode}
  */
-export const texture3D = /*@__PURE__*/ nodeProxy( Texture3DNode );
+export const texture3D = /*@__PURE__*/ nodeProxy(Texture3DNode)

@@ -1,4 +1,4 @@
-import { Object3D } from '../core/Object3D.js';
+import { Object3D } from "../core/Object3D.js"
 
 /**
  * Represents a non-positional ( global ) audio object.
@@ -26,17 +26,15 @@ import { Object3D } from '../core/Object3D.js';
  * @augments Object3D
  */
 class Audio extends Object3D {
-
 	/**
 	 * Constructs a new audio.
 	 *
 	 * @param {AudioListener} listener - The global audio listener.
 	 */
-	constructor( listener ) {
+	constructor(listener) {
+		super()
 
-		super();
-
-		this.type = 'Audio';
+		this.type = "Audio"
 
 		/**
 		 * The global audio listener.
@@ -44,7 +42,7 @@ class Audio extends Object3D {
 		 * @type {AudioListener}
 		 * @readonly
 		 */
-		this.listener = listener;
+		this.listener = listener
 
 		/**
 		 * The audio context.
@@ -52,7 +50,7 @@ class Audio extends Object3D {
 		 * @type {AudioContext}
 		 * @readonly
 		 */
-		this.context = listener.context;
+		this.context = listener.context
 
 		/**
 		 * The gain node used for volume control.
@@ -60,8 +58,8 @@ class Audio extends Object3D {
 		 * @type {GainNode}
 		 * @readonly
 		 */
-		this.gain = this.context.createGain();
-		this.gain.connect( listener.getInput() );
+		this.gain = this.context.createGain()
+		this.gain.connect(listener.getInput())
 
 		/**
 		 * Whether to start playback automatically or not.
@@ -69,7 +67,7 @@ class Audio extends Object3D {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.autoplay = false;
+		this.autoplay = false
 
 		/**
 		 * A reference to an audio buffer.
@@ -80,7 +78,7 @@ class Audio extends Object3D {
 		 * @default null
 		 * @readonly
 		 */
-		this.buffer = null;
+		this.buffer = null
 
 		/**
 		 * Modify pitch, measured in cents. +/- 100 is a semitone.
@@ -92,7 +90,7 @@ class Audio extends Object3D {
 		 * @default 0
 		 * @readonly
 		 */
-		this.detune = 0;
+		this.detune = 0
 
 		/**
 		 * Whether the audio should loop or not.
@@ -103,7 +101,7 @@ class Audio extends Object3D {
 		 * @default false
 		 * @readonly
 		 */
-		this.loop = false;
+		this.loop = false
 
 		/**
 		 * Defines where in the audio buffer the replay should
@@ -112,7 +110,7 @@ class Audio extends Object3D {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.loopStart = 0;
+		this.loopStart = 0
 
 		/**
 		 * Defines where in the audio buffer the replay should
@@ -121,7 +119,7 @@ class Audio extends Object3D {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.loopEnd = 0;
+		this.loopEnd = 0
 
 		/**
 		 * An offset to the time within the audio buffer the playback
@@ -130,7 +128,7 @@ class Audio extends Object3D {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.offset = 0;
+		this.offset = 0
 
 		/**
 		 * Overrides the default duration of the audio.
@@ -138,7 +136,7 @@ class Audio extends Object3D {
 		 * @type {undefined|number}
 		 * @default undefined
 		 */
-		this.duration = undefined;
+		this.duration = undefined
 
 		/**
 		 * The playback speed.
@@ -149,7 +147,7 @@ class Audio extends Object3D {
 		 * @readonly
 		 * @default 1
 		 */
-		this.playbackRate = 1;
+		this.playbackRate = 1
 
 		/**
 		 * Indicates whether the audio is playing or not.
@@ -161,7 +159,7 @@ class Audio extends Object3D {
 		 * @readonly
 		 * @default false
 		 */
-		this.isPlaying = false;
+		this.isPlaying = false
 
 		/**
 		 * Indicates whether the audio playback can be controlled
@@ -174,7 +172,7 @@ class Audio extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.hasPlaybackControl = true;
+		this.hasPlaybackControl = true
 
 		/**
 		 * Holds a reference to the current audio source.
@@ -185,7 +183,7 @@ class Audio extends Object3D {
 		 * @readonly
 		 * @default null
 		 */
-		this.source = null;
+		this.source = null
 
 		/**
 		 * Defines the source type.
@@ -196,11 +194,11 @@ class Audio extends Object3D {
 		 * @readonly
 		 * @default 'empty'
 		 */
-		this.sourceType = 'empty';
+		this.sourceType = "empty"
 
-		this._startedAt = 0;
-		this._progress = 0;
-		this._connected = false;
+		this._startedAt = 0
+		this._progress = 0
+		this._connected = false
 
 		/**
 		 * Can be used to apply a variety of low-order filters to create
@@ -211,8 +209,7 @@ class Audio extends Object3D {
 		 * @type {Array<AudioNode>}
 		 * @readonly
 		 */
-		this.filters = [];
-
+		this.filters = []
 	}
 
 	/**
@@ -221,9 +218,7 @@ class Audio extends Object3D {
 	 * @return {GainNode} The output node.
 	 */
 	getOutput() {
-
-		return this.gain;
-
+		return this.gain
 	}
 
 	/**
@@ -234,15 +229,13 @@ class Audio extends Object3D {
 	 * @param {AudioNode} audioNode - The audio node like an instance of `OscillatorNode`.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setNodeSource( audioNode ) {
+	setNodeSource(audioNode) {
+		this.hasPlaybackControl = false
+		this.sourceType = "audioNode"
+		this.source = audioNode
+		this.connect()
 
-		this.hasPlaybackControl = false;
-		this.sourceType = 'audioNode';
-		this.source = audioNode;
-		this.connect();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -253,15 +246,13 @@ class Audio extends Object3D {
 	 * @param {HTMLMediaElement} mediaElement - The media element.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setMediaElementSource( mediaElement ) {
+	setMediaElementSource(mediaElement) {
+		this.hasPlaybackControl = false
+		this.sourceType = "mediaNode"
+		this.source = this.context.createMediaElementSource(mediaElement)
+		this.connect()
 
-		this.hasPlaybackControl = false;
-		this.sourceType = 'mediaNode';
-		this.source = this.context.createMediaElementSource( mediaElement );
-		this.connect();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -272,15 +263,13 @@ class Audio extends Object3D {
 	 * @param {MediaStream} mediaStream - The media stream.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setMediaStreamSource( mediaStream ) {
+	setMediaStreamSource(mediaStream) {
+		this.hasPlaybackControl = false
+		this.sourceType = "mediaStreamNode"
+		this.source = this.context.createMediaStreamSource(mediaStream)
+		this.connect()
 
-		this.hasPlaybackControl = false;
-		this.sourceType = 'mediaStreamNode';
-		this.source = this.context.createMediaStreamSource( mediaStream );
-		this.connect();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -291,15 +280,13 @@ class Audio extends Object3D {
 	 * @param {AudioBuffer} audioBuffer - The audio buffer.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setBuffer( audioBuffer ) {
+	setBuffer(audioBuffer) {
+		this.buffer = audioBuffer
+		this.sourceType = "buffer"
 
-		this.buffer = audioBuffer;
-		this.sourceType = 'buffer';
+		if (this.autoplay) this.play()
 
-		if ( this.autoplay ) this.play();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -310,41 +297,35 @@ class Audio extends Object3D {
 	 * @param {number} [delay=0] - The delay, in seconds, at which the audio should start playing.
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
-	play( delay = 0 ) {
-
-		if ( this.isPlaying === true ) {
-
-			console.warn( 'THREE.Audio: Audio is already playing.' );
-			return;
-
+	play(delay = 0) {
+		if (this.isPlaying === true) {
+			console.warn("THREE.Audio: Audio is already playing.")
+			return
 		}
 
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return
 		}
 
-		this._startedAt = this.context.currentTime + delay;
+		this._startedAt = this.context.currentTime + delay
 
-		const source = this.context.createBufferSource();
-		source.buffer = this.buffer;
-		source.loop = this.loop;
-		source.loopStart = this.loopStart;
-		source.loopEnd = this.loopEnd;
-		source.onended = this.onEnded.bind( this );
-		source.start( this._startedAt, this._progress + this.offset, this.duration );
+		const source = this.context.createBufferSource()
+		source.buffer = this.buffer
+		source.loop = this.loop
+		source.loopStart = this.loopStart
+		source.loopEnd = this.loopEnd
+		source.onended = this.onEnded.bind(this)
+		source.start(this._startedAt, this._progress + this.offset, this.duration)
 
-		this.isPlaying = true;
+		this.isPlaying = true
 
-		this.source = source;
+		this.source = source
 
-		this.setDetune( this.detune );
-		this.setPlaybackRate( this.playbackRate );
+		this.setDetune(this.detune)
+		this.setPlaybackRate(this.playbackRate)
 
-		return this.connect();
-
+		return this.connect()
 	}
 
 	/**
@@ -355,37 +336,29 @@ class Audio extends Object3D {
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
 	pause() {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return
 		}
 
-		if ( this.isPlaying === true ) {
-
+		if (this.isPlaying === true) {
 			// update current progress
 
-			this._progress += Math.max( this.context.currentTime - this._startedAt, 0 ) * this.playbackRate;
+			this._progress += Math.max(this.context.currentTime - this._startedAt, 0) * this.playbackRate
 
-			if ( this.loop === true ) {
-
+			if (this.loop === true) {
 				// ensure _progress does not exceed duration with looped audios
 
-				this._progress = this._progress % ( this.duration || this.buffer.duration );
-
+				this._progress = this._progress % (this.duration || this.buffer.duration)
 			}
 
-			this.source.stop();
-			this.source.onended = null;
+			this.source.stop()
+			this.source.onended = null
 
-			this.isPlaying = false;
-
+			this.isPlaying = false
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -396,28 +369,22 @@ class Audio extends Object3D {
 	 * @param {number} [delay=0] - The delay, in seconds, at which the audio should stop playing.
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
-	stop( delay = 0 ) {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+	stop(delay = 0) {
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return
 		}
 
-		this._progress = 0;
+		this._progress = 0
 
-		if ( this.source !== null ) {
-
-			this.source.stop( this.context.currentTime + delay );
-			this.source.onended = null;
-
+		if (this.source !== null) {
+			this.source.stop(this.context.currentTime + delay)
+			this.source.onended = null
 		}
 
-		this.isPlaying = false;
+		this.isPlaying = false
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -427,29 +394,21 @@ class Audio extends Object3D {
 	 * @return {Audio} A reference to this instance.
 	 */
 	connect() {
+		if (this.filters.length > 0) {
+			this.source.connect(this.filters[0])
 
-		if ( this.filters.length > 0 ) {
-
-			this.source.connect( this.filters[ 0 ] );
-
-			for ( let i = 1, l = this.filters.length; i < l; i ++ ) {
-
-				this.filters[ i - 1 ].connect( this.filters[ i ] );
-
+			for (let i = 1, l = this.filters.length; i < l; i++) {
+				this.filters[i - 1].connect(this.filters[i])
 			}
 
-			this.filters[ this.filters.length - 1 ].connect( this.getOutput() );
-
+			this.filters[this.filters.length - 1].connect(this.getOutput())
 		} else {
-
-			this.source.connect( this.getOutput() );
-
+			this.source.connect(this.getOutput())
 		}
 
-		this._connected = true;
+		this._connected = true
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -459,35 +418,25 @@ class Audio extends Object3D {
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
 	disconnect() {
-
-		if ( this._connected === false ) {
-
-			return;
-
+		if (this._connected === false) {
+			return
 		}
 
-		if ( this.filters.length > 0 ) {
+		if (this.filters.length > 0) {
+			this.source.disconnect(this.filters[0])
 
-			this.source.disconnect( this.filters[ 0 ] );
-
-			for ( let i = 1, l = this.filters.length; i < l; i ++ ) {
-
-				this.filters[ i - 1 ].disconnect( this.filters[ i ] );
-
+			for (let i = 1, l = this.filters.length; i < l; i++) {
+				this.filters[i - 1].disconnect(this.filters[i])
 			}
 
-			this.filters[ this.filters.length - 1 ].disconnect( this.getOutput() );
-
+			this.filters[this.filters.length - 1].disconnect(this.getOutput())
 		} else {
-
-			this.source.disconnect( this.getOutput() );
-
+			this.source.disconnect(this.getOutput())
 		}
 
-		this._connected = false;
+		this._connected = false
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -496,9 +445,7 @@ class Audio extends Object3D {
 	 * @return {Array<AudioNode>} The list of filters.
 	 */
 	getFilters() {
-
-		return this.filters;
-
+		return this.filters
 	}
 
 	/**
@@ -507,24 +454,18 @@ class Audio extends Object3D {
 	 * @param {Array<AudioNode>} [value] - A list of filters.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setFilters( value ) {
+	setFilters(value) {
+		if (!value) value = []
 
-		if ( ! value ) value = [];
-
-		if ( this._connected === true ) {
-
-			this.disconnect();
-			this.filters = value.slice();
-			this.connect();
-
+		if (this._connected === true) {
+			this.disconnect()
+			this.filters = value.slice()
+			this.connect()
 		} else {
-
-			this.filters = value.slice();
-
+			this.filters = value.slice()
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -533,18 +474,14 @@ class Audio extends Object3D {
 	 * @param {number} value - The detuning of oscillation in cents.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setDetune( value ) {
+	setDetune(value) {
+		this.detune = value
 
-		this.detune = value;
-
-		if ( this.isPlaying === true && this.source.detune !== undefined ) {
-
-			this.source.detune.setTargetAtTime( this.detune, this.context.currentTime, 0.01 );
-
+		if (this.isPlaying === true && this.source.detune !== undefined) {
+			this.source.detune.setTargetAtTime(this.detune, this.context.currentTime, 0.01)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -553,9 +490,7 @@ class Audio extends Object3D {
 	 * @return {number} The detuning of oscillation in cents.
 	 */
 	getDetune() {
-
-		return this.detune;
-
+		return this.detune
 	}
 
 	/**
@@ -564,9 +499,7 @@ class Audio extends Object3D {
 	 * @return {AudioNode|undefined} The first filter in the list of filters.
 	 */
 	getFilter() {
-
-		return this.getFilters()[ 0 ];
-
+		return this.getFilters()[0]
 	}
 
 	/**
@@ -575,10 +508,8 @@ class Audio extends Object3D {
 	 * @param {AudioNode} [filter] - The filter to set.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setFilter( filter ) {
-
-		return this.setFilters( filter ? [ filter ] : [] );
-
+	setFilter(filter) {
+		return this.setFilters(filter ? [filter] : [])
 	}
 
 	/**
@@ -589,25 +520,19 @@ class Audio extends Object3D {
 	 * @param {number} [value] - The playback rate to set.
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
-	setPlaybackRate( value ) {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+	setPlaybackRate(value) {
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return
 		}
 
-		this.playbackRate = value;
+		this.playbackRate = value
 
-		if ( this.isPlaying === true ) {
-
-			this.source.playbackRate.setTargetAtTime( this.playbackRate, this.context.currentTime, 0.01 );
-
+		if (this.isPlaying === true) {
+			this.source.playbackRate.setTargetAtTime(this.playbackRate, this.context.currentTime, 0.01)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -616,19 +541,15 @@ class Audio extends Object3D {
 	 * @return {number} The playback rate.
 	 */
 	getPlaybackRate() {
-
-		return this.playbackRate;
-
+		return this.playbackRate
 	}
 
 	/**
 	 * Automatically called when playback finished.
 	 */
 	onEnded() {
-
-		this.isPlaying = false;
-		this._progress = 0;
-
+		this.isPlaying = false
+		this._progress = 0
 	}
 
 	/**
@@ -639,16 +560,12 @@ class Audio extends Object3D {
 	 * @return {boolean} Whether the audio should loop or not.
 	 */
 	getLoop() {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return false;
-
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return false
 		}
 
-		return this.loop;
-
+		return this.loop
 	}
 
 	/**
@@ -659,25 +576,19 @@ class Audio extends Object3D {
 	 * @param {boolean} value - Whether the audio should loop or not.
 	 * @return {Audio|undefined} A reference to this instance.
 	 */
-	setLoop( value ) {
-
-		if ( this.hasPlaybackControl === false ) {
-
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
-			return;
-
+	setLoop(value) {
+		if (this.hasPlaybackControl === false) {
+			console.warn("THREE.Audio: this Audio has no playback control.")
+			return
 		}
 
-		this.loop = value;
+		this.loop = value
 
-		if ( this.isPlaying === true ) {
-
-			this.source.loop = this.loop;
-
+		if (this.isPlaying === true) {
+			this.source.loop = this.loop
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -687,12 +598,10 @@ class Audio extends Object3D {
 	 * @param {number} value - The loop start value.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setLoopStart( value ) {
+	setLoopStart(value) {
+		this.loopStart = value
 
-		this.loopStart = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -702,12 +611,10 @@ class Audio extends Object3D {
 	 * @param {number} value - The loop end value.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setLoopEnd( value ) {
+	setLoopEnd(value) {
+		this.loopEnd = value
 
-		this.loopEnd = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -716,9 +623,7 @@ class Audio extends Object3D {
 	 * @return {number} The volume.
 	 */
 	getVolume() {
-
-		return this.gain.gain.value;
-
+		return this.gain.gain.value
 	}
 
 	/**
@@ -727,51 +632,42 @@ class Audio extends Object3D {
 	 * @param {number} value - The volume to set.
 	 * @return {Audio} A reference to this instance.
 	 */
-	setVolume( value ) {
+	setVolume(value) {
+		this.gain.gain.setTargetAtTime(value, this.context.currentTime, 0.01)
 
-		this.gain.gain.setTargetAtTime( value, this.context.currentTime, 0.01 );
-
-		return this;
-
+		return this
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		if (source.sourceType !== "buffer") {
+			console.warn("THREE.Audio: Audio source type cannot be copied.")
 
-		if ( source.sourceType !== 'buffer' ) {
-
-			console.warn( 'THREE.Audio: Audio source type cannot be copied.' );
-
-			return this;
-
+			return this
 		}
 
-		this.autoplay = source.autoplay;
+		this.autoplay = source.autoplay
 
-		this.buffer = source.buffer;
-		this.detune = source.detune;
-		this.loop = source.loop;
-		this.loopStart = source.loopStart;
-		this.loopEnd = source.loopEnd;
-		this.offset = source.offset;
-		this.duration = source.duration;
-		this.playbackRate = source.playbackRate;
-		this.hasPlaybackControl = source.hasPlaybackControl;
-		this.sourceType = source.sourceType;
+		this.buffer = source.buffer
+		this.detune = source.detune
+		this.loop = source.loop
+		this.loopStart = source.loopStart
+		this.loopEnd = source.loopEnd
+		this.offset = source.offset
+		this.duration = source.duration
+		this.playbackRate = source.playbackRate
+		this.hasPlaybackControl = source.hasPlaybackControl
+		this.sourceType = source.sourceType
 
-		this.filters = source.filters.slice();
+		this.filters = source.filters.slice()
 
-		return this;
-
+		return this
 	}
 
-	clone( recursive ) {
-
-		return new this.constructor( this.listener ).copy( this, recursive );
-
+	clone(recursive) {
+		return new this.constructor(this.listener).copy(this, recursive)
 	}
-
 }
 
-export { Audio };
+export { Audio }

@@ -1,25 +1,23 @@
-import AnalyticLightNode from './AnalyticLightNode.js';
-import { getDistanceAttenuation } from './LightUtils.js';
-import { uniform } from '../core/UniformNode.js';
-import { renderGroup } from '../core/UniformGroupNode.js';
-import { pointShadow } from './PointShadowNode.js';
+import AnalyticLightNode from "./AnalyticLightNode.js"
+import { getDistanceAttenuation } from "./LightUtils.js"
+import { uniform } from "../core/UniformNode.js"
+import { renderGroup } from "../core/UniformGroupNode.js"
+import { pointShadow } from "./PointShadowNode.js"
 
-export const directPointLight = ( { color, lightVector, cutoffDistance, decayExponent } ) => {
+export const directPointLight = ({ color, lightVector, cutoffDistance, decayExponent }) => {
+	const lightDirection = lightVector.normalize()
+	const lightDistance = lightVector.length()
 
-	const lightDirection = lightVector.normalize();
-	const lightDistance = lightVector.length();
-
-	const attenuation = getDistanceAttenuation( {
+	const attenuation = getDistanceAttenuation({
 		lightDistance,
 		cutoffDistance,
-		decayExponent
-	} );
+		decayExponent,
+	})
 
-	const lightColor = color.mul( attenuation );
+	const lightColor = color.mul(attenuation)
 
-	return { lightDirection, lightColor };
-
-};
+	return { lightDirection, lightColor }
+}
 
 /**
  * Module for representing point lights as nodes.
@@ -27,11 +25,8 @@ export const directPointLight = ( { color, lightVector, cutoffDistance, decayExp
  * @augments AnalyticLightNode
  */
 class PointLightNode extends AnalyticLightNode {
-
 	static get type() {
-
-		return 'PointLightNode';
-
+		return "PointLightNode"
 	}
 
 	/**
@@ -39,24 +34,22 @@ class PointLightNode extends AnalyticLightNode {
 	 *
 	 * @param {?PointLight} [light=null] - The point light source.
 	 */
-	constructor( light = null ) {
-
-		super( light );
+	constructor(light = null) {
+		super(light)
 
 		/**
 		 * Uniform node representing the cutoff distance.
 		 *
 		 * @type {UniformNode<float>}
 		 */
-		this.cutoffDistanceNode = uniform( 0 ).setGroup( renderGroup );
+		this.cutoffDistanceNode = uniform(0).setGroup(renderGroup)
 
 		/**
 		 * Uniform node representing the decay exponent.
 		 *
 		 * @type {UniformNode<float>}
 		 */
-		this.decayExponentNode = uniform( 2 ).setGroup( renderGroup );
-
+		this.decayExponentNode = uniform(2).setGroup(renderGroup)
 	}
 
 	/**
@@ -64,15 +57,13 @@ class PointLightNode extends AnalyticLightNode {
 	 *
 	 * @param {NodeFrame} frame - A reference to the current node frame.
 	 */
-	update( frame ) {
+	update(frame) {
+		const { light } = this
 
-		const { light } = this;
+		super.update(frame)
 
-		super.update( frame );
-
-		this.cutoffDistanceNode.value = light.distance;
-		this.decayExponentNode.value = light.decay;
-
+		this.cutoffDistanceNode.value = light.distance
+		this.decayExponentNode.value = light.decay
 	}
 
 	/**
@@ -81,22 +72,17 @@ class PointLightNode extends AnalyticLightNode {
 	 * @return {PointShadowNode}
 	 */
 	setupShadowNode() {
-
-		return pointShadow( this.light );
-
+		return pointShadow(this.light)
 	}
 
-	setupDirect( builder ) {
-
-		return directPointLight( {
+	setupDirect(builder) {
+		return directPointLight({
 			color: this.colorNode,
-			lightVector: this.getLightVector( builder ),
+			lightVector: this.getLightVector(builder),
 			cutoffDistance: this.cutoffDistanceNode,
-			decayExponent: this.decayExponentNode
-		} );
-
+			decayExponent: this.decayExponentNode,
+		})
 	}
-
 }
 
-export default PointLightNode;
+export default PointLightNode

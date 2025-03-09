@@ -1,15 +1,15 @@
-import NodeMaterial from './NodeMaterial.js';
-import { diffuseColor, metalness, roughness, specularColor, specularF90 } from '../../nodes/core/PropertyNode.js';
-import { mix } from '../../nodes/math/MathNode.js';
-import { materialRoughness, materialMetalness } from '../../nodes/accessors/MaterialNode.js';
-import getRoughness from '../../nodes/functions/material/getRoughness.js';
-import PhysicalLightingModel from '../../nodes/functions/PhysicalLightingModel.js';
-import EnvironmentNode from '../../nodes/lighting/EnvironmentNode.js';
-import { float, vec3, vec4 } from '../../nodes/tsl/TSLBase.js';
+import NodeMaterial from "./NodeMaterial.js"
+import { diffuseColor, metalness, roughness, specularColor, specularF90 } from "../../nodes/core/PropertyNode.js"
+import { mix } from "../../nodes/math/MathNode.js"
+import { materialRoughness, materialMetalness } from "../../nodes/accessors/MaterialNode.js"
+import getRoughness from "../../nodes/functions/material/getRoughness.js"
+import PhysicalLightingModel from "../../nodes/functions/PhysicalLightingModel.js"
+import EnvironmentNode from "../../nodes/lighting/EnvironmentNode.js"
+import { float, vec3, vec4 } from "../../nodes/tsl/TSLBase.js"
 
-import { MeshStandardMaterial } from '../MeshStandardMaterial.js';
+import { MeshStandardMaterial } from "../MeshStandardMaterial.js"
 
-const _defaultValues = /*@__PURE__*/ new MeshStandardMaterial();
+const _defaultValues = /*@__PURE__*/ new MeshStandardMaterial()
 
 /**
  * Node material version of {@link MeshStandardMaterial}.
@@ -17,11 +17,8 @@ const _defaultValues = /*@__PURE__*/ new MeshStandardMaterial();
  * @augments NodeMaterial
  */
 class MeshStandardNodeMaterial extends NodeMaterial {
-
 	static get type() {
-
-		return 'MeshStandardNodeMaterial';
-
+		return "MeshStandardNodeMaterial"
 	}
 
 	/**
@@ -29,9 +26,8 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 	 *
 	 * @param {Object} [parameters] - The configuration parameter.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -40,7 +36,7 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshStandardNodeMaterial = true;
+		this.isMeshStandardNodeMaterial = true
 
 		/**
 		 * Set to `true` because standard materials react on lights.
@@ -48,7 +44,7 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.lights = true;
+		this.lights = true
 
 		/**
 		 * The emissive color of standard materials is by default inferred from the `emissive`,
@@ -61,7 +57,7 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 		 * @type {?Node<vec3>}
 		 * @default null
 		 */
-		this.emissiveNode = null;
+		this.emissiveNode = null
 
 		/**
 		 * The metalness of standard materials is by default inferred from the `metalness`,
@@ -74,7 +70,7 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 		 * @type {?Node<float>}
 		 * @default null
 		 */
-		this.metalnessNode = null;
+		this.metalnessNode = null
 
 		/**
 		 * The roughness of standard materials is by default inferred from the `roughness`,
@@ -87,12 +83,11 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 		 * @type {?Node<float>}
 		 * @default null
 		 */
-		this.roughnessNode = null;
+		this.roughnessNode = null
 
-		this.setDefaultValues( _defaultValues );
+		this.setDefaultValues(_defaultValues)
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
 	/**
@@ -103,18 +98,14 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 	 * @param {NodeBuilder} builder - The current node builder.
 	 * @return {?EnvironmentNode<vec3>} The environment node.
 	 */
-	setupEnvironment( builder ) {
+	setupEnvironment(builder) {
+		let envNode = super.setupEnvironment(builder)
 
-		let envNode = super.setupEnvironment( builder );
-
-		if ( envNode === null && builder.environmentNode ) {
-
-			envNode = builder.environmentNode;
-
+		if (envNode === null && builder.environmentNode) {
+			envNode = builder.environmentNode
 		}
 
-		return envNode ? new EnvironmentNode( envNode ) : null;
-
+		return envNode ? new EnvironmentNode(envNode) : null
 	}
 
 	/**
@@ -122,22 +113,18 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 	 *
 	 * @return {PhysicalLightingModel} The lighting model.
 	 */
-	setupLightingModel( /*builder*/ ) {
-
-		return new PhysicalLightingModel();
-
+	setupLightingModel(/*builder*/) {
+		return new PhysicalLightingModel()
 	}
 
 	/**
 	 * Setups the specular related node variables.
 	 */
 	setupSpecular() {
+		const specularColorNode = mix(vec3(0.04), diffuseColor.rgb, metalness)
 
-		const specularColorNode = mix( vec3( 0.04 ), diffuseColor.rgb, metalness );
-
-		specularColor.assign( specularColorNode );
-		specularF90.assign( 1.0 );
-
+		specularColor.assign(specularColorNode)
+		specularF90.assign(1.0)
 	}
 
 	/**
@@ -146,41 +133,36 @@ class MeshStandardNodeMaterial extends NodeMaterial {
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
 	setupVariants() {
-
 		// METALNESS
 
-		const metalnessNode = this.metalnessNode ? float( this.metalnessNode ) : materialMetalness;
+		const metalnessNode = this.metalnessNode ? float(this.metalnessNode) : materialMetalness
 
-		metalness.assign( metalnessNode );
+		metalness.assign(metalnessNode)
 
 		// ROUGHNESS
 
-		let roughnessNode = this.roughnessNode ? float( this.roughnessNode ) : materialRoughness;
-		roughnessNode = getRoughness( { roughness: roughnessNode } );
+		let roughnessNode = this.roughnessNode ? float(this.roughnessNode) : materialRoughness
+		roughnessNode = getRoughness({ roughness: roughnessNode })
 
-		roughness.assign( roughnessNode );
+		roughness.assign(roughnessNode)
 
 		// SPECULAR COLOR
 
-		this.setupSpecular();
+		this.setupSpecular()
 
 		// DIFFUSE COLOR
 
-		diffuseColor.assign( vec4( diffuseColor.rgb.mul( metalnessNode.oneMinus() ), diffuseColor.a ) );
-
+		diffuseColor.assign(vec4(diffuseColor.rgb.mul(metalnessNode.oneMinus()), diffuseColor.a))
 	}
 
-	copy( source ) {
+	copy(source) {
+		this.emissiveNode = source.emissiveNode
 
-		this.emissiveNode = source.emissiveNode;
+		this.metalnessNode = source.metalnessNode
+		this.roughnessNode = source.roughnessNode
 
-		this.metalnessNode = source.metalnessNode;
-		this.roughnessNode = source.roughnessNode;
-
-		return super.copy( source );
-
+		return super.copy(source)
 	}
-
 }
 
-export default MeshStandardNodeMaterial;
+export default MeshStandardNodeMaterial

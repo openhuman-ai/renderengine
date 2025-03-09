@@ -1,6 +1,6 @@
-import { LightShadow } from './LightShadow.js';
-import { RAD2DEG } from '../math/MathUtils.js';
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+import { LightShadow } from "./LightShadow.js"
+import { RAD2DEG } from "../math/MathUtils.js"
+import { PerspectiveCamera } from "../cameras/PerspectiveCamera.js"
 
 /**
  * Represents the shadow configuration of directional lights.
@@ -8,13 +8,11 @@ import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
  * @augments LightShadow
  */
 class SpotLightShadow extends LightShadow {
-
 	/**
 	 * Constructs a new spot light shadow.
 	 */
 	constructor() {
-
-		super( new PerspectiveCamera( 50, 1, 0.5, 500 ) );
+		super(new PerspectiveCamera(50, 1, 0.5, 500))
 
 		/**
 		 * This flag can be used for type testing.
@@ -23,7 +21,7 @@ class SpotLightShadow extends LightShadow {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSpotLightShadow = true;
+		this.isSpotLightShadow = true
 
 		/**
 		 * Used to focus the shadow camera. The camera's field of view is set as a
@@ -32,41 +30,33 @@ class SpotLightShadow extends LightShadow {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.focus = 1;
-
+		this.focus = 1
 	}
 
-	updateMatrices( light ) {
+	updateMatrices(light) {
+		const camera = this.camera
 
-		const camera = this.camera;
+		const fov = RAD2DEG * 2 * light.angle * this.focus
+		const aspect = this.mapSize.width / this.mapSize.height
+		const far = light.distance || camera.far
 
-		const fov = RAD2DEG * 2 * light.angle * this.focus;
-		const aspect = this.mapSize.width / this.mapSize.height;
-		const far = light.distance || camera.far;
-
-		if ( fov !== camera.fov || aspect !== camera.aspect || far !== camera.far ) {
-
-			camera.fov = fov;
-			camera.aspect = aspect;
-			camera.far = far;
-			camera.updateProjectionMatrix();
-
+		if (fov !== camera.fov || aspect !== camera.aspect || far !== camera.far) {
+			camera.fov = fov
+			camera.aspect = aspect
+			camera.far = far
+			camera.updateProjectionMatrix()
 		}
 
-		super.updateMatrices( light );
-
+		super.updateMatrices(light)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.focus = source.focus
 
-		this.focus = source.focus;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { SpotLightShadow };
+export { SpotLightShadow }

@@ -26,32 +26,29 @@
  * ```
  */
 class AudioAnalyser {
-
 	/**
 	 * Constructs a new audio analyzer.
 	 *
 	 * @param {Audio} audio - The audio to analyze.
 	 * @param {number} [fftSize=2048] - The window size in samples that is used when performing a Fast Fourier Transform (FFT) to get frequency domain data.
 	 */
-	constructor( audio, fftSize = 2048 ) {
-
+	constructor(audio, fftSize = 2048) {
 		/**
 		 * The global audio listener.
 		 *
 		 * @type {AnalyserNode}
 		 */
-		this.analyser = audio.context.createAnalyser();
-		this.analyser.fftSize = fftSize;
+		this.analyser = audio.context.createAnalyser()
+		this.analyser.fftSize = fftSize
 
 		/**
 		 * Holds the analyzed data.
 		 *
 		 * @type {Uint8Array}
 		 */
-		this.data = new Uint8Array( this.analyser.frequencyBinCount );
+		this.data = new Uint8Array(this.analyser.frequencyBinCount)
 
-		audio.getOutput().connect( this.analyser );
-
+		audio.getOutput().connect(this.analyser)
 	}
 
 	/**
@@ -65,11 +62,9 @@ class AudioAnalyser {
 	 * @return {Uint8Array} The frequency data.
 	 */
 	getFrequencyData() {
+		this.analyser.getByteFrequencyData(this.data)
 
-		this.analyser.getByteFrequencyData( this.data );
-
-		return this.data;
-
+		return this.data
 	}
 
 	/**
@@ -78,20 +73,15 @@ class AudioAnalyser {
 	 * @return {number} The average frequency.
 	 */
 	getAverageFrequency() {
+		let value = 0
+		const data = this.getFrequencyData()
 
-		let value = 0;
-		const data = this.getFrequencyData();
-
-		for ( let i = 0; i < data.length; i ++ ) {
-
-			value += data[ i ];
-
+		for (let i = 0; i < data.length; i++) {
+			value += data[i]
 		}
 
-		return value / data.length;
-
+		return value / data.length
 	}
-
 }
 
-export { AudioAnalyser };
+export { AudioAnalyser }

@@ -1,4 +1,4 @@
-import { Texture } from './Texture.js';
+import { Texture } from "./Texture.js"
 
 /**
  * Creates a texture from a canvas element.
@@ -9,7 +9,6 @@ import { Texture } from './Texture.js';
  * @augments Texture
  */
 class CanvasTexture extends Texture {
-
 	/**
 	 * Constructs a new texture.
 	 *
@@ -23,9 +22,8 @@ class CanvasTexture extends Texture {
 	 * @param {number} [type=UnsignedByteType] - The texture type.
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 */
-	constructor( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
-
-		super( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+	constructor(canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+		super(canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy)
 
 		/**
 		 * This flag can be used for type testing.
@@ -34,12 +32,10 @@ class CanvasTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isCanvasTexture = true;
+		this.isCanvasTexture = true
 
-		this.needsUpdate = true;
-
+		this.needsUpdate = true
 	}
-
 }
 
-export { CanvasTexture };
+export { CanvasTexture }

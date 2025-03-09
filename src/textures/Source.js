@@ -1,7 +1,7 @@
-import { ImageUtils } from '../extras/ImageUtils.js';
-import { generateUUID } from '../math/MathUtils.js';
+import { ImageUtils } from "../extras/ImageUtils.js"
+import { generateUUID } from "../math/MathUtils.js"
 
-let _sourceId = 0;
+let _sourceId = 0
 
 /**
  * Represents the data source of a texture.
@@ -10,14 +10,12 @@ let _sourceId = 0;
  * definition so the same data can be used with multiple texture instances.
  */
 class Source {
-
 	/**
 	 * Constructs a new video texture.
 	 *
 	 * @param {any} [data=null] - The data definition of a texture.
 	 */
-	constructor( data = null ) {
-
+	constructor(data = null) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -25,7 +23,7 @@ class Source {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSource = true;
+		this.isSource = true
 
 		/**
 		 * The ID of the source.
@@ -34,7 +32,7 @@ class Source {
 		 * @type {number}
 		 * @readonly
 		 */
-		Object.defineProperty( this, 'id', { value: _sourceId ++ } );
+		Object.defineProperty(this, "id", { value: _sourceId++ })
 
 		/**
 		 * The UUID of the source.
@@ -42,14 +40,14 @@ class Source {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.uuid = generateUUID();
+		this.uuid = generateUUID()
 
 		/**
 		 * The data definition of a texture.
 		 *
 		 * @type {any}
 		 */
-		this.data = data;
+		this.data = data
 
 		/**
 		 * This property is only relevant when {@link Source#needsUpdate} is set to `true` and
@@ -60,7 +58,7 @@ class Source {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.dataReady = true;
+		this.dataReady = true
 
 		/**
 		 * This starts at `0` and counts how many times {@link Source#needsUpdate} is set to `true`.
@@ -69,8 +67,7 @@ class Source {
 		 * @readonly
 		 * @default 0
 		 */
-		this.version = 0;
-
+		this.version = 0
 	}
 
 	/**
@@ -82,10 +79,8 @@ class Source {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsUpdate( value ) {
-
-		if ( value === true ) this.version ++;
-
+	set needsUpdate(value) {
+		if (value === true) this.version++
 	}
 
 	/**
@@ -95,103 +90,76 @@ class Source {
 	 * @return {Object} A JSON object representing the serialized source.
 	 * @see {@link ObjectLoader#parse}
 	 */
-	toJSON( meta ) {
+	toJSON(meta) {
+		const isRootObject = meta === undefined || typeof meta === "string"
 
-		const isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		if ( ! isRootObject && meta.images[ this.uuid ] !== undefined ) {
-
-			return meta.images[ this.uuid ];
-
+		if (!isRootObject && meta.images[this.uuid] !== undefined) {
+			return meta.images[this.uuid]
 		}
 
 		const output = {
 			uuid: this.uuid,
-			url: ''
-		};
+			url: "",
+		}
 
-		const data = this.data;
+		const data = this.data
 
-		if ( data !== null ) {
+		if (data !== null) {
+			let url
 
-			let url;
-
-			if ( Array.isArray( data ) ) {
-
+			if (Array.isArray(data)) {
 				// cube texture
 
-				url = [];
+				url = []
 
-				for ( let i = 0, l = data.length; i < l; i ++ ) {
-
-					if ( data[ i ].isDataTexture ) {
-
-						url.push( serializeImage( data[ i ].image ) );
-
+				for (let i = 0, l = data.length; i < l; i++) {
+					if (data[i].isDataTexture) {
+						url.push(serializeImage(data[i].image))
 					} else {
-
-						url.push( serializeImage( data[ i ] ) );
-
+						url.push(serializeImage(data[i]))
 					}
-
 				}
-
 			} else {
-
 				// texture
 
-				url = serializeImage( data );
-
+				url = serializeImage(data)
 			}
 
-			output.url = url;
-
+			output.url = url
 		}
 
-		if ( ! isRootObject ) {
-
-			meta.images[ this.uuid ] = output;
-
+		if (!isRootObject) {
+			meta.images[this.uuid] = output
 		}
 
-		return output;
-
+		return output
 	}
-
 }
 
-function serializeImage( image ) {
-
-	if ( ( typeof HTMLImageElement !== 'undefined' && image instanceof HTMLImageElement ) ||
-		( typeof HTMLCanvasElement !== 'undefined' && image instanceof HTMLCanvasElement ) ||
-		( typeof ImageBitmap !== 'undefined' && image instanceof ImageBitmap ) ) {
-
+function serializeImage(image) {
+	if (
+		(typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement) ||
+		(typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement) ||
+		(typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap)
+	) {
 		// default images
 
-		return ImageUtils.getDataURL( image );
-
+		return ImageUtils.getDataURL(image)
 	} else {
-
-		if ( image.data ) {
-
+		if (image.data) {
 			// images of DataTexture
 
 			return {
-				data: Array.from( image.data ),
+				data: Array.from(image.data),
 				width: image.width,
 				height: image.height,
-				type: image.data.constructor.name
-			};
-
+				type: image.data.constructor.name,
+			}
 		} else {
-
-			console.warn( 'THREE.Texture: Unable to serialize Texture.' );
-			return {};
-
+			console.warn("THREE.Texture: Unable to serialize Texture.")
+			return {}
 		}
-
 	}
-
 }
 
-export { Source };
+export { Source }

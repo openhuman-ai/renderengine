@@ -2,15 +2,13 @@
  * Class for keeping track of time.
  */
 class Clock {
-
 	/**
 	 * Constructs a new clock.
 	 *
 	 * @param {boolean} [autoStart=true] - Whether to automatically start the clock when
 	 * `getDelta()` is called for the first time.
 	 */
-	constructor( autoStart = true ) {
-
+	constructor(autoStart = true) {
 		/**
 		 * If set to `true`, the clock starts automatically when `getDelta()` is called
 		 * for the first time.
@@ -18,7 +16,7 @@ class Clock {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.autoStart = autoStart;
+		this.autoStart = autoStart
 
 		/**
 		 * Holds the time at which the clock's `start()` method was last called.
@@ -26,7 +24,7 @@ class Clock {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.startTime = 0;
+		this.startTime = 0
 
 		/**
 		 * Holds the time at which the clock's `start()`, `getElapsedTime()` or
@@ -35,7 +33,7 @@ class Clock {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.oldTime = 0;
+		this.oldTime = 0
 
 		/**
 		 * Keeps track of the total time that the clock has been running.
@@ -43,7 +41,7 @@ class Clock {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.elapsedTime = 0;
+		this.elapsedTime = 0
 
 		/**
 		 * Whether the clock is running or not.
@@ -51,8 +49,7 @@ class Clock {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.running = false;
-
+		this.running = false
 	}
 
 	/**
@@ -60,24 +57,20 @@ class Clock {
 	 * called by the class.
 	 */
 	start() {
+		this.startTime = now()
 
-		this.startTime = now();
-
-		this.oldTime = this.startTime;
-		this.elapsedTime = 0;
-		this.running = true;
-
+		this.oldTime = this.startTime
+		this.elapsedTime = 0
+		this.running = true
 	}
 
 	/**
 	 * Stops the clock.
 	 */
 	stop() {
-
-		this.getElapsedTime();
-		this.running = false;
-		this.autoStart = false;
-
+		this.getElapsedTime()
+		this.running = false
+		this.autoStart = false
 	}
 
 	/**
@@ -86,10 +79,8 @@ class Clock {
 	 * @return {number} The elapsed time.
 	 */
 	getElapsedTime() {
-
-		this.getDelta();
-		return this.elapsedTime;
-
+		this.getDelta()
+		return this.elapsedTime
 	}
 
 	/**
@@ -98,37 +89,28 @@ class Clock {
 	 * @return {number} The delta time.
 	 */
 	getDelta() {
+		let diff = 0
 
-		let diff = 0;
-
-		if ( this.autoStart && ! this.running ) {
-
-			this.start();
-			return 0;
-
+		if (this.autoStart && !this.running) {
+			this.start()
+			return 0
 		}
 
-		if ( this.running ) {
+		if (this.running) {
+			const newTime = now()
 
-			const newTime = now();
+			diff = (newTime - this.oldTime) / 1000
+			this.oldTime = newTime
 
-			diff = ( newTime - this.oldTime ) / 1000;
-			this.oldTime = newTime;
-
-			this.elapsedTime += diff;
-
+			this.elapsedTime += diff
 		}
 
-		return diff;
-
+		return diff
 	}
-
 }
 
 function now() {
-
-	return performance.now();
-
+	return performance.now()
 }
 
-export { Clock };
+export { Clock }

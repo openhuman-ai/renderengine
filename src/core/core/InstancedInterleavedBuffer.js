@@ -1,4 +1,4 @@
-import { InterleavedBuffer } from './InterleavedBuffer.js';
+import { InterleavedBuffer } from "./InterleavedBuffer.js"
 
 /**
  * An instanced version of an interleaved buffer.
@@ -6,7 +6,6 @@ import { InterleavedBuffer } from './InterleavedBuffer.js';
  * @augments InterleavedBuffer
  */
 class InstancedInterleavedBuffer extends InterleavedBuffer {
-
 	/**
 	 * Constructs a new instanced interleaved buffer.
 	 *
@@ -14,9 +13,8 @@ class InstancedInterleavedBuffer extends InterleavedBuffer {
 	 * @param {number} stride - The number of typed-array elements per vertex.
 	 * @param {number} [meshPerAttribute=1] - Defines how often a value of this interleaved buffer should be repeated.
 	 */
-	constructor( array, stride, meshPerAttribute = 1 ) {
-
-		super( array, stride );
+	constructor(array, stride, meshPerAttribute = 1) {
+		super(array, stride)
 
 		/**
 		 * This flag can be used for type testing.
@@ -25,7 +23,7 @@ class InstancedInterleavedBuffer extends InterleavedBuffer {
 		 * @readonly
 		 * @default true
 		 */
-		this.isInstancedInterleavedBuffer = true;
+		this.isInstancedInterleavedBuffer = true
 
 		/**
 		 * Defines how often a value of this buffer attribute should be repeated,
@@ -34,41 +32,33 @@ class InstancedInterleavedBuffer extends InterleavedBuffer {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.meshPerAttribute = meshPerAttribute;
-
+		this.meshPerAttribute = meshPerAttribute
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.meshPerAttribute = source.meshPerAttribute
 
-		this.meshPerAttribute = source.meshPerAttribute;
-
-		return this;
-
+		return this
 	}
 
-	clone( data ) {
+	clone(data) {
+		const ib = super.clone(data)
 
-		const ib = super.clone( data );
+		ib.meshPerAttribute = this.meshPerAttribute
 
-		ib.meshPerAttribute = this.meshPerAttribute;
-
-		return ib;
-
+		return ib
 	}
 
-	toJSON( data ) {
+	toJSON(data) {
+		const json = super.toJSON(data)
 
-		const json = super.toJSON( data );
+		json.isInstancedInterleavedBuffer = true
+		json.meshPerAttribute = this.meshPerAttribute
 
-		json.isInstancedInterleavedBuffer = true;
-		json.meshPerAttribute = this.meshPerAttribute;
-
-		return json;
-
+		return json
 	}
-
 }
 
-export { InstancedInterleavedBuffer };
+export { InstancedInterleavedBuffer }

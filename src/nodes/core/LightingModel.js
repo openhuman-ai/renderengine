@@ -5,7 +5,6 @@
  * process.
  */
 class LightingModel {
-
 	/**
 	 * This method is intended for setting up lighting model and context data
 	 * which are later used in the evaluation process.
@@ -13,16 +12,14 @@ class LightingModel {
 	 * @abstract
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	start( builder ) {
-
+	start(builder) {
 		// lights ( direct )
 
-		builder.lightsNode.setupLights( builder, builder.lightsNode.getLightNodes( builder ) );
+		builder.lightsNode.setupLights(builder, builder.lightsNode.getLightNodes(builder))
 
 		// indirect
 
-		this.indirect( builder );
-
+		this.indirect(builder)
 	}
 
 	/**
@@ -32,7 +29,7 @@ class LightingModel {
 	 * @abstract
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	finish( /*builder*/ ) { }
+	finish(/*builder*/) {}
 
 	/**
 	 * This method is intended for implementing the direct light term and
@@ -42,7 +39,7 @@ class LightingModel {
 	 * @param {Object} lightData - The light data.
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	direct( /*lightData, builder*/ ) { }
+	direct(/*lightData, builder*/) {}
 
 	/**
 	 * This method is intended for implementing the direct light term for
@@ -52,7 +49,7 @@ class LightingModel {
 	 * @param {Object} lightData - The light data.
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	directRectArea( /*lightData, builder*/ ) {}
+	directRectArea(/*lightData, builder*/) {}
 
 	/**
 	 * This method is intended for implementing the indirect light term.
@@ -60,7 +57,7 @@ class LightingModel {
 	 * @abstract
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	indirect( /*builder*/ ) { }
+	indirect(/*builder*/) {}
 
 	/**
 	 * This method is intended for implementing the ambient occlusion term.
@@ -70,8 +67,7 @@ class LightingModel {
 	 * @abstract
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	ambientOcclusion( /*input, stack, builder*/ ) { }
-
+	ambientOcclusion(/*input, stack, builder*/) {}
 }
 
-export default LightingModel;
+export default LightingModel

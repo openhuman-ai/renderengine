@@ -1,10 +1,10 @@
-import Object3DNode from './Object3DNode.js';
-import { Fn, nodeImmutable } from '../tsl/TSLBase.js';
-import { uniform } from '../core/UniformNode.js';
+import Object3DNode from "./Object3DNode.js"
+import { Fn, nodeImmutable } from "../tsl/TSLBase.js"
+import { uniform } from "../core/UniformNode.js"
 
-import { Matrix4 } from '../../math/Matrix4.js';
-import { cameraViewMatrix } from './Camera.js';
-import { Matrix3 } from '../../math/Matrix3.js';
+import { Matrix4 } from "../../math/Matrix4.js"
+import { cameraViewMatrix } from "./Camera.js"
+import { Matrix3 } from "../../math/Matrix3.js"
 
 /**
  * This type of node is a specialized version of `Object3DNode`
@@ -15,11 +15,8 @@ import { Matrix3 } from '../../math/Matrix3.js';
  * @augments Object3DNode
  */
 class ModelNode extends Object3DNode {
-
 	static get type() {
-
-		return 'ModelNode';
-
+		return "ModelNode"
 	}
 
 	/**
@@ -27,10 +24,8 @@ class ModelNode extends Object3DNode {
 	 *
 	 * @param {('position'|'viewPosition'|'direction'|'scale'|'worldMatrix')} scope - The node represents a different type of transformation depending on the scope.
 	 */
-	constructor( scope ) {
-
-		super( scope );
-
+	constructor(scope) {
+		super(scope)
 	}
 
 	/**
@@ -39,17 +34,14 @@ class ModelNode extends Object3DNode {
 	 *
 	 * @param {NodeFrame} frame - The current node frame.
 	 */
-	update( frame ) {
+	update(frame) {
+		this.object3d = frame.object
 
-		this.object3d = frame.object;
-
-		super.update( frame );
-
+		super.update(frame)
 	}
-
 }
 
-export default ModelNode;
+export default ModelNode
 
 /**
  * TSL object that represents the object's direction in world space.
@@ -57,7 +49,7 @@ export default ModelNode;
  * @tsl
  * @type {ModelNode<vec3>}
  */
-export const modelDirection = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.DIRECTION );
+export const modelDirection = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.DIRECTION)
 
 /**
  * TSL object that represents the object's world matrix.
@@ -65,7 +57,7 @@ export const modelDirection = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.
  * @tsl
  * @type {ModelNode<mat4>}
  */
-export const modelWorldMatrix = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.WORLD_MATRIX );
+export const modelWorldMatrix = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.WORLD_MATRIX)
 
 /**
  * TSL object that represents the object's position in world space.
@@ -73,7 +65,7 @@ export const modelWorldMatrix = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNod
  * @tsl
  * @type {ModelNode<vec3>}
  */
-export const modelPosition = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.POSITION );
+export const modelPosition = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.POSITION)
 
 /**
  * TSL object that represents the object's scale in world space.
@@ -81,7 +73,7 @@ export const modelPosition = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.P
  * @tsl
  * @type {ModelNode<vec3>}
  */
-export const modelScale = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.SCALE );
+export const modelScale = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.SCALE)
 
 /**
  * TSL object that represents the object's position in view/camera space.
@@ -89,7 +81,7 @@ export const modelScale = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.SCAL
  * @tsl
  * @type {ModelNode<vec3>}
  */
-export const modelViewPosition = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.VIEW_POSITION );
+export const modelViewPosition = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.VIEW_POSITION)
 
 /**
  * TSL object that represents the object's radius.
@@ -97,7 +89,7 @@ export const modelViewPosition = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNo
  * @tsl
  * @type {ModelNode<float>}
  */
-export const modelRadius = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.RADIUS );
+export const modelRadius = /*@__PURE__*/ nodeImmutable(ModelNode, ModelNode.RADIUS)
 
 /**
  * TSL object that represents the object's normal matrix.
@@ -105,7 +97,7 @@ export const modelRadius = /*@__PURE__*/ nodeImmutable( ModelNode, ModelNode.RAD
  * @tsl
  * @type {UniformNode<mat3>}
  */
-export const modelNormalMatrix = /*@__PURE__*/ uniform( new Matrix3() ).onObjectUpdate( ( { object }, self ) => self.value.getNormalMatrix( object.matrixWorld ) );
+export const modelNormalMatrix = /*@__PURE__*/ uniform(new Matrix3()).onObjectUpdate(({ object }, self) => self.value.getNormalMatrix(object.matrixWorld))
 
 /**
  * TSL object that represents the object's inverse world matrix.
@@ -113,7 +105,7 @@ export const modelNormalMatrix = /*@__PURE__*/ uniform( new Matrix3() ).onObject
  * @tsl
  * @type {UniformNode<mat4>}
  */
-export const modelWorldMatrixInverse = /*@__PURE__*/ uniform( new Matrix4() ).onObjectUpdate( ( { object }, self ) => self.value.copy( object.matrixWorld ).invert() );
+export const modelWorldMatrixInverse = /*@__PURE__*/ uniform(new Matrix4()).onObjectUpdate(({ object }, self) => self.value.copy(object.matrixWorld).invert())
 
 /**
  * TSL object that represents the object's model view matrix.
@@ -121,11 +113,11 @@ export const modelWorldMatrixInverse = /*@__PURE__*/ uniform( new Matrix4() ).on
  * @tsl
  * @type {Node<mat4>}
  */
-export const modelViewMatrix = /*@__PURE__*/ ( Fn( ( builder ) => {
-
-	return builder.renderer.nodes.modelViewMatrix || mediumpModelViewMatrix;
-
-} ).once() )().toVar( 'modelViewMatrix' );
+export const modelViewMatrix = /*@__PURE__*/ Fn((builder) => {
+	return builder.renderer.nodes.modelViewMatrix || mediumpModelViewMatrix
+})
+	.once()()
+	.toVar("modelViewMatrix")
 
 // GPU Precision
 
@@ -135,7 +127,7 @@ export const modelViewMatrix = /*@__PURE__*/ ( Fn( ( builder ) => {
  * @tsl
  * @type {Node<mat4>}
  */
-export const mediumpModelViewMatrix = /*@__PURE__*/ cameraViewMatrix.mul( modelWorldMatrix );
+export const mediumpModelViewMatrix = /*@__PURE__*/ cameraViewMatrix.mul(modelWorldMatrix)
 
 // CPU Precision
 
@@ -146,17 +138,15 @@ export const mediumpModelViewMatrix = /*@__PURE__*/ cameraViewMatrix.mul( modelW
  * @tsl
  * @type {Node<mat4>}
  */
-export const highpModelViewMatrix = /*@__PURE__*/ ( Fn( ( builder ) => {
+export const highpModelViewMatrix = /*@__PURE__*/ Fn((builder) => {
+	builder.context.isHighPrecisionModelViewMatrix = true
 
-	builder.context.isHighPrecisionModelViewMatrix = true;
-
-	return uniform( 'mat4' ).onObjectUpdate( ( { object, camera } ) => {
-
-		return object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
-
-	} );
-
-} ).once() )().toVar( 'highpModelViewMatrix' );
+	return uniform("mat4").onObjectUpdate(({ object, camera }) => {
+		return object.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, object.matrixWorld)
+	})
+})
+	.once()()
+	.toVar("highpModelViewMatrix")
 
 /**
  * TSL object that represents the object's model normal view in `highp` precision
@@ -165,20 +155,16 @@ export const highpModelViewMatrix = /*@__PURE__*/ ( Fn( ( builder ) => {
  * @tsl
  * @type {Node<mat3>}
  */
-export const highpModelNormalViewMatrix = /*@__PURE__*/ ( Fn( ( builder ) => {
+export const highpModelNormalViewMatrix = /*@__PURE__*/ Fn((builder) => {
+	const isHighPrecisionModelViewMatrix = builder.context.isHighPrecisionModelViewMatrix
 
-	const isHighPrecisionModelViewMatrix = builder.context.isHighPrecisionModelViewMatrix;
-
-	return uniform( 'mat3' ).onObjectUpdate( ( { object, camera } ) => {
-
-		if ( isHighPrecisionModelViewMatrix !== true ) {
-
-			object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
-
+	return uniform("mat3").onObjectUpdate(({ object, camera }) => {
+		if (isHighPrecisionModelViewMatrix !== true) {
+			object.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, object.matrixWorld)
 		}
 
-		return object.normalMatrix.getNormalMatrix( object.modelViewMatrix );
-
-	} );
-
-} ).once() )().toVar( 'highpModelNormalViewMatrix' );
+		return object.normalMatrix.getNormalMatrix(object.modelViewMatrix)
+	})
+})
+	.once()()
+	.toVar("highpModelNormalViewMatrix")

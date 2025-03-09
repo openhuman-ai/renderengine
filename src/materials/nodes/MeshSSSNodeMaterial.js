@@ -1,8 +1,8 @@
-import MeshPhysicalNodeMaterial from './MeshPhysicalNodeMaterial.js';
-import PhysicalLightingModel from '../../nodes/functions/PhysicalLightingModel.js';
-import { transformedNormalView } from '../../nodes/accessors/Normal.js';
-import { positionViewDirection } from '../../nodes/accessors/Position.js';
-import { float, vec3 } from '../../nodes/tsl/TSLBase.js';
+import MeshPhysicalNodeMaterial from "./MeshPhysicalNodeMaterial.js"
+import PhysicalLightingModel from "../../nodes/functions/PhysicalLightingModel.js"
+import { transformedNormalView } from "../../nodes/accessors/Normal.js"
+import { positionViewDirection } from "../../nodes/accessors/Position.js"
+import { float, vec3 } from "../../nodes/tsl/TSLBase.js"
 
 /**
  * Represents the lighting model for {@link MeshSSSNodeMaterial}.
@@ -10,7 +10,6 @@ import { float, vec3 } from '../../nodes/tsl/TSLBase.js';
  * @augments PhysicalLightingModel
  */
 class SSSLightingModel extends PhysicalLightingModel {
-
 	/**
 	 * Constructs a new physical lighting model.
 	 *
@@ -22,9 +21,8 @@ class SSSLightingModel extends PhysicalLightingModel {
 	 * @param {boolean} [dispersion=false] - Whether dispersion is supported or not.
 	 * @param {boolean} [sss=false] - Whether SSS is supported or not.
 	 */
-	constructor( clearcoat = false, sheen = false, iridescence = false, anisotropy = false, transmission = false, dispersion = false, sss = false ) {
-
-		super( clearcoat, sheen, iridescence, anisotropy, transmission, dispersion );
+	constructor(clearcoat = false, sheen = false, iridescence = false, anisotropy = false, transmission = false, dispersion = false, sss = false) {
+		super(clearcoat, sheen, iridescence, anisotropy, transmission, dispersion)
 
 		/**
 		 * Whether the lighting model should use SSS or not.
@@ -32,8 +30,7 @@ class SSSLightingModel extends PhysicalLightingModel {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.useSSS = sss;
-
+		this.useSSS = sss
 	}
 
 	/**
@@ -44,26 +41,21 @@ class SSSLightingModel extends PhysicalLightingModel {
 	 * @param {Object} input - The input data.
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	direct( { lightDirection, lightColor, reflectedLight }, builder ) {
+	direct({ lightDirection, lightColor, reflectedLight }, builder) {
+		if (this.useSSS === true) {
+			const material = builder.material
 
-		if ( this.useSSS === true ) {
+			const { thicknessColorNode, thicknessDistortionNode, thicknessAmbientNode, thicknessAttenuationNode, thicknessPowerNode, thicknessScaleNode } = material
 
-			const material = builder.material;
+			const scatteringHalf = lightDirection.add(transformedNormalView.mul(thicknessDistortionNode)).normalize()
+			const scatteringDot = float(positionViewDirection.dot(scatteringHalf.negate()).saturate().pow(thicknessPowerNode).mul(thicknessScaleNode))
+			const scatteringIllu = vec3(scatteringDot.add(thicknessAmbientNode).mul(thicknessColorNode))
 
-			const { thicknessColorNode, thicknessDistortionNode, thicknessAmbientNode, thicknessAttenuationNode, thicknessPowerNode, thicknessScaleNode } = material;
-
-			const scatteringHalf = lightDirection.add( transformedNormalView.mul( thicknessDistortionNode ) ).normalize();
-			const scatteringDot = float( positionViewDirection.dot( scatteringHalf.negate() ).saturate().pow( thicknessPowerNode ).mul( thicknessScaleNode ) );
-			const scatteringIllu = vec3( scatteringDot.add( thicknessAmbientNode ).mul( thicknessColorNode ) );
-
-			reflectedLight.directDiffuse.addAssign( scatteringIllu.mul( thicknessAttenuationNode.mul( lightColor ) ) );
-
+			reflectedLight.directDiffuse.addAssign(scatteringIllu.mul(thicknessAttenuationNode.mul(lightColor)))
 		}
 
-		super.direct( { lightDirection, lightColor, reflectedLight }, builder );
-
+		super.direct({ lightDirection, lightColor, reflectedLight }, builder)
 	}
-
 }
 
 /**
@@ -73,11 +65,8 @@ class SSSLightingModel extends PhysicalLightingModel {
  * @augments MeshPhysicalNodeMaterial
  */
 class MeshSSSNodeMaterial extends MeshPhysicalNodeMaterial {
-
 	static get type() {
-
-		return 'MeshSSSNodeMaterial';
-
+		return "MeshSSSNodeMaterial"
 	}
 
 	/**
@@ -85,9 +74,8 @@ class MeshSSSNodeMaterial extends MeshPhysicalNodeMaterial {
 	 *
 	 * @param {Object} [parameters] - The configuration parameter.
 	 */
-	constructor( parameters ) {
-
-		super( parameters );
+	constructor(parameters) {
+		super(parameters)
 
 		/**
 		 * Represents the thickness color.
@@ -95,43 +83,42 @@ class MeshSSSNodeMaterial extends MeshPhysicalNodeMaterial {
 		 * @type {?Node<vec3>}
 		 * @default null
 		 */
-		this.thicknessColorNode = null;
+		this.thicknessColorNode = null
 
 		/**
 		 * Represents the distortion factor.
 		 *
 		 * @type {?Node<float>}
 		 */
-		this.thicknessDistortionNode = float( 0.1 );
+		this.thicknessDistortionNode = float(0.1)
 
 		/**
 		 * Represents the thickness ambient factor.
 		 *
 		 * @type {?Node<float>}
 		 */
-		this.thicknessAmbientNode = float( 0.0 );
+		this.thicknessAmbientNode = float(0.0)
 
 		/**
 		 * Represents the thickness attenuation.
 		 *
 		 * @type {?Node<float>}
 		 */
-		this.thicknessAttenuationNode = float( .1 );
+		this.thicknessAttenuationNode = float(0.1)
 
 		/**
 		 * Represents the thickness power.
 		 *
 		 * @type {?Node<float>}
 		 */
-		this.thicknessPowerNode = float( 2.0 );
+		this.thicknessPowerNode = float(2.0)
 
 		/**
 		 * Represents the thickness scale.
 		 *
 		 * @type {?Node<float>}
 		 */
-		this.thicknessScaleNode = float( 10.0 );
-
+		this.thicknessScaleNode = float(10.0)
 	}
 
 	/**
@@ -141,9 +128,7 @@ class MeshSSSNodeMaterial extends MeshPhysicalNodeMaterial {
 	 * @default true
 	 */
 	get useSSS() {
-
-		return this.thicknessColorNode !== null;
-
+		return this.thicknessColorNode !== null
 	}
 
 	/**
@@ -151,25 +136,20 @@ class MeshSSSNodeMaterial extends MeshPhysicalNodeMaterial {
 	 *
 	 * @return {SSSLightingModel} The lighting model.
 	 */
-	setupLightingModel( /*builder*/ ) {
-
-		return new SSSLightingModel( this.useClearcoat, this.useSheen, this.useIridescence, this.useAnisotropy, this.useTransmission, this.useDispersion, this.useSSS );
-
+	setupLightingModel(/*builder*/) {
+		return new SSSLightingModel(this.useClearcoat, this.useSheen, this.useIridescence, this.useAnisotropy, this.useTransmission, this.useDispersion, this.useSSS)
 	}
 
-	copy( source ) {
+	copy(source) {
+		this.thicknessColorNode = source.thicknessColorNode
+		this.thicknessDistortionNode = source.thicknessDistortionNode
+		this.thicknessAmbientNode = source.thicknessAmbientNode
+		this.thicknessAttenuationNode = source.thicknessAttenuationNode
+		this.thicknessPowerNode = source.thicknessPowerNode
+		this.thicknessScaleNode = source.thicknessScaleNode
 
-		this.thicknessColorNode = source.thicknessColorNode;
-		this.thicknessDistortionNode = source.thicknessDistortionNode;
-		this.thicknessAmbientNode = source.thicknessAmbientNode;
-		this.thicknessAttenuationNode = source.thicknessAttenuationNode;
-		this.thicknessPowerNode = source.thicknessPowerNode;
-		this.thicknessScaleNode = source.thicknessScaleNode;
-
-		return super.copy( source );
-
+		return super.copy(source)
 	}
-
 }
 
-export default MeshSSSNodeMaterial;
+export default MeshSSSNodeMaterial

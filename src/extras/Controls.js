@@ -1,4 +1,4 @@
-import { EventDispatcher } from '../core/EventDispatcher.js';
+import { EventDispatcher } from "../core/EventDispatcher.js"
 
 /**
  * Abstract base class for controls.
@@ -7,23 +7,21 @@ import { EventDispatcher } from '../core/EventDispatcher.js';
  * @augments EventDispatcher
  */
 class Controls extends EventDispatcher {
-
 	/**
 	 * Constructs a new controls instance.
 	 *
 	 * @param {Object3D} object - The object that is managed by the controls.
 	 * @param {?HTMLDOMElement} domElement - The HTML element used for event listeners.
 	 */
-	constructor( object, domElement = null ) {
-
-		super();
+	constructor(object, domElement = null) {
+		super()
 
 		/**
 		 * The object that is managed by the controls.
 		 *
 		 * @type {Object3D}
 		 */
-		this.object = object;
+		this.object = object
 
 		/**
 		 * The HTML element used for event listeners.
@@ -31,7 +29,7 @@ class Controls extends EventDispatcher {
 		 * @type {?HTMLDOMElement}
 		 * @default null
 		 */
-		this.domElement = domElement;
+		this.domElement = domElement
 
 		/**
 		 * Whether the controls responds to user input or not.
@@ -39,7 +37,7 @@ class Controls extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.enabled = true;
+		this.enabled = true
 
 		/**
 		 * The internal state of the controls.
@@ -47,14 +45,14 @@ class Controls extends EventDispatcher {
 		 * @type {number}
 		 * @default -1
 		 */
-		this.state = - 1;
+		this.state = -1
 
 		/**
 		 * This object defines the keyboard input of the controls.
 		 *
 		 * @type {Object}
 		 */
-		this.keys = {};
+		this.keys = {}
 
 		/**
 		 * This object defines what type of actions are assigned to the available mouse buttons.
@@ -62,7 +60,7 @@ class Controls extends EventDispatcher {
 		 *
 		 * @type {{LEFT: ?number, MIDDLE: ?number, RIGHT: ?number}}
 		 */
-		this.mouseButtons = { LEFT: null, MIDDLE: null, RIGHT: null };
+		this.mouseButtons = { LEFT: null, MIDDLE: null, RIGHT: null }
 
 		/**
 		 * This object defines what type of actions are assigned to what kind of touch interaction.
@@ -70,8 +68,7 @@ class Controls extends EventDispatcher {
 		 *
 		 * @type {{ONE: ?number, TWO: ?number}}
 		 */
-		this.touches = { ONE: null, TWO: null };
-
+		this.touches = { ONE: null, TWO: null }
 	}
 
 	/**
@@ -97,8 +94,7 @@ class Controls extends EventDispatcher {
 	 *
 	 * @param {number} [delta] - The time delta in seconds.
 	 */
-	update( /* delta */ ) {}
-
+	update(/* delta */) {}
 }
 
-export { Controls };
+export { Controls }

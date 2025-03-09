@@ -1,7 +1,7 @@
-import { EventDispatcher } from './EventDispatcher.js';
-import { StaticDrawUsage } from '../constants.js';
+import { EventDispatcher } from "./EventDispatcher.js"
+import { StaticDrawUsage } from "../constants.js"
 
-let _id = 0;
+let _id = 0
 
 /**
  * A class for managing multiple uniforms in a single group. The renderer will process
@@ -13,13 +13,11 @@ let _id = 0;
  * @augments EventDispatcher
  */
 class UniformsGroup extends EventDispatcher {
-
 	/**
 	 * Constructs a new uniforms group.
 	 */
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -28,7 +26,7 @@ class UniformsGroup extends EventDispatcher {
 		 * @readonly
 		 * @default true
 		 */
-		this.isUniformsGroup = true;
+		this.isUniformsGroup = true
 
 		/**
 		 * The ID of the 3D object.
@@ -37,14 +35,14 @@ class UniformsGroup extends EventDispatcher {
 		 * @type {number}
 		 * @readonly
 		 */
-		Object.defineProperty( this, 'id', { value: _id ++ } );
+		Object.defineProperty(this, "id", { value: _id++ })
 
 		/**
 		 * The name of the uniforms group.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The buffer usage.
@@ -52,15 +50,14 @@ class UniformsGroup extends EventDispatcher {
 		 * @type {(StaticDrawUsage|DynamicDrawUsage|StreamDrawUsage|StaticReadUsage|DynamicReadUsage|StreamReadUsage|StaticCopyUsage|DynamicCopyUsage|StreamCopyUsage)}
 		 * @default StaticDrawUsage
 		 */
-		this.usage = StaticDrawUsage;
+		this.usage = StaticDrawUsage
 
 		/**
 		 * An array holding the uniforms.
 		 *
 		 * @type {Array<Uniform>}
 		 */
-		this.uniforms = [];
-
+		this.uniforms = []
 	}
 
 	/**
@@ -69,12 +66,10 @@ class UniformsGroup extends EventDispatcher {
 	 * @param {Uniform} uniform - The uniform to add.
 	 * @return {UniformsGroup} A reference to this uniforms group.
 	 */
-	add( uniform ) {
+	add(uniform) {
+		this.uniforms.push(uniform)
 
-		this.uniforms.push( uniform );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -83,14 +78,12 @@ class UniformsGroup extends EventDispatcher {
 	 * @param {Uniform} uniform - The uniform to remove.
 	 * @return {UniformsGroup} A reference to this uniforms group.
 	 */
-	remove( uniform ) {
+	remove(uniform) {
+		const index = this.uniforms.indexOf(uniform)
 
-		const index = this.uniforms.indexOf( uniform );
+		if (index !== -1) this.uniforms.splice(index, 1)
 
-		if ( index !== - 1 ) this.uniforms.splice( index, 1 );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -99,12 +92,10 @@ class UniformsGroup extends EventDispatcher {
 	 * @param {string} name - The name to set.
 	 * @return {UniformsGroup} A reference to this uniforms group.
 	 */
-	setName( name ) {
+	setName(name) {
+		this.name = name
 
-		this.name = name;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -113,12 +104,10 @@ class UniformsGroup extends EventDispatcher {
 	 * @param {(StaticDrawUsage|DynamicDrawUsage|StreamDrawUsage|StaticReadUsage|DynamicReadUsage|StreamReadUsage|StaticCopyUsage|DynamicCopyUsage|StreamCopyUsage)} value - The usage to set.
 	 * @return {UniformsGroup} A reference to this uniforms group.
 	 */
-	setUsage( value ) {
+	setUsage(value) {
+		this.usage = value
 
-		this.usage = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -128,9 +117,7 @@ class UniformsGroup extends EventDispatcher {
 	 * @fires Texture#dispose
 	 */
 	dispose() {
-
-		this.dispatchEvent( { type: 'dispose' } );
-
+		this.dispatchEvent({ type: "dispose" })
 	}
 
 	/**
@@ -139,29 +126,23 @@ class UniformsGroup extends EventDispatcher {
 	 * @param {UniformsGroup} source - The uniforms group to copy.
 	 * @return {UniformsGroup} A reference to this uniforms group.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.name = source.name
+		this.usage = source.usage
 
-		this.name = source.name;
-		this.usage = source.usage;
+		const uniformsSource = source.uniforms
 
-		const uniformsSource = source.uniforms;
+		this.uniforms.length = 0
 
-		this.uniforms.length = 0;
+		for (let i = 0, l = uniformsSource.length; i < l; i++) {
+			const uniforms = Array.isArray(uniformsSource[i]) ? uniformsSource[i] : [uniformsSource[i]]
 
-		for ( let i = 0, l = uniformsSource.length; i < l; i ++ ) {
-
-			const uniforms = Array.isArray( uniformsSource[ i ] ) ? uniformsSource[ i ] : [ uniformsSource[ i ] ];
-
-			for ( let j = 0; j < uniforms.length; j ++ ) {
-
-				this.uniforms.push( uniforms[ j ].clone() );
-
+			for (let j = 0; j < uniforms.length; j++) {
+				this.uniforms.push(uniforms[j].clone())
 			}
-
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -170,11 +151,8 @@ class UniformsGroup extends EventDispatcher {
 	 * @return {UniformsGroup} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
-
 }
 
-export { UniformsGroup };
+export { UniformsGroup }

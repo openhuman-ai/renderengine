@@ -1,7 +1,7 @@
-import { TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
+import { TangentSpaceNormalMap } from "../constants.js"
+import { Material } from "./Material.js"
+import { Vector2 } from "../math/Vector2.js"
+import { Color } from "../math/Color.js"
 
 /**
  * This material is defined by a MatCap (or Lit Sphere) texture, which encodes the
@@ -15,7 +15,6 @@ import { Color } from '../math/Color.js';
  * @augments Material
  */
 class MeshMatcapMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh matcap material.
 	 *
@@ -25,9 +24,8 @@ class MeshMatcapMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -36,11 +34,11 @@ class MeshMatcapMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshMatcapMaterial = true;
+		this.isMeshMatcapMaterial = true
 
-		this.defines = { 'MATCAP': '' };
+		this.defines = { MATCAP: "" }
 
-		this.type = 'MeshMatcapMaterial';
+		this.type = "MeshMatcapMaterial"
 
 		/**
 		 * Color of the material.
@@ -48,7 +46,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.color = new Color( 0xffffff ); // diffuse
+		this.color = new Color(0xffffff) // diffuse
 
 		/**
 		 * The matcap map.
@@ -56,7 +54,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.matcap = null;
+		this.matcap = null
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -66,7 +64,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The texture to create a bump map. The black and white values map to the
@@ -77,7 +75,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.bumpMap = null;
+		this.bumpMap = null
 
 		/**
 		 * How much the bump map affects the material. Typical range is `[0,1]`.
@@ -85,7 +83,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.bumpScale = 1;
+		this.bumpScale = 1
 
 		/**
 		 * The texture to create a normal map. The RGB values affect the surface
@@ -98,7 +96,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.normalMap = null;
+		this.normalMap = null
 
 		/**
 		 * The type of normal map.
@@ -106,7 +104,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {(TangentSpaceNormalMap|ObjectSpaceNormalMap)}
 		 * @default TangentSpaceNormalMap
 		 */
-		this.normalMapType = TangentSpaceNormalMap;
+		this.normalMapType = TangentSpaceNormalMap
 
 		/**
 		 * How much the normal map affects the material. Typical value range is `[0,1]`.
@@ -114,7 +112,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {Vector2}
 		 * @default (1,1)
 		 */
-		this.normalScale = new Vector2( 1, 1 );
+		this.normalScale = new Vector2(1, 1)
 
 		/**
 		 * The displacement map affects the position of the mesh's vertices. Unlike
@@ -127,7 +125,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.displacementMap = null;
+		this.displacementMap = null
 
 		/**
 		 * How much the displacement map affects the mesh (where black is no
@@ -137,7 +135,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementScale = 1;
+		this.displacementScale = 1
 
 		/**
 		 * The offset of the displacement map's values on the mesh's vertices.
@@ -147,7 +145,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementBias = 0;
+		this.displacementBias = 0
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -162,7 +160,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * Whether the material is rendered with flat shading or not.
@@ -170,7 +168,7 @@ class MeshMatcapMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flatShading = false;
+		this.flatShading = false
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -178,46 +176,41 @@ class MeshMatcapMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
+	copy(source) {
+		super.copy(source)
 
-	copy( source ) {
+		this.defines = { MATCAP: "" }
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.defines = { 'MATCAP': '' };
+		this.matcap = source.matcap
 
-		this.color.copy( source.color );
+		this.map = source.map
 
-		this.matcap = source.matcap;
+		this.bumpMap = source.bumpMap
+		this.bumpScale = source.bumpScale
 
-		this.map = source.map;
+		this.normalMap = source.normalMap
+		this.normalMapType = source.normalMapType
+		this.normalScale.copy(source.normalScale)
 
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
+		this.displacementMap = source.displacementMap
+		this.displacementScale = source.displacementScale
+		this.displacementBias = source.displacementBias
 
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
+		this.alphaMap = source.alphaMap
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
+		this.flatShading = source.flatShading
 
-		this.alphaMap = source.alphaMap;
+		this.fog = source.fog
 
-		this.flatShading = source.flatShading;
-
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshMatcapMaterial };
+export { MeshMatcapMaterial }

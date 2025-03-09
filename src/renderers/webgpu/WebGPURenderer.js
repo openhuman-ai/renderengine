@@ -1,7 +1,7 @@
-import Renderer from '../common/Renderer.js';
-import WebGLBackend from '../webgl-fallback/WebGLBackend.js';
-import WebGPUBackend from './WebGPUBackend.js';
-import StandardNodeLibrary from './nodes/StandardNodeLibrary.js';
+import Renderer from "../common/Renderer.js"
+import WebGLBackend from "../webgl-fallback/WebGLBackend.js"
+import WebGPUBackend from "./WebGPUBackend.js"
+import StandardNodeLibrary from "./nodes/StandardNodeLibrary.js"
 /*
 const debugHandler = {
 
@@ -25,7 +25,6 @@ const debugHandler = {
  * @augments Renderer
  */
 class WebGPURenderer extends Renderer {
-
 	/**
 	 * WebGPURenderer options.
 	 *
@@ -47,32 +46,25 @@ class WebGPURenderer extends Renderer {
 	 *
 	 * @param {WebGPURenderer~Options} [parameters] - The configuration parameter.
 	 */
-	constructor( parameters = {} ) {
+	constructor(parameters = {}) {
+		let BackendClass
 
-		let BackendClass;
-
-		if ( parameters.forceWebGL ) {
-
-			BackendClass = WebGLBackend;
-
+		if (parameters.forceWebGL) {
+			BackendClass = WebGLBackend
 		} else {
-
-			BackendClass = WebGPUBackend;
+			BackendClass = WebGPUBackend
 
 			parameters.getFallback = () => {
+				console.warn("THREE.WebGPURenderer: WebGPU is not available, running under WebGL2 backend.")
 
-				console.warn( 'THREE.WebGPURenderer: WebGPU is not available, running under WebGL2 backend.' );
-
-				return new WebGLBackend( parameters );
-
-			};
-
+				return new WebGLBackend(parameters)
+			}
 		}
 
-		const backend = new BackendClass( parameters );
+		const backend = new BackendClass(parameters)
 
 		//super( new Proxy( backend, debugHandler ) );
-		super( backend, parameters );
+		super(backend, parameters)
 
 		/**
 		 * The generic default value is overwritten with the
@@ -80,7 +72,7 @@ class WebGPURenderer extends Renderer {
 		 *
 		 * @type {StandardNodeLibrary}
 		 */
-		this.library = new StandardNodeLibrary();
+		this.library = new StandardNodeLibrary()
 
 		/**
 		 * This flag can be used for type testing.
@@ -89,10 +81,8 @@ class WebGPURenderer extends Renderer {
 		 * @readonly
 		 * @default true
 		 */
-		this.isWebGPURenderer = true;
-
+		this.isWebGPURenderer = true
 	}
-
 }
 
-export default WebGPURenderer;
+export default WebGPURenderer

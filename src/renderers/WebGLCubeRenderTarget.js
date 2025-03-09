@@ -1,11 +1,11 @@
-import { BackSide, LinearFilter, LinearMipmapLinearFilter, NoBlending } from '../constants.js';
-import { Mesh } from '../objects/Mesh.js';
-import { BoxGeometry } from '../geometries/BoxGeometry.js';
-import { ShaderMaterial } from '../materials/ShaderMaterial.js';
-import { cloneUniforms } from './shaders/UniformsUtils.js';
-import { WebGLRenderTarget } from './WebGLRenderTarget.js';
-import { CubeCamera } from '../cameras/CubeCamera.js';
-import { CubeTexture } from '../textures/CubeTexture.js';
+import { BackSide, LinearFilter, LinearMipmapLinearFilter, NoBlending } from "../constants.js"
+import { Mesh } from "../objects/Mesh.js"
+import { BoxGeometry } from "../geometries/BoxGeometry.js"
+import { ShaderMaterial } from "../materials/ShaderMaterial.js"
+import { cloneUniforms } from "./shaders/UniformsUtils.js"
+import { WebGLRenderTarget } from "./WebGLRenderTarget.js"
+import { CubeCamera } from "../cameras/CubeCamera.js"
+import { CubeTexture } from "../textures/CubeTexture.js"
 
 /**
  * A cube render target used in context of {@link WebGLRenderer}.
@@ -13,16 +13,14 @@ import { CubeTexture } from '../textures/CubeTexture.js';
  * @augments WebGLRenderTarget
  */
 class WebGLCubeRenderTarget extends WebGLRenderTarget {
-
 	/**
 	 * Constructs a new cube render target.
 	 *
 	 * @param {number} [size=1] - The size of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( size = 1, options = {} ) {
-
-		super( size, size, options );
+	constructor(size = 1, options = {}) {
+		super(size, size, options)
 
 		/**
 		 * This flag can be used for type testing.
@@ -31,17 +29,28 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 		 * @readonly
 		 * @default true
 		 */
-		this.isWebGLCubeRenderTarget = true;
+		this.isWebGLCubeRenderTarget = true
 
-		const image = { width: size, height: size, depth: 1 };
-		const images = [ image, image, image, image, image, image ];
+		const image = { width: size, height: size, depth: 1 }
+		const images = [image, image, image, image, image, image]
 
 		/**
 		 * Overwritten with a different texture type.
 		 *
 		 * @type {DataArrayTexture}
 		 */
-		this.texture = new CubeTexture( images, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
+		this.texture = new CubeTexture(
+			images,
+			options.mapping,
+			options.wrapS,
+			options.wrapT,
+			options.magFilter,
+			options.minFilter,
+			options.format,
+			options.type,
+			options.anisotropy,
+			options.colorSpace
+		)
 
 		// By convention -- likely based on the RenderMan spec from the 1990's -- cube maps are specified by WebGL (and three.js)
 		// in a coordinate system in which positive-x is to the right when looking up the positive-z axis -- in other words,
@@ -51,11 +60,10 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 		// and the flag isRenderTargetTexture controls this conversion. The flip is not required when using WebGLCubeRenderTarget.texture
 		// as a cube texture (this is detected when isRenderTargetTexture is set to true for cube textures).
 
-		this.texture.isRenderTargetTexture = true;
+		this.texture.isRenderTargetTexture = true
 
-		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
-		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
-
+		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false
+		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter
 	}
 
 	/**
@@ -65,22 +73,20 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 	 * @param {Texture} texture - The equirectangular texture.
 	 * @return {WebGLCubeRenderTarget} A reference to this cube render target.
 	 */
-	fromEquirectangularTexture( renderer, texture ) {
+	fromEquirectangularTexture(renderer, texture) {
+		this.texture.type = texture.type
+		this.texture.colorSpace = texture.colorSpace
 
-		this.texture.type = texture.type;
-		this.texture.colorSpace = texture.colorSpace;
-
-		this.texture.generateMipmaps = texture.generateMipmaps;
-		this.texture.minFilter = texture.minFilter;
-		this.texture.magFilter = texture.magFilter;
+		this.texture.generateMipmaps = texture.generateMipmaps
+		this.texture.minFilter = texture.minFilter
+		this.texture.magFilter = texture.magFilter
 
 		const shader = {
-
 			uniforms: {
 				tEquirect: { value: null },
 			},
 
-			vertexShader: /* glsl */`
+			vertexShader: /* glsl */ `
 
 				varying vec3 vWorldDirection;
 
@@ -100,7 +106,7 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 				}
 			`,
 
-			fragmentShader: /* glsl */`
+			fragmentShader: /* glsl */ `
 
 				uniform sampler2D tEquirect;
 
@@ -117,42 +123,39 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 					gl_FragColor = texture2D( tEquirect, sampleUV );
 
 				}
-			`
-		};
+			`,
+		}
 
-		const geometry = new BoxGeometry( 5, 5, 5 );
+		const geometry = new BoxGeometry(5, 5, 5)
 
-		const material = new ShaderMaterial( {
+		const material = new ShaderMaterial({
+			name: "CubemapFromEquirect",
 
-			name: 'CubemapFromEquirect',
-
-			uniforms: cloneUniforms( shader.uniforms ),
+			uniforms: cloneUniforms(shader.uniforms),
 			vertexShader: shader.vertexShader,
 			fragmentShader: shader.fragmentShader,
 			side: BackSide,
-			blending: NoBlending
+			blending: NoBlending,
+		})
 
-		} );
+		material.uniforms.tEquirect.value = texture
 
-		material.uniforms.tEquirect.value = texture;
+		const mesh = new Mesh(geometry, material)
 
-		const mesh = new Mesh( geometry, material );
-
-		const currentMinFilter = texture.minFilter;
+		const currentMinFilter = texture.minFilter
 
 		// Avoid blurred poles
-		if ( texture.minFilter === LinearMipmapLinearFilter ) texture.minFilter = LinearFilter;
+		if (texture.minFilter === LinearMipmapLinearFilter) texture.minFilter = LinearFilter
 
-		const camera = new CubeCamera( 1, 10, this );
-		camera.update( renderer, mesh );
+		const camera = new CubeCamera(1, 10, this)
+		camera.update(renderer, mesh)
 
-		texture.minFilter = currentMinFilter;
+		texture.minFilter = currentMinFilter
 
-		mesh.geometry.dispose();
-		mesh.material.dispose();
+		mesh.geometry.dispose()
+		mesh.material.dispose()
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -163,22 +166,17 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 	 * @param {boolean} [depth=true] - Whether the depth buffer should be cleared or not.
 	 * @param {boolean} [stencil=true] - Whether the stencil buffer should be cleared or not.
 	 */
-	clear( renderer, color = true, depth = true, stencil = true ) {
+	clear(renderer, color = true, depth = true, stencil = true) {
+		const currentRenderTarget = renderer.getRenderTarget()
 
-		const currentRenderTarget = renderer.getRenderTarget();
+		for (let i = 0; i < 6; i++) {
+			renderer.setRenderTarget(this, i)
 
-		for ( let i = 0; i < 6; i ++ ) {
-
-			renderer.setRenderTarget( this, i );
-
-			renderer.clear( color, depth, stencil );
-
+			renderer.clear(color, depth, stencil)
 		}
 
-		renderer.setRenderTarget( currentRenderTarget );
-
+		renderer.setRenderTarget(currentRenderTarget)
 	}
-
 }
 
-export { WebGLCubeRenderTarget };
+export { WebGLCubeRenderTarget }

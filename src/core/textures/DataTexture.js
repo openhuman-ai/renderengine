@@ -1,5 +1,5 @@
-import { Texture } from './Texture.js';
-import { NearestFilter } from '../constants.js';
+import { Texture } from "./Texture.js"
+import { NearestFilter } from "../constants.js"
 
 /**
  * Creates a texture directly from raw buffer data.
@@ -12,7 +12,6 @@ import { NearestFilter } from '../constants.js';
  * @augments Texture
  */
 class DataTexture extends Texture {
-
 	/**
 	 * Constructs a new data texture.
 	 *
@@ -29,9 +28,8 @@ class DataTexture extends Texture {
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 * @param {string} [colorSpace=NoColorSpace] - The color space.
 	 */
-	constructor( data = null, width = 1, height = 1, format, type, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, colorSpace ) {
-
-		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace );
+	constructor(data = null, width = 1, height = 1, format, type, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, colorSpace) {
+		super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace)
 
 		/**
 		 * This flag can be used for type testing.
@@ -40,14 +38,14 @@ class DataTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isDataTexture = true;
+		this.isDataTexture = true
 
 		/**
 		 * The image definition of a data texture.
 		 *
 		 * @type {{data:TypedArray,width:number,height:number}}
 		 */
-		this.image = { data: data, width: width, height: height };
+		this.image = { data: data, width: width, height: height }
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -57,7 +55,7 @@ class DataTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -68,7 +66,7 @@ class DataTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flipY = false;
+		this.flipY = false
 
 		/**
 		 * Specifies the alignment requirements for the start of each pixel row in memory.
@@ -78,10 +76,8 @@ class DataTexture extends Texture {
 		 * @type {boolean}
 		 * @default 1
 		 */
-		this.unpackAlignment = 1;
-
+		this.unpackAlignment = 1
 	}
-
 }
 
-export { DataTexture };
+export { DataTexture }

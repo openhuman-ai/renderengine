@@ -1,8 +1,8 @@
-import { Vector3 } from '../math/Vector3.js';
-import { Object3D } from '../core/Object3D.js';
+import { Vector3 } from "../math/Vector3.js"
+import { Object3D } from "../core/Object3D.js"
 
-const _v1 = /*@__PURE__*/ new Vector3();
-const _v2 = /*@__PURE__*/ new Vector3();
+const _v1 = /*@__PURE__*/ new Vector3()
+const _v2 = /*@__PURE__*/ new Vector3()
 
 /**
  * A component for providing a basic Level of Detail (LOD) mechanism.
@@ -31,13 +31,11 @@ const _v2 = /*@__PURE__*/ new Vector3();
  * @augments Object3D
  */
 class LOD extends Object3D {
-
 	/**
 	 * Constructs a new LOD.
 	 */
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -46,7 +44,7 @@ class LOD extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.isLOD = true;
+		this.isLOD = true
 
 		/**
 		 * The current LOD index.
@@ -55,11 +53,11 @@ class LOD extends Object3D {
 		 * @type {number}
 		 * @default 0
 		 */
-		this._currentLevel = 0;
+		this._currentLevel = 0
 
-		this.type = 'LOD';
+		this.type = "LOD"
 
-		Object.defineProperties( this, {
+		Object.defineProperties(this, {
 			/**
 			 * This array holds the LOD levels.
 			 *
@@ -68,9 +66,9 @@ class LOD extends Object3D {
 			 */
 			levels: {
 				enumerable: true,
-				value: []
-			}
-		} );
+				value: [],
+			},
+		})
 
 		/**
 		 * Whether the LOD object is updated automatically by the renderer per frame
@@ -80,28 +78,23 @@ class LOD extends Object3D {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.autoUpdate = true;
-
+		this.autoUpdate = true
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source, false)
 
-		super.copy( source, false );
+		const levels = source.levels
 
-		const levels = source.levels;
+		for (let i = 0, l = levels.length; i < l; i++) {
+			const level = levels[i]
 
-		for ( let i = 0, l = levels.length; i < l; i ++ ) {
-
-			const level = levels[ i ];
-
-			this.addLevel( level.object.clone(), level.distance, level.hysteresis );
-
+			this.addLevel(level.object.clone(), level.distance, level.hysteresis)
 		}
 
-		this.autoUpdate = source.autoUpdate;
+		this.autoUpdate = source.autoUpdate
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -113,30 +106,24 @@ class LOD extends Object3D {
 	 * @param {number} [hysteresis=0] - Threshold used to avoid flickering at LOD boundaries, as a fraction of distance.
 	 * @return {LOD} A reference to this instance.
 	 */
-	addLevel( object, distance = 0, hysteresis = 0 ) {
+	addLevel(object, distance = 0, hysteresis = 0) {
+		distance = Math.abs(distance)
 
-		distance = Math.abs( distance );
+		const levels = this.levels
 
-		const levels = this.levels;
+		let l
 
-		let l;
-
-		for ( l = 0; l < levels.length; l ++ ) {
-
-			if ( distance < levels[ l ].distance ) {
-
-				break;
-
+		for (l = 0; l < levels.length; l++) {
+			if (distance < levels[l].distance) {
+				break
 			}
-
 		}
 
-		levels.splice( l, 0, { distance: distance, hysteresis: hysteresis, object: object } );
+		levels.splice(l, 0, { distance: distance, hysteresis: hysteresis, object: object })
 
-		this.add( object );
+		this.add(object)
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -146,25 +133,19 @@ class LOD extends Object3D {
 	 * @param {number} distance - Distance of the level to remove.
 	 * @return {boolean} Whether the level has been removed or not.
 	 */
-	removeLevel( distance ) {
+	removeLevel(distance) {
+		const levels = this.levels
 
-		const levels = this.levels;
+		for (let i = 0; i < levels.length; i++) {
+			if (levels[i].distance === distance) {
+				const removedElements = levels.splice(i, 1)
+				this.remove(removedElements[0].object)
 
-		for ( let i = 0; i < levels.length; i ++ ) {
-
-			if ( levels[ i ].distance === distance ) {
-
-				const removedElements = levels.splice( i, 1 );
-				this.remove( removedElements[ 0 ].object );
-
-				return true;
-
+				return true
 			}
-
 		}
 
-		return false;
-
+		return false
 	}
 
 	/**
@@ -173,9 +154,7 @@ class LOD extends Object3D {
 	 * @return {number} The current active LOD level index.
 	 */
 	getCurrentLevel() {
-
-		return this._currentLevel;
-
+		return this._currentLevel
 	}
 
 	/**
@@ -185,38 +164,28 @@ class LOD extends Object3D {
 	 * @param {number} distance - The LOD distance.
 	 * @return {Object3D|null} The found 3D object. `null` if no 3D object has been found.
 	 */
-	getObjectForDistance( distance ) {
+	getObjectForDistance(distance) {
+		const levels = this.levels
 
-		const levels = this.levels;
+		if (levels.length > 0) {
+			let i, l
 
-		if ( levels.length > 0 ) {
+			for (i = 1, l = levels.length; i < l; i++) {
+				let levelDistance = levels[i].distance
 
-			let i, l;
-
-			for ( i = 1, l = levels.length; i < l; i ++ ) {
-
-				let levelDistance = levels[ i ].distance;
-
-				if ( levels[ i ].object.visible ) {
-
-					levelDistance -= levelDistance * levels[ i ].hysteresis;
-
+				if (levels[i].object.visible) {
+					levelDistance -= levelDistance * levels[i].hysteresis
 				}
 
-				if ( distance < levelDistance ) {
-
-					break;
-
+				if (distance < levelDistance) {
+					break
 				}
-
 			}
 
-			return levels[ i - 1 ].object;
-
+			return levels[i - 1].object
 		}
 
-		return null;
-
+		return null
 	}
 
 	/**
@@ -225,20 +194,16 @@ class LOD extends Object3D {
 	 * @param {Raycaster} raycaster - The raycaster.
 	 * @param {Array<Object>} intersects - The target array that holds the intersection points.
 	 */
-	raycast( raycaster, intersects ) {
+	raycast(raycaster, intersects) {
+		const levels = this.levels
 
-		const levels = this.levels;
+		if (levels.length > 0) {
+			_v1.setFromMatrixPosition(this.matrixWorld)
 
-		if ( levels.length > 0 ) {
+			const distance = raycaster.ray.origin.distanceTo(_v1)
 
-			_v1.setFromMatrixPosition( this.matrixWorld );
-
-			const distance = raycaster.ray.origin.distanceTo( _v1 );
-
-			this.getObjectForDistance( distance ).raycast( raycaster, intersects );
-
+			this.getObjectForDistance(distance).raycast(raycaster, intersects)
 		}
-
 	}
 
 	/**
@@ -247,83 +212,63 @@ class LOD extends Object3D {
 	 *
 	 * @param {Camera} camera - The camera the scene is rendered with.
 	 */
-	update( camera ) {
+	update(camera) {
+		const levels = this.levels
 
-		const levels = this.levels;
+		if (levels.length > 1) {
+			_v1.setFromMatrixPosition(camera.matrixWorld)
+			_v2.setFromMatrixPosition(this.matrixWorld)
 
-		if ( levels.length > 1 ) {
+			const distance = _v1.distanceTo(_v2) / camera.zoom
 
-			_v1.setFromMatrixPosition( camera.matrixWorld );
-			_v2.setFromMatrixPosition( this.matrixWorld );
+			levels[0].object.visible = true
 
-			const distance = _v1.distanceTo( _v2 ) / camera.zoom;
+			let i, l
 
-			levels[ 0 ].object.visible = true;
+			for (i = 1, l = levels.length; i < l; i++) {
+				let levelDistance = levels[i].distance
 
-			let i, l;
-
-			for ( i = 1, l = levels.length; i < l; i ++ ) {
-
-				let levelDistance = levels[ i ].distance;
-
-				if ( levels[ i ].object.visible ) {
-
-					levelDistance -= levelDistance * levels[ i ].hysteresis;
-
+				if (levels[i].object.visible) {
+					levelDistance -= levelDistance * levels[i].hysteresis
 				}
 
-				if ( distance >= levelDistance ) {
-
-					levels[ i - 1 ].object.visible = false;
-					levels[ i ].object.visible = true;
-
+				if (distance >= levelDistance) {
+					levels[i - 1].object.visible = false
+					levels[i].object.visible = true
 				} else {
-
-					break;
-
+					break
 				}
-
 			}
 
-			this._currentLevel = i - 1;
+			this._currentLevel = i - 1
 
-			for ( ; i < l; i ++ ) {
-
-				levels[ i ].object.visible = false;
-
+			for (; i < l; i++) {
+				levels[i].object.visible = false
 			}
-
 		}
-
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		if (this.autoUpdate === false) data.object.autoUpdate = false
 
-		if ( this.autoUpdate === false ) data.object.autoUpdate = false;
+		data.object.levels = []
 
-		data.object.levels = [];
+		const levels = this.levels
 
-		const levels = this.levels;
+		for (let i = 0, l = levels.length; i < l; i++) {
+			const level = levels[i]
 
-		for ( let i = 0, l = levels.length; i < l; i ++ ) {
-
-			const level = levels[ i ];
-
-			data.object.levels.push( {
+			data.object.levels.push({
 				object: level.object.uuid,
 				distance: level.distance,
-				hysteresis: level.hysteresis
-			} );
-
+				hysteresis: level.hysteresis,
+			})
 		}
 
-		return data;
-
+		return data
 	}
-
 }
 
-
-export { LOD };
+export { LOD }

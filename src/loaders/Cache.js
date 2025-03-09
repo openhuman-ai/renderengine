@@ -5,7 +5,6 @@
  * @hideconstructor
  */
 const Cache = {
-
 	/**
 	 * Whether caching is enabled or not.
 	 *
@@ -31,14 +30,12 @@ const Cache = {
 	 * @param {string} key - The key to reference the cached file.
 	 * @param {Object} file -  The file to be cached.
 	 */
-	add: function ( key, file ) {
-
-		if ( this.enabled === false ) return;
+	add: function (key, file) {
+		if (this.enabled === false) return
 
 		// console.log( 'THREE.Cache', 'Adding key:', key );
 
-		this.files[ key ] = file;
-
+		this.files[key] = file
 	},
 
 	/**
@@ -48,14 +45,12 @@ const Cache = {
 	 * @param {string} key - The key to reference the cached file.
 	 * @return {Object|undefined} The cached file. If the key does not exist `undefined` is returned.
 	 */
-	get: function ( key ) {
-
-		if ( this.enabled === false ) return;
+	get: function (key) {
+		if (this.enabled === false) return
 
 		// console.log( 'THREE.Cache', 'Checking key:', key );
 
-		return this.files[ key ];
-
+		return this.files[key]
 	},
 
 	/**
@@ -64,10 +59,8 @@ const Cache = {
 	 * @static
 	 * @param {string} key - The key to reference the cached file.
 	 */
-	remove: function ( key ) {
-
-		delete this.files[ key ];
-
+	remove: function (key) {
+		delete this.files[key]
 	},
 
 	/**
@@ -76,12 +69,8 @@ const Cache = {
 	 * @static
 	 */
 	clear: function () {
+		this.files = {}
+	},
+}
 
-		this.files = {};
-
-	}
-
-};
-
-
-export { Cache };
+export { Cache }

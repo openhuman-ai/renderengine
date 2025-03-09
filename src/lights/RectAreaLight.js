@@ -1,4 +1,4 @@
-import { Light } from './Light.js';
+import { Light } from "./Light.js"
 
 /**
  * This class emits light uniformly across the face a rectangular plane.
@@ -26,7 +26,6 @@ import { Light } from './Light.js';
  * @augments Light
  */
 class RectAreaLight extends Light {
-
 	/**
 	 * Constructs a new area light.
 	 *
@@ -35,9 +34,8 @@ class RectAreaLight extends Light {
 	 * @param {number} [width=10] - The width of the light.
 	 * @param {number} [height=10] - The height of the light.
 	 */
-	constructor( color, intensity, width = 10, height = 10 ) {
-
-		super( color, intensity );
+	constructor(color, intensity, width = 10, height = 10) {
+		super(color, intensity)
 
 		/**
 		 * This flag can be used for type testing.
@@ -46,9 +44,9 @@ class RectAreaLight extends Light {
 		 * @readonly
 		 * @default true
 		 */
-		this.isRectAreaLight = true;
+		this.isRectAreaLight = true
 
-		this.type = 'RectAreaLight';
+		this.type = "RectAreaLight"
 
 		/**
 		 * The width of the light.
@@ -56,7 +54,7 @@ class RectAreaLight extends Light {
 		 * @type {number}
 		 * @default 10
 		 */
-		this.width = width;
+		this.width = width
 
 		/**
 		 * The height of the light.
@@ -64,8 +62,7 @@ class RectAreaLight extends Light {
 		 * @type {number}
 		 * @default 10
 		 */
-		this.height = height;
-
+		this.height = height
 	}
 
 	/**
@@ -75,41 +72,32 @@ class RectAreaLight extends Light {
 	 * @type {number}
 	 */
 	get power() {
-
 		// compute the light's luminous power (in lumens) from its intensity (in nits)
-		return this.intensity * this.width * this.height * Math.PI;
-
+		return this.intensity * this.width * this.height * Math.PI
 	}
 
-	set power( power ) {
-
+	set power(power) {
 		// set the light's intensity (in nits) from the desired luminous power (in lumens)
-		this.intensity = power / ( this.width * this.height * Math.PI );
-
+		this.intensity = power / (this.width * this.height * Math.PI)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.width = source.width
+		this.height = source.height
 
-		this.width = source.width;
-		this.height = source.height;
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.object.width = this.width
+		data.object.height = this.height
 
-		data.object.width = this.width;
-		data.object.height = this.height;
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { RectAreaLight };
+export { RectAreaLight }

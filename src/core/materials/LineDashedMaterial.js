@@ -1,4 +1,4 @@
-import { LineBasicMaterial } from './LineBasicMaterial.js';
+import { LineBasicMaterial } from "./LineBasicMaterial.js"
 
 /**
  * A material for rendering line primitives.
@@ -17,7 +17,6 @@ import { LineBasicMaterial } from './LineBasicMaterial.js';
  * @augments LineBasicMaterial
  */
 class LineDashedMaterial extends LineBasicMaterial {
-
 	/**
 	 * Constructs a new line dashed material.
 	 *
@@ -27,9 +26,8 @@ class LineDashedMaterial extends LineBasicMaterial {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -38,8 +36,8 @@ class LineDashedMaterial extends LineBasicMaterial {
 		 * @readonly
 		 * @default true
 		 */
-		this.isLineDashedMaterial = true;
-		this.type = 'LineDashedMaterial';
+		this.isLineDashedMaterial = true
+		this.type = "LineDashedMaterial"
 
 		/**
 		 * The scale of the dashed part of a line.
@@ -47,7 +45,7 @@ class LineDashedMaterial extends LineBasicMaterial {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.scale = 1;
+		this.scale = 1
 
 		/**
 		 * The size of the dash. This is both the gap with the stroke.
@@ -55,7 +53,7 @@ class LineDashedMaterial extends LineBasicMaterial {
 		 * @type {number}
 		 * @default 3
 		 */
-		this.dashSize = 3;
+		this.dashSize = 3
 
 		/**
 		 * The size of the gap.
@@ -63,24 +61,20 @@ class LineDashedMaterial extends LineBasicMaterial {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.gapSize = 1;
+		this.gapSize = 1
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.scale = source.scale
+		this.dashSize = source.dashSize
+		this.gapSize = source.gapSize
 
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { LineDashedMaterial };
+export { LineDashedMaterial }

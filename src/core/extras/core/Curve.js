@@ -1,7 +1,7 @@
-import { clamp } from '../../math/MathUtils.js';
-import { Vector2 } from '../../math/Vector2.js';
-import { Vector3 } from '../../math/Vector3.js';
-import { Matrix4 } from '../../math/Matrix4.js';
+import { clamp } from "../../math/MathUtils.js"
+import { Vector2 } from "../../math/Vector2.js"
+import { Vector3 } from "../../math/Vector3.js"
+import { Matrix4 } from "../../math/Matrix4.js"
 
 /**
  * An abstract base class for creating an analytic curve object that contains methods
@@ -10,12 +10,10 @@ import { Matrix4 } from '../../math/Matrix4.js';
  * @abstract
  */
 class Curve {
-
 	/**
 	 * Constructs a new curve.
 	 */
 	constructor() {
-
 		/**
 		 * The type property is used for detecting the object type
 		 * in context of serialization/deserialization.
@@ -23,7 +21,7 @@ class Curve {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.type = 'Curve';
+		this.type = "Curve"
 
 		/**
 		 * This value determines the amount of divisions when calculating the
@@ -34,7 +32,7 @@ class Curve {
 		 * @type {number}
 		 * @default 200
 		 */
-		this.arcLengthDivisions = 200;
+		this.arcLengthDivisions = 200
 
 		/**
 		 * Must be set to `true` if the curve parameters have changed.
@@ -42,7 +40,7 @@ class Curve {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.needsUpdate = false;
+		this.needsUpdate = false
 
 		/**
 		 * An internal cache that holds precomputed curve length values.
@@ -51,8 +49,7 @@ class Curve {
 		 * @type {?Array<number>}
 		 * @default null
 		 */
-		this.cacheArcLengths = null;
-
+		this.cacheArcLengths = null
 	}
 
 	/**
@@ -64,10 +61,8 @@ class Curve {
 	 * @param {(Vector2|Vector3)} [optionalTarget] - The optional target vector the result is written to.
 	 * @return {(Vector2|Vector3)} The position on the curve. It can be a 2D or 3D vector depending on the curve definition.
 	 */
-	getPoint( /* t, optionalTarget */ ) {
-
-		console.warn( 'THREE.Curve: .getPoint() not implemented.' );
-
+	getPoint(/* t, optionalTarget */) {
+		console.warn("THREE.Curve: .getPoint() not implemented.")
 	}
 
 	/**
@@ -79,11 +74,9 @@ class Curve {
 	 * @param {(Vector2|Vector3)} [optionalTarget] - The optional target vector the result is written to.
 	 * @return {(Vector2|Vector3)} The position on the curve. It can be a 2D or 3D vector depending on the curve definition.
 	 */
-	getPointAt( u, optionalTarget ) {
-
-		const t = this.getUtoTmapping( u );
-		return this.getPoint( t, optionalTarget );
-
+	getPointAt(u, optionalTarget) {
+		const t = this.getUtoTmapping(u)
+		return this.getPoint(t, optionalTarget)
 	}
 
 	/**
@@ -93,18 +86,14 @@ class Curve {
 	 * @param {number} [divisions=5] - The number of divisions.
 	 * @return {Array<(Vector2|Vector3)>} An array holding the sampled curve values. The number of points is `divisions + 1`.
 	 */
-	getPoints( divisions = 5 ) {
+	getPoints(divisions = 5) {
+		const points = []
 
-		const points = [];
-
-		for ( let d = 0; d <= divisions; d ++ ) {
-
-			points.push( this.getPoint( d / divisions ) );
-
+		for (let d = 0; d <= divisions; d++) {
+			points.push(this.getPoint(d / divisions))
 		}
 
-		return points;
-
+		return points
 	}
 
 	// Get sequence of points using getPointAt( u )
@@ -117,18 +106,14 @@ class Curve {
 	 * @param {number} [divisions=5] - The number of divisions.
 	 * @return {Array<(Vector2|Vector3)>} An array holding the sampled curve values. The number of points is `divisions + 1`.
 	 */
-	getSpacedPoints( divisions = 5 ) {
+	getSpacedPoints(divisions = 5) {
+		const points = []
 
-		const points = [];
-
-		for ( let d = 0; d <= divisions; d ++ ) {
-
-			points.push( this.getPointAt( d / divisions ) );
-
+		for (let d = 0; d <= divisions; d++) {
+			points.push(this.getPointAt(d / divisions))
 		}
 
-		return points;
-
+		return points
 	}
 
 	/**
@@ -137,10 +122,8 @@ class Curve {
 	 * @return {number} The length of the curve.
 	 */
 	getLength() {
-
-		const lengths = this.getLengths();
-		return lengths[ lengths.length - 1 ];
-
+		const lengths = this.getLengths()
+		return lengths[lengths.length - 1]
 	}
 
 	/**
@@ -149,37 +132,30 @@ class Curve {
 	 * @param {number} [divisions=this.arcLengthDivisions] - The number of divisions.
 	 * @return {Array<number>} An array holding the cumulative segment lengths.
 	 */
-	getLengths( divisions = this.arcLengthDivisions ) {
-
-		if ( this.cacheArcLengths &&
-			( this.cacheArcLengths.length === divisions + 1 ) &&
-			! this.needsUpdate ) {
-
-			return this.cacheArcLengths;
-
+	getLengths(divisions = this.arcLengthDivisions) {
+		if (this.cacheArcLengths && this.cacheArcLengths.length === divisions + 1 && !this.needsUpdate) {
+			return this.cacheArcLengths
 		}
 
-		this.needsUpdate = false;
+		this.needsUpdate = false
 
-		const cache = [];
-		let current, last = this.getPoint( 0 );
-		let sum = 0;
+		const cache = []
+		let current,
+			last = this.getPoint(0)
+		let sum = 0
 
-		cache.push( 0 );
+		cache.push(0)
 
-		for ( let p = 1; p <= divisions; p ++ ) {
-
-			current = this.getPoint( p / divisions );
-			sum += current.distanceTo( last );
-			cache.push( sum );
-			last = current;
-
+		for (let p = 1; p <= divisions; p++) {
+			current = this.getPoint(p / divisions)
+			sum += current.distanceTo(last)
+			cache.push(sum)
+			last = current
 		}
 
-		this.cacheArcLengths = cache;
+		this.cacheArcLengths = cache
 
-		return cache; // { sums: cache, sum: sum }; Sum is in the last element.
-
+		return cache // { sums: cache, sum: sum }; Sum is in the last element.
 	}
 
 	/**
@@ -189,10 +165,8 @@ class Curve {
 	 * composed curve, too.
 	 */
 	updateArcLengths() {
-
-		this.needsUpdate = true;
-		this.getLengths();
-
+		this.needsUpdate = true
+		this.getLengths()
 	}
 
 	/**
@@ -204,79 +178,65 @@ class Curve {
 	 * @param {?number} distance - An optional distance on the curve.
 	 * @return {number} The updated interpolation factor.
 	 */
-	getUtoTmapping( u, distance = null ) {
+	getUtoTmapping(u, distance = null) {
+		const arcLengths = this.getLengths()
 
-		const arcLengths = this.getLengths();
+		let i = 0
+		const il = arcLengths.length
 
-		let i = 0;
-		const il = arcLengths.length;
+		let targetArcLength // The targeted u distance value to get
 
-		let targetArcLength; // The targeted u distance value to get
-
-		if ( distance ) {
-
-			targetArcLength = distance;
-
+		if (distance) {
+			targetArcLength = distance
 		} else {
-
-			targetArcLength = u * arcLengths[ il - 1 ];
-
+			targetArcLength = u * arcLengths[il - 1]
 		}
 
 		// binary search for the index with largest value smaller than target u distance
 
-		let low = 0, high = il - 1, comparison;
+		let low = 0,
+			high = il - 1,
+			comparison
 
-		while ( low <= high ) {
+		while (low <= high) {
+			i = Math.floor(low + (high - low) / 2) // less likely to overflow, though probably not issue here, JS doesn't really have integers, all numbers are floats
 
-			i = Math.floor( low + ( high - low ) / 2 ); // less likely to overflow, though probably not issue here, JS doesn't really have integers, all numbers are floats
+			comparison = arcLengths[i] - targetArcLength
 
-			comparison = arcLengths[ i ] - targetArcLength;
-
-			if ( comparison < 0 ) {
-
-				low = i + 1;
-
-			} else if ( comparison > 0 ) {
-
-				high = i - 1;
-
+			if (comparison < 0) {
+				low = i + 1
+			} else if (comparison > 0) {
+				high = i - 1
 			} else {
-
-				high = i;
-				break;
+				high = i
+				break
 
 				// DONE
-
 			}
-
 		}
 
-		i = high;
+		i = high
 
-		if ( arcLengths[ i ] === targetArcLength ) {
-
-			return i / ( il - 1 );
-
+		if (arcLengths[i] === targetArcLength) {
+			return i / (il - 1)
 		}
 
 		// we could get finer grain at lengths, or use simple interpolation between two points
 
-		const lengthBefore = arcLengths[ i ];
-		const lengthAfter = arcLengths[ i + 1 ];
+		const lengthBefore = arcLengths[i]
+		const lengthAfter = arcLengths[i + 1]
 
-		const segmentLength = lengthAfter - lengthBefore;
+		const segmentLength = lengthAfter - lengthBefore
 
 		// determine where we are between the 'before' and 'after' points
 
-		const segmentFraction = ( targetArcLength - lengthBefore ) / segmentLength;
+		const segmentFraction = (targetArcLength - lengthBefore) / segmentLength
 
 		// add that fractional amount to t
 
-		const t = ( i + segmentFraction ) / ( il - 1 );
+		const t = (i + segmentFraction) / (il - 1)
 
-		return t;
-
+		return t
 	}
 
 	/**
@@ -289,26 +249,24 @@ class Curve {
 	 * @param {(Vector2|Vector3)} [optionalTarget] - The optional target vector the result is written to.
 	 * @return {(Vector2|Vector3)} The tangent vector.
 	 */
-	getTangent( t, optionalTarget ) {
-
-		const delta = 0.0001;
-		let t1 = t - delta;
-		let t2 = t + delta;
+	getTangent(t, optionalTarget) {
+		const delta = 0.0001
+		let t1 = t - delta
+		let t2 = t + delta
 
 		// Capping in case of danger
 
-		if ( t1 < 0 ) t1 = 0;
-		if ( t2 > 1 ) t2 = 1;
+		if (t1 < 0) t1 = 0
+		if (t2 > 1) t2 = 1
 
-		const pt1 = this.getPoint( t1 );
-		const pt2 = this.getPoint( t2 );
+		const pt1 = this.getPoint(t1)
+		const pt2 = this.getPoint(t2)
 
-		const tangent = optionalTarget || ( ( pt1.isVector2 ) ? new Vector2() : new Vector3() );
+		const tangent = optionalTarget || (pt1.isVector2 ? new Vector2() : new Vector3())
 
-		tangent.copy( pt2 ).sub( pt1 ).normalize();
+		tangent.copy(pt2).sub(pt1).normalize()
 
-		return tangent;
-
+		return tangent
 	}
 
 	/**
@@ -319,11 +277,9 @@ class Curve {
 	 * @return {(Vector2|Vector3)} The tangent vector.
 	 * @see {@link Curve#getPointAt}
 	 */
-	getTangentAt( u, optionalTarget ) {
-
-		const t = this.getUtoTmapping( u );
-		return this.getTangent( t, optionalTarget );
-
+	getTangentAt(u, optionalTarget) {
+		const t = this.getUtoTmapping(u)
+		return this.getTangent(t, optionalTarget)
 	}
 
 	/**
@@ -334,118 +290,97 @@ class Curve {
 	 * @param {boolean} [closed=false] - Whether the curve is closed or not.
 	 * @return {{tangents: Array<Vector3>, normals: Array<Vector3>, binormals: Array<Vector3>}} The Frenet Frames.
 	 */
-	computeFrenetFrames( segments, closed = false ) {
-
+	computeFrenetFrames(segments, closed = false) {
 		// see http://www.cs.indiana.edu/pub/techreports/TR425.pdf
 
-		const normal = new Vector3();
+		const normal = new Vector3()
 
-		const tangents = [];
-		const normals = [];
-		const binormals = [];
+		const tangents = []
+		const normals = []
+		const binormals = []
 
-		const vec = new Vector3();
-		const mat = new Matrix4();
+		const vec = new Vector3()
+		const mat = new Matrix4()
 
 		// compute the tangent vectors for each segment on the curve
 
-		for ( let i = 0; i <= segments; i ++ ) {
+		for (let i = 0; i <= segments; i++) {
+			const u = i / segments
 
-			const u = i / segments;
-
-			tangents[ i ] = this.getTangentAt( u, new Vector3() );
-
+			tangents[i] = this.getTangentAt(u, new Vector3())
 		}
 
 		// select an initial normal vector perpendicular to the first tangent vector,
 		// and in the direction of the minimum tangent xyz component
 
-		normals[ 0 ] = new Vector3();
-		binormals[ 0 ] = new Vector3();
-		let min = Number.MAX_VALUE;
-		const tx = Math.abs( tangents[ 0 ].x );
-		const ty = Math.abs( tangents[ 0 ].y );
-		const tz = Math.abs( tangents[ 0 ].z );
+		normals[0] = new Vector3()
+		binormals[0] = new Vector3()
+		let min = Number.MAX_VALUE
+		const tx = Math.abs(tangents[0].x)
+		const ty = Math.abs(tangents[0].y)
+		const tz = Math.abs(tangents[0].z)
 
-		if ( tx <= min ) {
-
-			min = tx;
-			normal.set( 1, 0, 0 );
-
+		if (tx <= min) {
+			min = tx
+			normal.set(1, 0, 0)
 		}
 
-		if ( ty <= min ) {
-
-			min = ty;
-			normal.set( 0, 1, 0 );
-
+		if (ty <= min) {
+			min = ty
+			normal.set(0, 1, 0)
 		}
 
-		if ( tz <= min ) {
-
-			normal.set( 0, 0, 1 );
-
+		if (tz <= min) {
+			normal.set(0, 0, 1)
 		}
 
-		vec.crossVectors( tangents[ 0 ], normal ).normalize();
+		vec.crossVectors(tangents[0], normal).normalize()
 
-		normals[ 0 ].crossVectors( tangents[ 0 ], vec );
-		binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
+		normals[0].crossVectors(tangents[0], vec)
+		binormals[0].crossVectors(tangents[0], normals[0])
 
 		// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
-		for ( let i = 1; i <= segments; i ++ ) {
+		for (let i = 1; i <= segments; i++) {
+			normals[i] = normals[i - 1].clone()
 
-			normals[ i ] = normals[ i - 1 ].clone();
+			binormals[i] = binormals[i - 1].clone()
 
-			binormals[ i ] = binormals[ i - 1 ].clone();
+			vec.crossVectors(tangents[i - 1], tangents[i])
 
-			vec.crossVectors( tangents[ i - 1 ], tangents[ i ] );
+			if (vec.length() > Number.EPSILON) {
+				vec.normalize()
 
-			if ( vec.length() > Number.EPSILON ) {
+				const theta = Math.acos(clamp(tangents[i - 1].dot(tangents[i]), -1, 1)) // clamp for floating pt errors
 
-				vec.normalize();
-
-				const theta = Math.acos( clamp( tangents[ i - 1 ].dot( tangents[ i ] ), - 1, 1 ) ); // clamp for floating pt errors
-
-				normals[ i ].applyMatrix4( mat.makeRotationAxis( vec, theta ) );
-
+				normals[i].applyMatrix4(mat.makeRotationAxis(vec, theta))
 			}
 
-			binormals[ i ].crossVectors( tangents[ i ], normals[ i ] );
-
+			binormals[i].crossVectors(tangents[i], normals[i])
 		}
 
 		// if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
 
-		if ( closed === true ) {
+		if (closed === true) {
+			let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1))
+			theta /= segments
 
-			let theta = Math.acos( clamp( normals[ 0 ].dot( normals[ segments ] ), - 1, 1 ) );
-			theta /= segments;
-
-			if ( tangents[ 0 ].dot( vec.crossVectors( normals[ 0 ], normals[ segments ] ) ) > 0 ) {
-
-				theta = - theta;
-
+			if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
+				theta = -theta
 			}
 
-			for ( let i = 1; i <= segments; i ++ ) {
-
+			for (let i = 1; i <= segments; i++) {
 				// twist a little...
-				normals[ i ].applyMatrix4( mat.makeRotationAxis( tangents[ i ], theta * i ) );
-				binormals[ i ].crossVectors( tangents[ i ], normals[ i ] );
-
+				normals[i].applyMatrix4(mat.makeRotationAxis(tangents[i], theta * i))
+				binormals[i].crossVectors(tangents[i], normals[i])
 			}
-
 		}
 
 		return {
 			tangents: tangents,
 			normals: normals,
-			binormals: binormals
-		};
-
+			binormals: binormals,
+		}
 	}
 
 	/**
@@ -454,9 +389,7 @@ class Curve {
 	 * @return {Curve} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
 
 	/**
@@ -465,12 +398,10 @@ class Curve {
 	 * @param {Curve} source - The curve to copy.
 	 * @return {Curve} A reference to this curve.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.arcLengthDivisions = source.arcLengthDivisions
 
-		this.arcLengthDivisions = source.arcLengthDivisions;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -480,20 +411,18 @@ class Curve {
 	 * @see {@link ObjectLoader#parse}
 	 */
 	toJSON() {
-
 		const data = {
 			metadata: {
 				version: 4.6,
-				type: 'Curve',
-				generator: 'Curve.toJSON'
-			}
-		};
+				type: "Curve",
+				generator: "Curve.toJSON",
+			},
+		}
 
-		data.arcLengthDivisions = this.arcLengthDivisions;
-		data.type = this.type;
+		data.arcLengthDivisions = this.arcLengthDivisions
+		data.type = this.type
 
-		return data;
-
+		return data
 	}
 
 	/**
@@ -502,15 +431,11 @@ class Curve {
 	 * @param {Object} json - The JSON holding the serialized curve.
 	 * @return {Curve} A reference to this curve.
 	 */
-	fromJSON( json ) {
+	fromJSON(json) {
+		this.arcLengthDivisions = json.arcLengthDivisions
 
-		this.arcLengthDivisions = json.arcLengthDivisions;
-
-		return this;
-
+		return this
 	}
-
 }
 
-
-export { Curve };
+export { Curve }

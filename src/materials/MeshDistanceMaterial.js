@@ -1,4 +1,4 @@
-import { Material } from './Material.js';
+import { Material } from "./Material.js"
 
 /**
  * A material used internally for implementing shadow mapping with
@@ -12,7 +12,6 @@ import { Material } from './Material.js';
  * @augments Material
  */
 class MeshDistanceMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh distance material.
 	 *
@@ -22,9 +21,8 @@ class MeshDistanceMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -33,9 +31,9 @@ class MeshDistanceMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshDistanceMaterial = true;
+		this.isMeshDistanceMaterial = true
 
-		this.type = 'MeshDistanceMaterial';
+		this.type = "MeshDistanceMaterial"
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -44,7 +42,7 @@ class MeshDistanceMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -59,7 +57,7 @@ class MeshDistanceMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * The displacement map affects the position of the mesh's vertices. Unlike
@@ -72,7 +70,7 @@ class MeshDistanceMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.displacementMap = null;
+		this.displacementMap = null
 
 		/**
 		 * How much the displacement map affects the mesh (where black is no
@@ -82,7 +80,7 @@ class MeshDistanceMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementScale = 1;
+		this.displacementScale = 1
 
 		/**
 		 * The offset of the displacement map's values on the mesh's vertices.
@@ -92,28 +90,24 @@ class MeshDistanceMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementBias = 0;
+		this.displacementBias = 0
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.map = source.map
 
-		this.map = source.map;
+		this.alphaMap = source.alphaMap
 
-		this.alphaMap = source.alphaMap;
+		this.displacementMap = source.displacementMap
+		this.displacementScale = source.displacementScale
+		this.displacementBias = source.displacementBias
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshDistanceMaterial };
+export { MeshDistanceMaterial }

@@ -1,9 +1,9 @@
-import { Quaternion } from './Quaternion.js';
-import { Matrix4 } from './Matrix4.js';
-import { clamp } from './MathUtils.js';
+import { Quaternion } from "./Quaternion.js"
+import { Matrix4 } from "./Matrix4.js"
+import { clamp } from "./MathUtils.js"
 
-const _matrix = /*@__PURE__*/ new Matrix4();
-const _quaternion = /*@__PURE__*/ new Quaternion();
+const _matrix = /*@__PURE__*/ new Matrix4()
+const _quaternion = /*@__PURE__*/ new Quaternion()
 
 /**
  * A class representing Euler angles.
@@ -22,7 +22,6 @@ const _quaternion = /*@__PURE__*/ new Quaternion();
  * ```
  */
 class Euler {
-
 	/**
 	 * Constructs a new euler instance.
 	 *
@@ -31,8 +30,7 @@ class Euler {
 	 * @param {number} [z=0] - The angle of the z axis in radians.
 	 * @param {string} [order=Euler.DEFAULT_ORDER] - A string representing the order that the rotations are applied.
 	 */
-	constructor( x = 0, y = 0, z = 0, order = Euler.DEFAULT_ORDER ) {
-
+	constructor(x = 0, y = 0, z = 0, order = Euler.DEFAULT_ORDER) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -40,13 +38,12 @@ class Euler {
 		 * @readonly
 		 * @default true
 		 */
-		this.isEuler = true;
+		this.isEuler = true
 
-		this._x = x;
-		this._y = y;
-		this._z = z;
-		this._order = order;
-
+		this._x = x
+		this._y = y
+		this._z = z
+		this._order = order
 	}
 
 	/**
@@ -56,16 +53,12 @@ class Euler {
 	 * @default 0
 	 */
 	get x() {
-
-		return this._x;
-
+		return this._x
 	}
 
-	set x( value ) {
-
-		this._x = value;
-		this._onChangeCallback();
-
+	set x(value) {
+		this._x = value
+		this._onChangeCallback()
 	}
 
 	/**
@@ -75,16 +68,12 @@ class Euler {
 	 * @default 0
 	 */
 	get y() {
-
-		return this._y;
-
+		return this._y
 	}
 
-	set y( value ) {
-
-		this._y = value;
-		this._onChangeCallback();
-
+	set y(value) {
+		this._y = value
+		this._onChangeCallback()
 	}
 
 	/**
@@ -94,16 +83,12 @@ class Euler {
 	 * @default 0
 	 */
 	get z() {
-
-		return this._z;
-
+		return this._z
 	}
 
-	set z( value ) {
-
-		this._z = value;
-		this._onChangeCallback();
-
+	set z(value) {
+		this._z = value
+		this._onChangeCallback()
 	}
 
 	/**
@@ -113,16 +98,12 @@ class Euler {
 	 * @default 'XYZ'
 	 */
 	get order() {
-
-		return this._order;
-
+		return this._order
 	}
 
-	set order( value ) {
-
-		this._order = value;
-		this._onChangeCallback();
-
+	set order(value) {
+		this._order = value
+		this._onChangeCallback()
 	}
 
 	/**
@@ -134,17 +115,15 @@ class Euler {
 	 * @param {string} [order] - A string representing the order that the rotations are applied.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	set( x, y, z, order = this._order ) {
+	set(x, y, z, order = this._order) {
+		this._x = x
+		this._y = y
+		this._z = z
+		this._order = order
 
-		this._x = x;
-		this._y = y;
-		this._z = z;
-		this._order = order;
+		this._onChangeCallback()
 
-		this._onChangeCallback();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -153,9 +132,7 @@ class Euler {
 	 * @return {Euler} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor( this._x, this._y, this._z, this._order );
-
+		return new this.constructor(this._x, this._y, this._z, this._order)
 	}
 
 	/**
@@ -164,17 +141,15 @@ class Euler {
 	 * @param {Euler} euler - The Euler instance to copy.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	copy( euler ) {
+	copy(euler) {
+		this._x = euler._x
+		this._y = euler._y
+		this._z = euler._z
+		this._order = euler._order
 
-		this._x = euler._x;
-		this._y = euler._y;
-		this._z = euler._z;
-		this._order = euler._order;
+		this._onChangeCallback()
 
-		this._onChangeCallback();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -185,135 +160,106 @@ class Euler {
 	 * @param {boolean} [update=true] - Whether the internal `onChange` callback should be executed or not.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	setFromRotationMatrix( m, order = this._order, update = true ) {
+	setFromRotationMatrix(m, order = this._order, update = true) {
+		const te = m.elements
+		const m11 = te[0],
+			m12 = te[4],
+			m13 = te[8]
+		const m21 = te[1],
+			m22 = te[5],
+			m23 = te[9]
+		const m31 = te[2],
+			m32 = te[6],
+			m33 = te[10]
 
-		const te = m.elements;
-		const m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ];
-		const m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ];
-		const m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+		switch (order) {
+			case "XYZ":
+				this._y = Math.asin(clamp(m13, -1, 1))
 
-		switch ( order ) {
-
-			case 'XYZ':
-
-				this._y = Math.asin( clamp( m13, - 1, 1 ) );
-
-				if ( Math.abs( m13 ) < 0.9999999 ) {
-
-					this._x = Math.atan2( - m23, m33 );
-					this._z = Math.atan2( - m12, m11 );
-
+				if (Math.abs(m13) < 0.9999999) {
+					this._x = Math.atan2(-m23, m33)
+					this._z = Math.atan2(-m12, m11)
 				} else {
-
-					this._x = Math.atan2( m32, m22 );
-					this._z = 0;
-
+					this._x = Math.atan2(m32, m22)
+					this._z = 0
 				}
 
-				break;
+				break
 
-			case 'YXZ':
+			case "YXZ":
+				this._x = Math.asin(-clamp(m23, -1, 1))
 
-				this._x = Math.asin( - clamp( m23, - 1, 1 ) );
-
-				if ( Math.abs( m23 ) < 0.9999999 ) {
-
-					this._y = Math.atan2( m13, m33 );
-					this._z = Math.atan2( m21, m22 );
-
+				if (Math.abs(m23) < 0.9999999) {
+					this._y = Math.atan2(m13, m33)
+					this._z = Math.atan2(m21, m22)
 				} else {
-
-					this._y = Math.atan2( - m31, m11 );
-					this._z = 0;
-
+					this._y = Math.atan2(-m31, m11)
+					this._z = 0
 				}
 
-				break;
+				break
 
-			case 'ZXY':
+			case "ZXY":
+				this._x = Math.asin(clamp(m32, -1, 1))
 
-				this._x = Math.asin( clamp( m32, - 1, 1 ) );
-
-				if ( Math.abs( m32 ) < 0.9999999 ) {
-
-					this._y = Math.atan2( - m31, m33 );
-					this._z = Math.atan2( - m12, m22 );
-
+				if (Math.abs(m32) < 0.9999999) {
+					this._y = Math.atan2(-m31, m33)
+					this._z = Math.atan2(-m12, m22)
 				} else {
-
-					this._y = 0;
-					this._z = Math.atan2( m21, m11 );
-
+					this._y = 0
+					this._z = Math.atan2(m21, m11)
 				}
 
-				break;
+				break
 
-			case 'ZYX':
+			case "ZYX":
+				this._y = Math.asin(-clamp(m31, -1, 1))
 
-				this._y = Math.asin( - clamp( m31, - 1, 1 ) );
-
-				if ( Math.abs( m31 ) < 0.9999999 ) {
-
-					this._x = Math.atan2( m32, m33 );
-					this._z = Math.atan2( m21, m11 );
-
+				if (Math.abs(m31) < 0.9999999) {
+					this._x = Math.atan2(m32, m33)
+					this._z = Math.atan2(m21, m11)
 				} else {
-
-					this._x = 0;
-					this._z = Math.atan2( - m12, m22 );
-
+					this._x = 0
+					this._z = Math.atan2(-m12, m22)
 				}
 
-				break;
+				break
 
-			case 'YZX':
+			case "YZX":
+				this._z = Math.asin(clamp(m21, -1, 1))
 
-				this._z = Math.asin( clamp( m21, - 1, 1 ) );
-
-				if ( Math.abs( m21 ) < 0.9999999 ) {
-
-					this._x = Math.atan2( - m23, m22 );
-					this._y = Math.atan2( - m31, m11 );
-
+				if (Math.abs(m21) < 0.9999999) {
+					this._x = Math.atan2(-m23, m22)
+					this._y = Math.atan2(-m31, m11)
 				} else {
-
-					this._x = 0;
-					this._y = Math.atan2( m13, m33 );
-
+					this._x = 0
+					this._y = Math.atan2(m13, m33)
 				}
 
-				break;
+				break
 
-			case 'XZY':
+			case "XZY":
+				this._z = Math.asin(-clamp(m12, -1, 1))
 
-				this._z = Math.asin( - clamp( m12, - 1, 1 ) );
-
-				if ( Math.abs( m12 ) < 0.9999999 ) {
-
-					this._x = Math.atan2( m32, m22 );
-					this._y = Math.atan2( m13, m11 );
-
+				if (Math.abs(m12) < 0.9999999) {
+					this._x = Math.atan2(m32, m22)
+					this._y = Math.atan2(m13, m11)
 				} else {
-
-					this._x = Math.atan2( - m23, m33 );
-					this._y = 0;
-
+					this._x = Math.atan2(-m23, m33)
+					this._y = 0
 				}
 
-				break;
+				break
 
 			default:
-
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() encountered an unknown order: ' + order );
-
+				console.warn("THREE.Euler: .setFromRotationMatrix() encountered an unknown order: " + order)
 		}
 
-		this._order = order;
+		this._order = order
 
-		if ( update === true ) this._onChangeCallback();
+		if (update === true) this._onChangeCallback()
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -324,12 +270,10 @@ class Euler {
 	 * @param {boolean} [update=true] - Whether the internal `onChange` callback should be executed or not.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	setFromQuaternion( q, order, update ) {
+	setFromQuaternion(q, order, update) {
+		_matrix.makeRotationFromQuaternion(q)
 
-		_matrix.makeRotationFromQuaternion( q );
-
-		return this.setFromRotationMatrix( _matrix, order, update );
-
+		return this.setFromRotationMatrix(_matrix, order, update)
 	}
 
 	/**
@@ -339,10 +283,8 @@ class Euler {
 	 * @param {string} [order] - A string representing the order that the rotations are applied.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	setFromVector3( v, order = this._order ) {
-
-		return this.set( v.x, v.y, v.z, order );
-
+	setFromVector3(v, order = this._order) {
+		return this.set(v.x, v.y, v.z, order)
 	}
 
 	/**
@@ -355,12 +297,10 @@ class Euler {
 	 * @param {string} [newOrder] - A string representing the new order that the rotations are applied.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	reorder( newOrder ) {
+	reorder(newOrder) {
+		_quaternion.setFromEuler(this)
 
-		_quaternion.setFromEuler( this );
-
-		return this.setFromQuaternion( _quaternion, newOrder );
-
+		return this.setFromQuaternion(_quaternion, newOrder)
 	}
 
 	/**
@@ -369,10 +309,8 @@ class Euler {
 	 * @param {Euler} euler - The Euler instance to test for equality.
 	 * @return {boolean} Whether this Euler instance is equal with the given one.
 	 */
-	equals( euler ) {
-
-		return ( euler._x === this._x ) && ( euler._y === this._y ) && ( euler._z === this._z ) && ( euler._order === this._order );
-
+	equals(euler) {
+		return euler._x === this._x && euler._y === this._y && euler._z === this._z && euler._order === this._order
 	}
 
 	/**
@@ -383,17 +321,15 @@ class Euler {
 	 * @param {Array<number,number,number,?string>} array - An array holding the Euler component values.
 	 * @return {Euler} A reference to this Euler instance.
 	 */
-	fromArray( array ) {
+	fromArray(array) {
+		this._x = array[0]
+		this._y = array[1]
+		this._z = array[2]
+		if (array[3] !== undefined) this._order = array[3]
 
-		this._x = array[ 0 ];
-		this._y = array[ 1 ];
-		this._z = array[ 2 ];
-		if ( array[ 3 ] !== undefined ) this._order = array[ 3 ];
+		this._onChangeCallback()
 
-		this._onChangeCallback();
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -404,36 +340,29 @@ class Euler {
 	 * @param {number} [offset=0] - Index of the first element in the array.
 	 * @return {Array<number,number,number,string>} The Euler components.
 	 */
-	toArray( array = [], offset = 0 ) {
+	toArray(array = [], offset = 0) {
+		array[offset] = this._x
+		array[offset + 1] = this._y
+		array[offset + 2] = this._z
+		array[offset + 3] = this._order
 
-		array[ offset ] = this._x;
-		array[ offset + 1 ] = this._y;
-		array[ offset + 2 ] = this._z;
-		array[ offset + 3 ] = this._order;
-
-		return array;
-
+		return array
 	}
 
-	_onChange( callback ) {
+	_onChange(callback) {
+		this._onChangeCallback = callback
 
-		this._onChangeCallback = callback;
-
-		return this;
-
+		return this
 	}
 
 	_onChangeCallback() {}
 
-	*[ Symbol.iterator ]() {
-
-		yield this._x;
-		yield this._y;
-		yield this._z;
-		yield this._order;
-
+	*[Symbol.iterator]() {
+		yield this._x
+		yield this._y
+		yield this._z
+		yield this._order
 	}
-
 }
 
 /**
@@ -443,6 +372,6 @@ class Euler {
  * @type {string}
  * @default 'XYZ'
  */
-Euler.DEFAULT_ORDER = 'XYZ';
+Euler.DEFAULT_ORDER = "XYZ"
 
-export { Euler };
+export { Euler }

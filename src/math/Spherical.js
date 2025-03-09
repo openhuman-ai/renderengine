@@ -1,11 +1,10 @@
-import { clamp } from './MathUtils.js';
+import { clamp } from "./MathUtils.js"
 
 /**
  * This class can be used to represent points in 3D space as
  * [Spherical coordinates]{@link https://en.wikipedia.org/wiki/Spherical_coordinate_system}.
  */
 class Spherical {
-
 	/**
 	 * Constructs a new spherical.
 	 *
@@ -13,15 +12,14 @@ class Spherical {
 	 * @param {number} [phi=0] - The polar angle in radians from the y (up) axis.
 	 * @param {number} [theta=0] - The equator/azimuthal angle in radians around the y (up) axis.
 	 */
-	constructor( radius = 1, phi = 0, theta = 0 ) {
-
+	constructor(radius = 1, phi = 0, theta = 0) {
 		/**
 		 * The radius, or the Euclidean distance (straight-line distance) from the point to the origin.
 		 *
 		 * @type {number}
 		 * @default 1
 		 */
-		this.radius = radius;
+		this.radius = radius
 
 		/**
 		 * The polar angle in radians from the y (up) axis.
@@ -29,7 +27,7 @@ class Spherical {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.phi = phi;
+		this.phi = phi
 
 		/**
 		 * The equator/azimuthal angle in radians around the y (up) axis.
@@ -37,8 +35,7 @@ class Spherical {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.theta = theta;
-
+		this.theta = theta
 	}
 
 	/**
@@ -49,14 +46,12 @@ class Spherical {
 	 * @param {number} theta - The azimuthal angle.
 	 * @return {Spherical} A reference to this spherical.
 	 */
-	set( radius, phi, theta ) {
+	set(radius, phi, theta) {
+		this.radius = radius
+		this.phi = phi
+		this.theta = theta
 
-		this.radius = radius;
-		this.phi = phi;
-		this.theta = theta;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -65,14 +60,12 @@ class Spherical {
 	 * @param {Spherical} other - The spherical to copy.
 	 * @return {Spherical} A reference to this spherical.
 	 */
-	copy( other ) {
+	copy(other) {
+		this.radius = other.radius
+		this.phi = other.phi
+		this.theta = other.theta
 
-		this.radius = other.radius;
-		this.phi = other.phi;
-		this.theta = other.theta;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -82,12 +75,10 @@ class Spherical {
 	 * @return {Spherical} A reference to this spherical.
 	 */
 	makeSafe() {
+		const EPS = 0.000001
+		this.phi = clamp(this.phi, EPS, Math.PI - EPS)
 
-		const EPS = 0.000001;
-		this.phi = clamp( this.phi, EPS, Math.PI - EPS );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -97,10 +88,8 @@ class Spherical {
 	 * @param {Vector3} v - The vector to set.
 	 * @return {Spherical} A reference to this spherical.
 	 */
-	setFromVector3( v ) {
-
-		return this.setFromCartesianCoords( v.x, v.y, v.z );
-
+	setFromVector3(v) {
+		return this.setFromCartesianCoords(v.x, v.y, v.z)
 	}
 
 	/**
@@ -111,24 +100,18 @@ class Spherical {
 	 * @param {number} z - The x value.
 	 * @return {Spherical} A reference to this spherical.
 	 */
-	setFromCartesianCoords( x, y, z ) {
+	setFromCartesianCoords(x, y, z) {
+		this.radius = Math.sqrt(x * x + y * y + z * z)
 
-		this.radius = Math.sqrt( x * x + y * y + z * z );
-
-		if ( this.radius === 0 ) {
-
-			this.theta = 0;
-			this.phi = 0;
-
+		if (this.radius === 0) {
+			this.theta = 0
+			this.phi = 0
 		} else {
-
-			this.theta = Math.atan2( x, z );
-			this.phi = Math.acos( clamp( y / this.radius, - 1, 1 ) );
-
+			this.theta = Math.atan2(x, z)
+			this.phi = Math.acos(clamp(y / this.radius, -1, 1))
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -137,11 +120,8 @@ class Spherical {
 	 * @return {Spherical} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
-
 }
 
-export { Spherical };
+export { Spherical }

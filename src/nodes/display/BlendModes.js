@@ -1,5 +1,5 @@
-import { Fn, vec4 } from '../tsl/TSLBase.js';
-import { mix, min, step } from '../math/MathNode.js';
+import { Fn, vec4 } from "../tsl/TSLBase.js"
+import { mix, min, step } from "../math/MathNode.js"
 
 /**
  * Represents a "Color Burn" blend mode.
@@ -14,18 +14,16 @@ import { mix, min, step } from '../math/MathNode.js';
  * @param {Node<vec3>} blend - The blend color. A white (#ffffff) blend color does not alter the base color.
  * @return {Node<vec3>} The result.
  */
-export const blendBurn = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
-
-	return min( 1.0, base.oneMinus().div( blend ) ).oneMinus();
-
-} ).setLayout( {
-	name: 'blendBurn',
-	type: 'vec3',
+export const blendBurn = /*@__PURE__*/ Fn(([base, blend]) => {
+	return min(1.0, base.oneMinus().div(blend)).oneMinus()
+}).setLayout({
+	name: "blendBurn",
+	type: "vec3",
 	inputs: [
-		{ name: 'base', type: 'vec3' },
-		{ name: 'blend', type: 'vec3' }
-	]
-} );
+		{ name: "base", type: "vec3" },
+		{ name: "blend", type: "vec3" },
+	],
+})
 
 /**
  * Represents a "Color Dodge" blend mode.
@@ -40,18 +38,16 @@ export const blendBurn = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
  * @param {Node<vec3>} blend - The blend color. A black (#000000) blend color does not alter the base color.
  * @return {Node<vec3>} The result.
  */
-export const blendDodge = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
-
-	return min( base.div( blend.oneMinus() ), 1.0 );
-
-} ).setLayout( {
-	name: 'blendDodge',
-	type: 'vec3',
+export const blendDodge = /*@__PURE__*/ Fn(([base, blend]) => {
+	return min(base.div(blend.oneMinus()), 1.0)
+}).setLayout({
+	name: "blendDodge",
+	type: "vec3",
 	inputs: [
-		{ name: 'base', type: 'vec3' },
-		{ name: 'blend', type: 'vec3' }
-	]
-} );
+		{ name: "base", type: "vec3" },
+		{ name: "blend", type: "vec3" },
+	],
+})
 
 /**
  * Represents a "Screen" blend mode.
@@ -66,18 +62,16 @@ export const blendDodge = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
  * @param {Node<vec3>} blend - The blend color. A black (#000000) blend color does not alter the base color.
  * @return {Node<vec3>} The result.
  */
-export const blendScreen = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
-
-	return base.oneMinus().mul( blend.oneMinus() ).oneMinus();
-
-} ).setLayout( {
-	name: 'blendScreen',
-	type: 'vec3',
+export const blendScreen = /*@__PURE__*/ Fn(([base, blend]) => {
+	return base.oneMinus().mul(blend.oneMinus()).oneMinus()
+}).setLayout({
+	name: "blendScreen",
+	type: "vec3",
 	inputs: [
-		{ name: 'base', type: 'vec3' },
-		{ name: 'blend', type: 'vec3' }
-	]
-} );
+		{ name: "base", type: "vec3" },
+		{ name: "blend", type: "vec3" },
+	],
+})
 
 /**
  * Represents a "Overlay" blend mode.
@@ -92,18 +86,16 @@ export const blendScreen = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
  * @param {Node<vec3>} blend - The blend color
  * @return {Node<vec3>} The result.
  */
-export const blendOverlay = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
-
-	return mix( base.mul( 2.0 ).mul( blend ), base.oneMinus().mul( 2.0 ).mul( blend.oneMinus() ).oneMinus(), step( 0.5, base ) );
-
-} ).setLayout( {
-	name: 'blendOverlay',
-	type: 'vec3',
+export const blendOverlay = /*@__PURE__*/ Fn(([base, blend]) => {
+	return mix(base.mul(2.0).mul(blend), base.oneMinus().mul(2.0).mul(blend.oneMinus()).oneMinus(), step(0.5, base))
+}).setLayout({
+	name: "blendOverlay",
+	type: "vec3",
 	inputs: [
-		{ name: 'base', type: 'vec3' },
-		{ name: 'blend', type: 'vec3' }
-	]
-} );
+		{ name: "base", type: "vec3" },
+		{ name: "blend", type: "vec3" },
+	],
+})
 
 /**
  * This function blends two color based on their alpha values by replicating the behavior of `THREE.NormalBlending`.
@@ -115,20 +107,18 @@ export const blendOverlay = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
  * @param {Node<vec4>} blend - The blend color
  * @return {Node<vec4>} The result.
  */
-export const blendColor = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
+export const blendColor = /*@__PURE__*/ Fn(([base, blend]) => {
+	const outAlpha = blend.a.add(base.a.mul(blend.a.oneMinus()))
 
-	const outAlpha = blend.a.add( base.a.mul( blend.a.oneMinus() ) );
-
-	return vec4( blend.rgb.mul( blend.a ).add( base.rgb.mul( base.a ).mul( blend.a.oneMinus() ) ).div( outAlpha ), outAlpha );
-
-} ).setLayout( {
-	name: 'blendColor',
-	type: 'vec4',
+	return vec4(blend.rgb.mul(blend.a).add(base.rgb.mul(base.a).mul(blend.a.oneMinus())).div(outAlpha), outAlpha)
+}).setLayout({
+	name: "blendColor",
+	type: "vec4",
 	inputs: [
-		{ name: 'base', type: 'vec4' },
-		{ name: 'blend', type: 'vec4' }
-	]
-} );
+		{ name: "base", type: "vec4" },
+		{ name: "blend", type: "vec4" },
+	],
+})
 
 // Deprecated
 
@@ -140,12 +130,12 @@ export const blendColor = /*@__PURE__*/ Fn( ( [ base, blend ] ) => {
  * @param  {...any} params
  * @returns {Function}
  */
-export const burn = ( ...params ) => { // @deprecated, r171
+export const burn = (...params) => {
+	// @deprecated, r171
 
-	console.warn( 'THREE.TSL: "burn" has been renamed. Use "blendBurn" instead.' );
-	return blendBurn( params );
-
-};
+	console.warn('THREE.TSL: "burn" has been renamed. Use "blendBurn" instead.')
+	return blendBurn(params)
+}
 
 /**
  * @tsl
@@ -155,12 +145,12 @@ export const burn = ( ...params ) => { // @deprecated, r171
  * @param  {...any} params
  * @returns {Function}
  */
-export const dodge = ( ...params ) => { // @deprecated, r171
+export const dodge = (...params) => {
+	// @deprecated, r171
 
-	console.warn( 'THREE.TSL: "dodge" has been renamed. Use "blendDodge" instead.' );
-	return blendDodge( params );
-
-};
+	console.warn('THREE.TSL: "dodge" has been renamed. Use "blendDodge" instead.')
+	return blendDodge(params)
+}
 
 /**
  * @tsl
@@ -170,12 +160,12 @@ export const dodge = ( ...params ) => { // @deprecated, r171
  * @param  {...any} params
  * @returns {Function}
  */
-export const screen = ( ...params ) => { // @deprecated, r171
+export const screen = (...params) => {
+	// @deprecated, r171
 
-	console.warn( 'THREE.TSL: "screen" has been renamed. Use "blendScreen" instead.' );
-	return blendScreen( params );
-
-};
+	console.warn('THREE.TSL: "screen" has been renamed. Use "blendScreen" instead.')
+	return blendScreen(params)
+}
 
 /**
  * @tsl
@@ -185,9 +175,9 @@ export const screen = ( ...params ) => { // @deprecated, r171
  * @param  {...any} params
  * @returns {Function}
  */
-export const overlay = ( ...params ) => { // @deprecated, r171
+export const overlay = (...params) => {
+	// @deprecated, r171
 
-	console.warn( 'THREE.TSL: "overlay" has been renamed. Use "blendOverlay" instead.' );
-	return blendOverlay( params );
-
-};
+	console.warn('THREE.TSL: "overlay" has been renamed. Use "blendOverlay" instead.')
+	return blendOverlay(params)
+}

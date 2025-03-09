@@ -1,6 +1,6 @@
-import { Source } from './Source.js';
-import { Texture } from './Texture.js';
-import { NearestFilter, UnsignedIntType, DepthFormat, DepthStencilFormat } from '../constants.js';
+import { Source } from "./Source.js"
+import { Texture } from "./Texture.js"
+import { NearestFilter, UnsignedIntType, DepthFormat, DepthStencilFormat } from "../constants.js"
 
 /**
  * This class can be used to automatically save the depth information of a
@@ -9,7 +9,6 @@ import { NearestFilter, UnsignedIntType, DepthFormat, DepthStencilFormat } from 
  * @augments Texture
  */
 class DepthTexture extends Texture {
-
 	/**
 	 * Constructs a new depth texture.
 	 *
@@ -24,15 +23,12 @@ class DepthTexture extends Texture {
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 * @param {number} [format=DepthFormat] - The texture format.
 	 */
-	constructor( width, height, type = UnsignedIntType, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, format = DepthFormat ) {
-
-		if ( format !== DepthFormat && format !== DepthStencilFormat ) {
-
-			throw new Error( 'DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat' );
-
+	constructor(width, height, type = UnsignedIntType, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, format = DepthFormat) {
+		if (format !== DepthFormat && format !== DepthStencilFormat) {
+			throw new Error("DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat")
 		}
 
-		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+		super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy)
 
 		/**
 		 * This flag can be used for type testing.
@@ -41,14 +37,14 @@ class DepthTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isDepthTexture = true;
+		this.isDepthTexture = true
 
 		/**
 		 * The image property of a depth texture just defines its dimensions.
 		 *
 		 * @type {{width:number,height:number}}
 		 */
-		this.image = { width: width, height: height };
+		this.image = { width: width, height: height }
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -59,7 +55,7 @@ class DepthTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flipY = false;
+		this.flipY = false
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -69,7 +65,7 @@ class DepthTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
 		/**
 		 * The depth compare function.
@@ -77,32 +73,25 @@ class DepthTexture extends Texture {
 		 * @type {?(NeverCompare|LessCompare|EqualCompare|LessEqualCompare|GreaterCompare|NotEqualCompare|GreaterEqualCompare|AlwaysCompare)}
 		 * @default null
 		 */
-		this.compareFunction = null;
-
+		this.compareFunction = null
 	}
 
+	copy(source) {
+		super.copy(source)
 
-	copy( source ) {
+		this.source = new Source(Object.assign({}, source.image)) // see #30540
+		this.compareFunction = source.compareFunction
 
-		super.copy( source );
-
-		this.source = new Source( Object.assign( {}, source.image ) ); // see #30540
-		this.compareFunction = source.compareFunction;
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		if (this.compareFunction !== null) data.compareFunction = this.compareFunction
 
-		if ( this.compareFunction !== null ) data.compareFunction = this.compareFunction;
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { DepthTexture };
+export { DepthTexture }

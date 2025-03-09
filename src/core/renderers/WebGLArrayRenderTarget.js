@@ -1,5 +1,5 @@
-import { WebGLRenderTarget } from './WebGLRenderTarget.js';
-import { DataArrayTexture } from '../textures/DataArrayTexture.js';
+import { WebGLRenderTarget } from "./WebGLRenderTarget.js"
+import { DataArrayTexture } from "../textures/DataArrayTexture.js"
 
 /**
  * An array render target used in context of {@link WebGLRenderer}.
@@ -7,7 +7,6 @@ import { DataArrayTexture } from '../textures/DataArrayTexture.js';
  * @augments WebGLRenderTarget
  */
 class WebGLArrayRenderTarget extends WebGLRenderTarget {
-
 	/**
 	 * Constructs a new array render target.
 	 *
@@ -16,9 +15,8 @@ class WebGLArrayRenderTarget extends WebGLRenderTarget {
 	 * @param {number} [depth=1] - The height of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( width = 1, height = 1, depth = 1, options = {} ) {
-
-		super( width, height, options );
+	constructor(width = 1, height = 1, depth = 1, options = {}) {
+		super(width, height, options)
 
 		/**
 		 * This flag can be used for type testing.
@@ -27,21 +25,19 @@ class WebGLArrayRenderTarget extends WebGLRenderTarget {
 		 * @readonly
 		 * @default true
 		 */
-		this.isWebGLArrayRenderTarget = true;
+		this.isWebGLArrayRenderTarget = true
 
-		this.depth = depth;
+		this.depth = depth
 
 		/**
 		 * Overwritten with a different texture type.
 		 *
 		 * @type {DataArrayTexture}
 		 */
-		this.texture = new DataArrayTexture( null, width, height, depth );
+		this.texture = new DataArrayTexture(null, width, height, depth)
 
-		this.texture.isRenderTargetTexture = true;
-
+		this.texture.isRenderTargetTexture = true
 	}
-
 }
 
-export { WebGLArrayRenderTarget };
+export { WebGLArrayRenderTarget }

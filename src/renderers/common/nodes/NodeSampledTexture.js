@@ -1,4 +1,4 @@
-import { SampledTexture } from '../SampledTexture.js';
+import { SampledTexture } from "../SampledTexture.js"
 
 /**
  * A special form of sampled texture binding type.
@@ -8,7 +8,6 @@ import { SampledTexture } from '../SampledTexture.js';
  * @augments SampledTexture
  */
 class NodeSampledTexture extends SampledTexture {
-
 	/**
 	 * Constructs a new node-based sampled texture.
 	 *
@@ -17,23 +16,22 @@ class NodeSampledTexture extends SampledTexture {
 	 * @param {UniformGroupNode} groupNode - The uniform group node.
 	 * @param {?string} [access=null] - The access type.
 	 */
-	constructor( name, textureNode, groupNode, access = null ) {
-
-		super( name, textureNode ? textureNode.value : null );
+	constructor(name, textureNode, groupNode, access = null) {
+		super(name, textureNode ? textureNode.value : null)
 
 		/**
 		 * The texture node.
 		 *
 		 * @type {TextureNode}
 		 */
-		this.textureNode = textureNode;
+		this.textureNode = textureNode
 
 		/**
 		 * The uniform group node.
 		 *
 		 * @type {UniformGroupNode}
 		 */
-		this.groupNode = groupNode;
+		this.groupNode = groupNode
 
 		/**
 		 * The access type.
@@ -41,8 +39,7 @@ class NodeSampledTexture extends SampledTexture {
 		 * @type {?string}
 		 * @default null
 		 */
-		this.access = access;
-
+		this.access = access
 	}
 
 	/**
@@ -51,10 +48,8 @@ class NodeSampledTexture extends SampledTexture {
 	 * @param {number} generation - The generation.
 	 * @return {boolean} Whether an update is required or not.
 	 */
-	needsBindingsUpdate( generation ) {
-
-		return this.textureNode.value !== this.texture || super.needsBindingsUpdate( generation );
-
+	needsBindingsUpdate(generation) {
+		return this.textureNode.value !== this.texture || super.needsBindingsUpdate(generation)
 	}
 
 	/**
@@ -64,21 +59,16 @@ class NodeSampledTexture extends SampledTexture {
 	 * uploaded to the GPU.
 	 */
 	update() {
+		const { textureNode } = this
 
-		const { textureNode } = this;
+		if (this.texture !== textureNode.value) {
+			this.texture = textureNode.value
 
-		if ( this.texture !== textureNode.value ) {
-
-			this.texture = textureNode.value;
-
-			return true;
-
+			return true
 		}
 
-		return super.update();
-
+		return super.update()
 	}
-
 }
 
 /**
@@ -89,7 +79,6 @@ class NodeSampledTexture extends SampledTexture {
  * @augments NodeSampledTexture
  */
 class NodeSampledCubeTexture extends NodeSampledTexture {
-
 	/**
 	 * Constructs a new node-based sampled cube texture.
 	 *
@@ -98,9 +87,8 @@ class NodeSampledCubeTexture extends NodeSampledTexture {
 	 * @param {UniformGroupNode} groupNode - The uniform group node.
 	 * @param {?string} [access=null] - The access type.
 	 */
-	constructor( name, textureNode, groupNode, access = null ) {
-
-		super( name, textureNode, groupNode, access );
+	constructor(name, textureNode, groupNode, access = null) {
+		super(name, textureNode, groupNode, access)
 
 		/**
 		 * This flag can be used for type testing.
@@ -109,10 +97,8 @@ class NodeSampledCubeTexture extends NodeSampledTexture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSampledCubeTexture = true;
-
+		this.isSampledCubeTexture = true
 	}
-
 }
 
 /**
@@ -123,7 +109,6 @@ class NodeSampledCubeTexture extends NodeSampledTexture {
  * @augments NodeSampledTexture
  */
 class NodeSampledTexture3D extends NodeSampledTexture {
-
 	/**
 	 * Constructs a new node-based sampled 3D texture.
 	 *
@@ -132,9 +117,8 @@ class NodeSampledTexture3D extends NodeSampledTexture {
 	 * @param {UniformGroupNode} groupNode - The uniform group node.
 	 * @param {?string} [access=null] - The access type.
 	 */
-	constructor( name, textureNode, groupNode, access = null ) {
-
-		super( name, textureNode, groupNode, access );
+	constructor(name, textureNode, groupNode, access = null) {
+		super(name, textureNode, groupNode, access)
 
 		/**
 		 * This flag can be used for type testing.
@@ -143,10 +127,8 @@ class NodeSampledTexture3D extends NodeSampledTexture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSampledTexture3D = true;
-
+		this.isSampledTexture3D = true
 	}
-
 }
 
-export { NodeSampledTexture, NodeSampledCubeTexture, NodeSampledTexture3D };
+export { NodeSampledTexture, NodeSampledCubeTexture, NodeSampledTexture3D }

@@ -1,4 +1,4 @@
-import { CylinderGeometry } from './CylinderGeometry.js';
+import { CylinderGeometry } from "./CylinderGeometry.js"
 
 /**
  * A geometry class for representing a cone.
@@ -13,7 +13,6 @@ import { CylinderGeometry } from './CylinderGeometry.js';
  * @augments CylinderGeometry
  */
 class ConeGeometry extends CylinderGeometry {
-
 	/**
 	 * Constructs a new cone geometry.
 	 *
@@ -26,11 +25,10 @@ class ConeGeometry extends CylinderGeometry {
 	 * @param {number} [thetaLength=Math.PI*2] - The central angle, often called theta, of the circular sector, in radians.
 	 * The default value results in a complete cone.
 	 */
-	constructor( radius = 1, height = 1, radialSegments = 32, heightSegments = 1, openEnded = false, thetaStart = 0, thetaLength = Math.PI * 2 ) {
+	constructor(radius = 1, height = 1, radialSegments = 32, heightSegments = 1, openEnded = false, thetaStart = 0, thetaLength = Math.PI * 2) {
+		super(0, radius, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength)
 
-		super( 0, radius, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength );
-
-		this.type = 'ConeGeometry';
+		this.type = "ConeGeometry"
 
 		/**
 		 * Holds the constructor parameters that have been
@@ -46,9 +44,8 @@ class ConeGeometry extends CylinderGeometry {
 			heightSegments: heightSegments,
 			openEnded: openEnded,
 			thetaStart: thetaStart,
-			thetaLength: thetaLength
-		};
-
+			thetaLength: thetaLength,
+		}
 	}
 
 	/**
@@ -58,12 +55,9 @@ class ConeGeometry extends CylinderGeometry {
 	 * @param {Object} data - A JSON object representing the serialized geometry.
 	 * @return {ConeGeometry} A new instance.
 	 */
-	static fromJSON( data ) {
-
-		return new ConeGeometry( data.radius, data.height, data.radialSegments, data.heightSegments, data.openEnded, data.thetaStart, data.thetaLength );
-
+	static fromJSON(data) {
+		return new ConeGeometry(data.radius, data.height, data.radialSegments, data.heightSegments, data.openEnded, data.thetaStart, data.thetaLength)
 	}
-
 }
 
-export { ConeGeometry };
+export { ConeGeometry }

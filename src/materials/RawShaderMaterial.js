@@ -1,4 +1,4 @@
-import { ShaderMaterial } from './ShaderMaterial.js';
+import { ShaderMaterial } from "./ShaderMaterial.js"
 
 /**
  * This class works just like {@link ShaderMaterial}, except that definitions
@@ -10,7 +10,6 @@ import { ShaderMaterial } from './ShaderMaterial.js';
  * @augments ShaderMaterial
  */
 class RawShaderMaterial extends ShaderMaterial {
-
 	/**
 	 * Constructs a new raw shader material.
 	 *
@@ -20,9 +19,8 @@ class RawShaderMaterial extends ShaderMaterial {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super( parameters );
+	constructor(parameters) {
+		super(parameters)
 
 		/**
 		 * This flag can be used for type testing.
@@ -31,12 +29,10 @@ class RawShaderMaterial extends ShaderMaterial {
 		 * @readonly
 		 * @default true
 		 */
-		this.isRawShaderMaterial = true;
+		this.isRawShaderMaterial = true
 
-		this.type = 'RawShaderMaterial';
-
+		this.type = "RawShaderMaterial"
 	}
-
 }
 
-export { RawShaderMaterial };
+export { RawShaderMaterial }

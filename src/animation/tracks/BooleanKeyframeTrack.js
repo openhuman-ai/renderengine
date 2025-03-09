@@ -1,5 +1,5 @@
-import { InterpolateDiscrete } from '../../constants.js';
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { InterpolateDiscrete } from "../../constants.js"
+import { KeyframeTrack } from "../KeyframeTrack.js"
 
 /**
  * A track for boolean keyframe values.
@@ -7,7 +7,6 @@ import { KeyframeTrack } from '../KeyframeTrack.js';
  * @augments KeyframeTrack
  */
 class BooleanKeyframeTrack extends KeyframeTrack {
-
 	/**
 	 * Constructs a new boolean keyframe track.
 	 *
@@ -18,12 +17,9 @@ class BooleanKeyframeTrack extends KeyframeTrack {
 	 * @param {Array<number>} times - A list of keyframe times.
 	 * @param {Array<number>} values - A list of keyframe values.
 	 */
-	constructor( name, times, values ) {
-
-		super( name, times, values );
-
+	constructor(name, times, values) {
+		super(name, times, values)
 	}
-
 }
 
 /**
@@ -32,7 +28,7 @@ class BooleanKeyframeTrack extends KeyframeTrack {
  * @type {String}
  * @default 'bool'
  */
-BooleanKeyframeTrack.prototype.ValueTypeName = 'bool';
+BooleanKeyframeTrack.prototype.ValueTypeName = "bool"
 
 /**
  * The value buffer type of this keyframe track.
@@ -40,7 +36,7 @@ BooleanKeyframeTrack.prototype.ValueTypeName = 'bool';
  * @type {TypedArray|Array}
  * @default Array.constructor
  */
-BooleanKeyframeTrack.prototype.ValueBufferType = Array;
+BooleanKeyframeTrack.prototype.ValueBufferType = Array
 
 /**
  * The default interpolation type of this keyframe track.
@@ -48,8 +44,8 @@ BooleanKeyframeTrack.prototype.ValueBufferType = Array;
  * @type {(InterpolateLinear|InterpolateDiscrete|InterpolateSmooth)}
  * @default InterpolateDiscrete
  */
-BooleanKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
-BooleanKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
-BooleanKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+BooleanKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete
+BooleanKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined
+BooleanKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined
 
-export { BooleanKeyframeTrack };
+export { BooleanKeyframeTrack }
