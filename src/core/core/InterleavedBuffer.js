@@ -1,5 +1,5 @@
-import { generateUUID } from '../math/MathUtils.js';
-import { StaticDrawUsage } from '../constants.js';
+import { generateUUID } from "../math/MathUtils.js"
+import { StaticDrawUsage } from "../constants.js"
 
 /**
  * "Interleaved" means that multiple attributes, possibly of different types,
@@ -8,15 +8,13 @@ import { StaticDrawUsage } from '../constants.js';
  * An introduction into interleaved arrays can be found here: [Interleaved array basics]{@link https://blog.tojicode.com/2011/05/interleaved-array-basics.html}
  */
 class InterleavedBuffer {
-
 	/**
 	 * Constructs a new interleaved buffer.
 	 *
 	 * @param {TypedArray} array - A typed array with a shared buffer storing attribute data.
 	 * @param {number} stride - The number of typed-array elements per vertex.
 	 */
-	constructor( array, stride ) {
-
+	constructor(array, stride) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -24,21 +22,21 @@ class InterleavedBuffer {
 		 * @readonly
 		 * @default true
 		 */
-		this.isInterleavedBuffer = true;
+		this.isInterleavedBuffer = true
 
 		/**
 		 * A typed array with a shared buffer storing attribute data.
 		 *
 		 * @type {TypedArray}
 		 */
-		this.array = array;
+		this.array = array
 
 		/**
 		 * The number of typed-array elements per vertex.
 		 *
 		 * @type {number}
 		 */
-		this.stride = stride;
+		this.stride = stride
 
 		/**
 		 * The total number of elements in the array
@@ -46,7 +44,7 @@ class InterleavedBuffer {
 		 * @type {number}
 		 * @readonly
 		 */
-		this.count = array !== undefined ? array.length / stride : 0;
+		this.count = array !== undefined ? array.length / stride : 0
 
 		/**
 		 * Defines the intended usage pattern of the data store for optimization purposes.
@@ -57,7 +55,7 @@ class InterleavedBuffer {
 		 * @type {(StaticDrawUsage|DynamicDrawUsage|StreamDrawUsage|StaticReadUsage|DynamicReadUsage|StreamReadUsage|StaticCopyUsage|DynamicCopyUsage|StreamCopyUsage)}
 		 * @default StaticDrawUsage
 		 */
-		this.usage = StaticDrawUsage;
+		this.usage = StaticDrawUsage
 
 		/**
 		 * This can be used to only update some components of stored vectors (for example, just the
@@ -65,14 +63,14 @@ class InterleavedBuffer {
 		 *
 		 * @type {Array<Object>}
 		 */
-		this.updateRanges = [];
+		this.updateRanges = []
 
 		/**
 		 * A version number, incremented every time the `needsUpdate` is set to `true`.
 		 *
 		 * @type {number}
 		 */
-		this.version = 0;
+		this.version = 0
 
 		/**
 		 * The UUID of the interleaved buffer.
@@ -80,8 +78,7 @@ class InterleavedBuffer {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.uuid = generateUUID();
-
+		this.uuid = generateUUID()
 	}
 
 	/**
@@ -98,10 +95,8 @@ class InterleavedBuffer {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsUpdate( value ) {
-
-		if ( value === true ) this.version ++;
-
+	set needsUpdate(value) {
+		if (value === true) this.version++
 	}
 
 	/**
@@ -110,12 +105,10 @@ class InterleavedBuffer {
 	 * @param {(StaticDrawUsage|DynamicDrawUsage|StreamDrawUsage|StaticReadUsage|DynamicReadUsage|StreamReadUsage|StaticCopyUsage|DynamicCopyUsage|StreamCopyUsage)} value - The usage to set.
 	 * @return {InterleavedBuffer} A reference to this interleaved buffer.
 	 */
-	setUsage( value ) {
+	setUsage(value) {
+		this.usage = value
 
-		this.usage = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -124,19 +117,15 @@ class InterleavedBuffer {
 	 * @param {number} start - Position at which to start update.
 	 * @param {number} count - The number of components to update.
 	 */
-	addUpdateRange( start, count ) {
-
-		this.updateRanges.push( { start, count } );
-
+	addUpdateRange(start, count) {
+		this.updateRanges.push({ start, count })
 	}
 
 	/**
 	 * Clears the update ranges.
 	 */
 	clearUpdateRanges() {
-
-		this.updateRanges.length = 0;
-
+		this.updateRanges.length = 0
 	}
 
 	/**
@@ -145,15 +134,13 @@ class InterleavedBuffer {
 	 * @param {InterleavedBuffer} source - The interleaved buffer to copy.
 	 * @return {InterleavedBuffer} A reference to this instance.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.array = new source.array.constructor(source.array)
+		this.count = source.count
+		this.stride = source.stride
+		this.usage = source.usage
 
-		this.array = new source.array.constructor( source.array );
-		this.count = source.count;
-		this.stride = source.stride;
-		this.usage = source.usage;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -166,19 +153,15 @@ class InterleavedBuffer {
 	 * @param {number} index2 - The source index into the given interleaved buffer.
 	 * @return {InterleavedBuffer} A reference to this instance.
 	 */
-	copyAt( index1, interleavedBuffer, index2 ) {
+	copyAt(index1, interleavedBuffer, index2) {
+		index1 *= this.stride
+		index2 *= interleavedBuffer.stride
 
-		index1 *= this.stride;
-		index2 *= interleavedBuffer.stride;
-
-		for ( let i = 0, l = this.stride; i < l; i ++ ) {
-
-			this.array[ index1 + i ] = interleavedBuffer.array[ index2 + i ];
-
+		for (let i = 0, l = this.stride; i < l; i++) {
+			this.array[index1 + i] = interleavedBuffer.array[index2 + i]
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -188,12 +171,10 @@ class InterleavedBuffer {
 	 * @param {number} [offset=0] - The offset in this interleaved buffer's array.
 	 * @return {InterleavedBuffer} A reference to this instance.
 	 */
-	set( value, offset = 0 ) {
+	set(value, offset = 0) {
+		this.array.set(value, offset)
 
-		this.array.set( value, offset );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -202,33 +183,25 @@ class InterleavedBuffer {
 	 * @param {Object} [data] - An object with shared array buffers that allows to retain shared structures.
 	 * @return {InterleavedBuffer} A clone of this instance.
 	 */
-	clone( data ) {
-
-		if ( data.arrayBuffers === undefined ) {
-
-			data.arrayBuffers = {};
-
+	clone(data) {
+		if (data.arrayBuffers === undefined) {
+			data.arrayBuffers = {}
 		}
 
-		if ( this.array.buffer._uuid === undefined ) {
-
-			this.array.buffer._uuid = generateUUID();
-
+		if (this.array.buffer._uuid === undefined) {
+			this.array.buffer._uuid = generateUUID()
 		}
 
-		if ( data.arrayBuffers[ this.array.buffer._uuid ] === undefined ) {
-
-			data.arrayBuffers[ this.array.buffer._uuid ] = this.array.slice( 0 ).buffer;
-
+		if (data.arrayBuffers[this.array.buffer._uuid] === undefined) {
+			data.arrayBuffers[this.array.buffer._uuid] = this.array.slice(0).buffer
 		}
 
-		const array = new this.array.constructor( data.arrayBuffers[ this.array.buffer._uuid ] );
+		const array = new this.array.constructor(data.arrayBuffers[this.array.buffer._uuid])
 
-		const ib = new this.constructor( array, this.stride );
-		ib.setUsage( this.usage );
+		const ib = new this.constructor(array, this.stride)
+		ib.setUsage(this.usage)
 
-		return ib;
-
+		return ib
 	}
 
 	/**
@@ -239,12 +212,10 @@ class InterleavedBuffer {
 	 * @param {Function} callback - The `onUpload()` callback.
 	 * @return {InterleavedBuffer} A reference to this instance.
 	 */
-	onUpload( callback ) {
+	onUpload(callback) {
+		this.onUploadCallback = callback
 
-		this.onUploadCallback = callback;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -253,26 +224,19 @@ class InterleavedBuffer {
 	 * @param {Object} [data] - An optional value holding meta information about the serialization.
 	 * @return {Object} A JSON object representing the serialized interleaved buffer.
 	 */
-	toJSON( data ) {
-
-		if ( data.arrayBuffers === undefined ) {
-
-			data.arrayBuffers = {};
-
+	toJSON(data) {
+		if (data.arrayBuffers === undefined) {
+			data.arrayBuffers = {}
 		}
 
 		// generate UUID for array buffer if necessary
 
-		if ( this.array.buffer._uuid === undefined ) {
-
-			this.array.buffer._uuid = generateUUID();
-
+		if (this.array.buffer._uuid === undefined) {
+			this.array.buffer._uuid = generateUUID()
 		}
 
-		if ( data.arrayBuffers[ this.array.buffer._uuid ] === undefined ) {
-
-			data.arrayBuffers[ this.array.buffer._uuid ] = Array.from( new Uint32Array( this.array.buffer ) );
-
+		if (data.arrayBuffers[this.array.buffer._uuid] === undefined) {
+			data.arrayBuffers[this.array.buffer._uuid] = Array.from(new Uint32Array(this.array.buffer))
 		}
 
 		//
@@ -281,11 +245,9 @@ class InterleavedBuffer {
 			uuid: this.uuid,
 			buffer: this.array.buffer._uuid,
 			type: this.array.constructor.name,
-			stride: this.stride
-		};
-
+			stride: this.stride,
+		}
 	}
-
 }
 
-export { InterleavedBuffer };
+export { InterleavedBuffer }

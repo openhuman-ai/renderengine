@@ -1,6 +1,6 @@
-import { Light } from './Light.js';
-import { Color } from '../math/Color.js';
-import { Object3D } from '../core/Object3D.js';
+import { Light } from "./Light.js"
+import { Color } from "../math/Color.js"
+import { Object3D } from "../core/Object3D.js"
 
 /**
  * A light source positioned directly above the scene, with color fading from
@@ -16,7 +16,6 @@ import { Object3D } from '../core/Object3D.js';
  * @augments Light
  */
 class HemisphereLight extends Light {
-
 	/**
 	 * Constructs a new hemisphere light.
 	 *
@@ -24,9 +23,8 @@ class HemisphereLight extends Light {
 	 * @param {(number|Color|string)} [groundColor=0xffffff] - The light's ground color.
 	 * @param {number} [intensity=1] - The light's strength/intensity.
 	 */
-	constructor( skyColor, groundColor, intensity ) {
-
-		super( skyColor, intensity );
+	constructor(skyColor, groundColor, intensity) {
+		super(skyColor, intensity)
 
 		/**
 		 * This flag can be used for type testing.
@@ -35,32 +33,28 @@ class HemisphereLight extends Light {
 		 * @readonly
 		 * @default true
 		 */
-		this.isHemisphereLight = true;
+		this.isHemisphereLight = true
 
-		this.type = 'HemisphereLight';
+		this.type = "HemisphereLight"
 
-		this.position.copy( Object3D.DEFAULT_UP );
-		this.updateMatrix();
+		this.position.copy(Object3D.DEFAULT_UP)
+		this.updateMatrix()
 
 		/**
 		 * The light's ground color.
 		 *
 		 * @type {Color}
 		 */
-		this.groundColor = new Color( groundColor );
-
+		this.groundColor = new Color(groundColor)
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.groundColor.copy(source.groundColor)
 
-		this.groundColor.copy( source.groundColor );
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { HemisphereLight };
+export { HemisphereLight }

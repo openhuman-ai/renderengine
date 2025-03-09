@@ -1,4 +1,4 @@
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { KeyframeTrack } from "../KeyframeTrack.js"
 
 /**
  * A track for numeric keyframe values.
@@ -6,7 +6,6 @@ import { KeyframeTrack } from '../KeyframeTrack.js';
  * @augments KeyframeTrack
  */
 class NumberKeyframeTrack extends KeyframeTrack {
-
 	/**
 	 * Constructs a new number keyframe track.
 	 *
@@ -15,12 +14,9 @@ class NumberKeyframeTrack extends KeyframeTrack {
 	 * @param {Array<number>} values - A list of keyframe values.
 	 * @param {(InterpolateLinear|InterpolateDiscrete|InterpolateSmooth)} [interpolation] - The interpolation type.
 	 */
-	constructor( name, times, values, interpolation ) {
-
-		super( name, times, values, interpolation );
-
+	constructor(name, times, values, interpolation) {
+		super(name, times, values, interpolation)
 	}
-
 }
 
 /**
@@ -29,8 +25,8 @@ class NumberKeyframeTrack extends KeyframeTrack {
  * @type {String}
  * @default 'number'
  */
-NumberKeyframeTrack.prototype.ValueTypeName = 'number';
+NumberKeyframeTrack.prototype.ValueTypeName = "number"
 // ValueBufferType is inherited
 // DefaultInterpolation is inherited
 
-export { NumberKeyframeTrack };
+export { NumberKeyframeTrack }

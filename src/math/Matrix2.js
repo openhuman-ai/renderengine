@@ -25,7 +25,6 @@
  * transpose of any matrices outlined here to make sense of the calculations.
  */
 export class Matrix2 {
-
 	/**
 	 * Constructs a new 2x2 matrix. The arguments are supposed to be
 	 * in row-major order. If no arguments are provided, the constructor
@@ -36,8 +35,7 @@ export class Matrix2 {
 	 * @param {number} [n21] - 2-1 matrix element.
 	 * @param {number} [n22] - 2-2 matrix element.
 	 */
-	constructor( n11, n12, n21, n22 ) {
-
+	constructor(n11, n12, n21, n22) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -45,24 +43,18 @@ export class Matrix2 {
 		 * @readonly
 		 * @default true
 		 */
-		Matrix2.prototype.isMatrix2 = true;
+		Matrix2.prototype.isMatrix2 = true
 
 		/**
 		 * A column-major list of matrix values.
 		 *
 		 * @type {Array<number>}
 		 */
-		this.elements = [
-			1, 0,
-			0, 1,
-		];
+		this.elements = [1, 0, 0, 1]
 
-		if ( n11 !== undefined ) {
-
-			this.set( n11, n12, n21, n22 );
-
+		if (n11 !== undefined) {
+			this.set(n11, n12, n21, n22)
 		}
-
 	}
 
 	/**
@@ -71,14 +63,9 @@ export class Matrix2 {
 	 * @return {Matrix2} A reference to this matrix.
 	 */
 	identity() {
+		this.set(1, 0, 0, 1)
 
-		this.set(
-			1, 0,
-			0, 1,
-		);
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -88,16 +75,12 @@ export class Matrix2 {
 	 * @param {number} [offset=0] - Index of the first element in the array.
 	 * @return {Matrix2} A reference to this matrix.
 	 */
-	fromArray( array, offset = 0 ) {
-
-		for ( let i = 0; i < 4; i ++ ) {
-
-			this.elements[ i ] = array[ i + offset ];
-
+	fromArray(array, offset = 0) {
+		for (let i = 0; i < 4; i++) {
+			this.elements[i] = array[i + offset]
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -110,15 +93,14 @@ export class Matrix2 {
 	 * @param {number} n22 - 2-2 matrix element.
 	 * @return {Matrix2} A reference to this matrix.
 	 */
-	set( n11, n12, n21, n22 ) {
+	set(n11, n12, n21, n22) {
+		const te = this.elements
 
-		const te = this.elements;
+		te[0] = n11
+		te[2] = n12
+		te[1] = n21
+		te[3] = n22
 
-		te[ 0 ] = n11; te[ 2 ] = n12;
-		te[ 1 ] = n21; te[ 3 ] = n22;
-
-		return this;
-
+		return this
 	}
-
 }

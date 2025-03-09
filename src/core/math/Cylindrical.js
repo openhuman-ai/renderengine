@@ -3,7 +3,6 @@
  * [Cylindrical coordinates]{@link https://en.wikipedia.org/wiki/Cylindrical_coordinate_system}.
  */
 class Cylindrical {
-
 	/**
 	 * Constructs a new cylindrical.
 	 *
@@ -11,15 +10,14 @@ class Cylindrical {
 	 * @param {number} [theta=0] - A counterclockwise angle in the x-z plane measured in radians from the positive z-axis.
 	 * @param {number} [y=0] - The height above the x-z plane.
 	 */
-	constructor( radius = 1, theta = 0, y = 0 ) {
-
+	constructor(radius = 1, theta = 0, y = 0) {
 		/**
 		 * The distance from the origin to a point in the x-z plane.
 		 *
 		 * @type {number}
 		 * @default 1
 		 */
-		this.radius = radius;
+		this.radius = radius
 
 		/**
 		 * A counterclockwise angle in the x-z plane measured in radians from the positive z-axis.
@@ -27,7 +25,7 @@ class Cylindrical {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.theta = theta;
+		this.theta = theta
 
 		/**
 		 * The height above the x-z plane.
@@ -35,8 +33,7 @@ class Cylindrical {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.y = y;
-
+		this.y = y
 	}
 
 	/**
@@ -47,14 +44,12 @@ class Cylindrical {
 	 * @param {number} y - The height value.
 	 * @return {Cylindrical} A reference to this cylindrical.
 	 */
-	set( radius, theta, y ) {
+	set(radius, theta, y) {
+		this.radius = radius
+		this.theta = theta
+		this.y = y
 
-		this.radius = radius;
-		this.theta = theta;
-		this.y = y;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -63,14 +58,12 @@ class Cylindrical {
 	 * @param {Cylindrical} other - The cylindrical to copy.
 	 * @return {Cylindrical} A reference to this cylindrical.
 	 */
-	copy( other ) {
+	copy(other) {
+		this.radius = other.radius
+		this.theta = other.theta
+		this.y = other.y
 
-		this.radius = other.radius;
-		this.theta = other.theta;
-		this.y = other.y;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -80,10 +73,8 @@ class Cylindrical {
 	 * @param {Vector3} v - The vector to set.
 	 * @return {Cylindrical} A reference to this cylindrical.
 	 */
-	setFromVector3( v ) {
-
-		return this.setFromCartesianCoords( v.x, v.y, v.z );
-
+	setFromVector3(v) {
+		return this.setFromCartesianCoords(v.x, v.y, v.z)
 	}
 
 	/**
@@ -94,14 +85,12 @@ class Cylindrical {
 	 * @param {number} z - The x value.
 	 * @return {Cylindrical} A reference to this cylindrical.
 	 */
-	setFromCartesianCoords( x, y, z ) {
+	setFromCartesianCoords(x, y, z) {
+		this.radius = Math.sqrt(x * x + z * z)
+		this.theta = Math.atan2(x, z)
+		this.y = y
 
-		this.radius = Math.sqrt( x * x + z * z );
-		this.theta = Math.atan2( x, z );
-		this.y = y;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -110,11 +99,8 @@ class Cylindrical {
 	 * @return {Cylindrical} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
-
 }
 
-export { Cylindrical };
+export { Cylindrical }

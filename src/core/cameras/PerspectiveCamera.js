@@ -1,11 +1,11 @@
-import { Camera } from './Camera.js';
-import { RAD2DEG, DEG2RAD } from '../math/MathUtils.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Vector3 } from '../math/Vector3.js';
+import { Camera } from "./Camera.js"
+import { RAD2DEG, DEG2RAD } from "../math/MathUtils.js"
+import { Vector2 } from "../math/Vector2.js"
+import { Vector3 } from "../math/Vector3.js"
 
-const _v3 = /*@__PURE__*/ new Vector3();
-const _minTarget = /*@__PURE__*/ new Vector2();
-const _maxTarget = /*@__PURE__*/ new Vector2();
+const _v3 = /*@__PURE__*/ new Vector3()
+const _minTarget = /*@__PURE__*/ new Vector2()
+const _maxTarget = /*@__PURE__*/ new Vector2()
 
 /**
  * Camera that uses [perspective projection]{@link https://en.wikipedia.org/wiki/Perspective_(graphical)}.
@@ -21,7 +21,6 @@ const _maxTarget = /*@__PURE__*/ new Vector2();
  * @augments Camera
  */
 class PerspectiveCamera extends Camera {
-
 	/**
 	 * Constructs a new perspective camera.
 	 *
@@ -30,9 +29,8 @@ class PerspectiveCamera extends Camera {
 	 * @param {number} [near=0.1] - The camera's near plane.
 	 * @param {number} [far=2000] - The camera's far plane.
 	 */
-	constructor( fov = 50, aspect = 1, near = 0.1, far = 2000 ) {
-
-		super();
+	constructor(fov = 50, aspect = 1, near = 0.1, far = 2000) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -41,9 +39,9 @@ class PerspectiveCamera extends Camera {
 		 * @readonly
 		 * @default true
 		 */
-		this.isPerspectiveCamera = true;
+		this.isPerspectiveCamera = true
 
-		this.type = 'PerspectiveCamera';
+		this.type = "PerspectiveCamera"
 
 		/**
 		 * The vertical field of view, from bottom to top of view,
@@ -52,7 +50,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 50
 		 */
-		this.fov = fov;
+		this.fov = fov
 
 		/**
 		 * The zoom factor of the camera.
@@ -60,7 +58,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.zoom = 1;
+		this.zoom = 1
 
 		/**
 		 * The camera's near plane. The valid range is greater than `0`
@@ -72,7 +70,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 0.1
 		 */
-		this.near = near;
+		this.near = near
 
 		/**
 		 * The camera's far plane. Must be greater than the
@@ -81,7 +79,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 2000
 		 */
-		this.far = far;
+		this.far = far
 
 		/**
 		 * Object distance used for stereoscopy and depth-of-field effects. This
@@ -91,7 +89,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 10
 		 */
-		this.focus = 10;
+		this.focus = 10
 
 		/**
 		 * The aspect ratio, usually the canvas width / canvas height.
@@ -99,7 +97,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.aspect = aspect;
+		this.aspect = aspect
 
 		/**
 		 * Represents the frustum window specification. This property should not be edited
@@ -108,7 +106,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {?Object}
 		 * @default null
 		 */
-		this.view = null;
+		this.view = null
 
 		/**
 		 * Film size used for the larger axis. Default is `35` (millimeters). This
@@ -118,7 +116,7 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 35
 		 */
-		this.filmGauge = 35;
+		this.filmGauge = 35
 
 		/**
 		 * Horizontal off-center offset in the same unit as {@link PerspectiveCamera#filmGauge}.
@@ -126,31 +124,28 @@ class PerspectiveCamera extends Camera {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.filmOffset = 0;
+		this.filmOffset = 0
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.fov = source.fov
+		this.zoom = source.zoom
 
-		this.fov = source.fov;
-		this.zoom = source.zoom;
+		this.near = source.near
+		this.far = source.far
+		this.focus = source.focus
 
-		this.near = source.near;
-		this.far = source.far;
-		this.focus = source.focus;
+		this.aspect = source.aspect
+		this.view = source.view === null ? null : Object.assign({}, source.view)
 
-		this.aspect = source.aspect;
-		this.view = source.view === null ? null : Object.assign( {}, source.view );
+		this.filmGauge = source.filmGauge
+		this.filmOffset = source.filmOffset
 
-		this.filmGauge = source.filmGauge;
-		this.filmOffset = source.filmOffset;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -161,14 +156,12 @@ class PerspectiveCamera extends Camera {
 	 *
 	 * @param {number} focalLength - Values for focal length and film gauge must have the same unit.
 	 */
-	setFocalLength( focalLength ) {
-
+	setFocalLength(focalLength) {
 		/** see {@link http://www.bobatkins.com/photography/technical/field_of_view.html} */
-		const vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
+		const vExtentSlope = (0.5 * this.getFilmHeight()) / focalLength
 
-		this.fov = RAD2DEG * 2 * Math.atan( vExtentSlope );
-		this.updateProjectionMatrix();
-
+		this.fov = RAD2DEG * 2 * Math.atan(vExtentSlope)
+		this.updateProjectionMatrix()
 	}
 
 	/**
@@ -178,11 +171,9 @@ class PerspectiveCamera extends Camera {
 	 * @return {number} The computed focal length.
 	 */
 	getFocalLength() {
+		const vExtentSlope = Math.tan(DEG2RAD * 0.5 * this.fov)
 
-		const vExtentSlope = Math.tan( DEG2RAD * 0.5 * this.fov );
-
-		return 0.5 * this.getFilmHeight() / vExtentSlope;
-
+		return (0.5 * this.getFilmHeight()) / vExtentSlope
 	}
 
 	/**
@@ -191,10 +182,7 @@ class PerspectiveCamera extends Camera {
 	 * @return {number} The effective FOV.
 	 */
 	getEffectiveFOV() {
-
-		return RAD2DEG * 2 * Math.atan(
-			Math.tan( DEG2RAD * 0.5 * this.fov ) / this.zoom );
-
+		return RAD2DEG * 2 * Math.atan(Math.tan(DEG2RAD * 0.5 * this.fov) / this.zoom)
 	}
 
 	/**
@@ -204,10 +192,8 @@ class PerspectiveCamera extends Camera {
 	 * @return {number} The film width.
 	 */
 	getFilmWidth() {
-
 		// film not completely covered in portrait format (aspect < 1)
-		return this.filmGauge * Math.min( this.aspect, 1 );
-
+		return this.filmGauge * Math.min(this.aspect, 1)
 	}
 
 	/**
@@ -217,10 +203,8 @@ class PerspectiveCamera extends Camera {
 	 * @return {number} The film width.
 	 */
 	getFilmHeight() {
-
 		// film not completely covered in landscape format (aspect > 1)
-		return this.filmGauge / Math.max( this.aspect, 1 );
-
+		return this.filmGauge / Math.max(this.aspect, 1)
 	}
 
 	/**
@@ -231,16 +215,14 @@ class PerspectiveCamera extends Camera {
 	 * @param {Vector2} minTarget - The lower-left corner of the view rectangle is written into this vector.
 	 * @param {Vector2} maxTarget - The upper-right corner of the view rectangle is written into this vector.
 	 */
-	getViewBounds( distance, minTarget, maxTarget ) {
+	getViewBounds(distance, minTarget, maxTarget) {
+		_v3.set(-1, -1, 0.5).applyMatrix4(this.projectionMatrixInverse)
 
-		_v3.set( - 1, - 1, 0.5 ).applyMatrix4( this.projectionMatrixInverse );
+		minTarget.set(_v3.x, _v3.y).multiplyScalar(-distance / _v3.z)
 
-		minTarget.set( _v3.x, _v3.y ).multiplyScalar( - distance / _v3.z );
+		_v3.set(1, 1, 0.5).applyMatrix4(this.projectionMatrixInverse)
 
-		_v3.set( 1, 1, 0.5 ).applyMatrix4( this.projectionMatrixInverse );
-
-		maxTarget.set( _v3.x, _v3.y ).multiplyScalar( - distance / _v3.z );
-
+		maxTarget.set(_v3.x, _v3.y).multiplyScalar(-distance / _v3.z)
 	}
 
 	/**
@@ -250,12 +232,10 @@ class PerspectiveCamera extends Camera {
 	 * @param {Vector2} target - The target vector that is used to store result where x is width and y is height.
 	 * @returns {Vector2} The view size.
 	 */
-	getViewSize( distance, target ) {
+	getViewSize(distance, target) {
+		this.getViewBounds(distance, _minTarget, _maxTarget)
 
-		this.getViewBounds( distance, _minTarget, _maxTarget );
-
-		return target.subVectors( _maxTarget, _minTarget );
-
+		return target.subVectors(_maxTarget, _minTarget)
 	}
 
 	/**
@@ -301,12 +281,10 @@ class PerspectiveCamera extends Camera {
 	 * @param {number} width - The width of subcamera.
 	 * @param {number} height - The height of subcamera.
 	 */
-	setViewOffset( fullWidth, fullHeight, x, y, width, height ) {
+	setViewOffset(fullWidth, fullHeight, x, y, width, height) {
+		this.aspect = fullWidth / fullHeight
 
-		this.aspect = fullWidth / fullHeight;
-
-		if ( this.view === null ) {
-
+		if (this.view === null) {
 			this.view = {
 				enabled: true,
 				fullWidth: 1,
@@ -314,36 +292,30 @@ class PerspectiveCamera extends Camera {
 				offsetX: 0,
 				offsetY: 0,
 				width: 1,
-				height: 1
-			};
-
+				height: 1,
+			}
 		}
 
-		this.view.enabled = true;
-		this.view.fullWidth = fullWidth;
-		this.view.fullHeight = fullHeight;
-		this.view.offsetX = x;
-		this.view.offsetY = y;
-		this.view.width = width;
-		this.view.height = height;
+		this.view.enabled = true
+		this.view.fullWidth = fullWidth
+		this.view.fullHeight = fullHeight
+		this.view.offsetX = x
+		this.view.offsetY = y
+		this.view.width = width
+		this.view.height = height
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
 	/**
 	 * Removes the view offset from the projection matrix.
 	 */
 	clearViewOffset() {
-
-		if ( this.view !== null ) {
-
-			this.view.enabled = false;
-
+		if (this.view !== null) {
+			this.view.enabled = false
 		}
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
 	/**
@@ -351,57 +323,50 @@ class PerspectiveCamera extends Camera {
 	 * camera properties.
 	 */
 	updateProjectionMatrix() {
+		const near = this.near
+		let top = (near * Math.tan(DEG2RAD * 0.5 * this.fov)) / this.zoom
+		let height = 2 * top
+		let width = this.aspect * height
+		let left = -0.5 * width
+		const view = this.view
 
-		const near = this.near;
-		let top = near * Math.tan( DEG2RAD * 0.5 * this.fov ) / this.zoom;
-		let height = 2 * top;
-		let width = this.aspect * height;
-		let left = - 0.5 * width;
-		const view = this.view;
-
-		if ( this.view !== null && this.view.enabled ) {
-
+		if (this.view !== null && this.view.enabled) {
 			const fullWidth = view.fullWidth,
-				fullHeight = view.fullHeight;
+				fullHeight = view.fullHeight
 
-			left += view.offsetX * width / fullWidth;
-			top -= view.offsetY * height / fullHeight;
-			width *= view.width / fullWidth;
-			height *= view.height / fullHeight;
-
+			left += (view.offsetX * width) / fullWidth
+			top -= (view.offsetY * height) / fullHeight
+			width *= view.width / fullWidth
+			height *= view.height / fullHeight
 		}
 
-		const skew = this.filmOffset;
-		if ( skew !== 0 ) left += near * skew / this.getFilmWidth();
+		const skew = this.filmOffset
+		if (skew !== 0) left += (near * skew) / this.getFilmWidth()
 
-		this.projectionMatrix.makePerspective( left, left + width, top, top - height, near, this.far, this.coordinateSystem );
+		this.projectionMatrix.makePerspective(left, left + width, top, top - height, near, this.far, this.coordinateSystem)
 
-		this.projectionMatrixInverse.copy( this.projectionMatrix ).invert();
-
+		this.projectionMatrixInverse.copy(this.projectionMatrix).invert()
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.object.fov = this.fov
+		data.object.zoom = this.zoom
 
-		data.object.fov = this.fov;
-		data.object.zoom = this.zoom;
+		data.object.near = this.near
+		data.object.far = this.far
+		data.object.focus = this.focus
 
-		data.object.near = this.near;
-		data.object.far = this.far;
-		data.object.focus = this.focus;
+		data.object.aspect = this.aspect
 
-		data.object.aspect = this.aspect;
+		if (this.view !== null) data.object.view = Object.assign({}, this.view)
 
-		if ( this.view !== null ) data.object.view = Object.assign( {}, this.view );
+		data.object.filmGauge = this.filmGauge
+		data.object.filmOffset = this.filmOffset
 
-		data.object.filmGauge = this.filmGauge;
-		data.object.filmOffset = this.filmOffset;
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { PerspectiveCamera };
+export { PerspectiveCamera }

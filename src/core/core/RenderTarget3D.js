@@ -1,5 +1,5 @@
-import { RenderTarget } from './RenderTarget.js';
-import { Data3DTexture } from '../textures/Data3DTexture.js';
+import { RenderTarget } from "./RenderTarget.js"
+import { Data3DTexture } from "../textures/Data3DTexture.js"
 
 /**
  * Represents a 3D render target.
@@ -7,7 +7,6 @@ import { Data3DTexture } from '../textures/Data3DTexture.js';
  * @augments RenderTarget
  */
 class RenderTarget3D extends RenderTarget {
-
 	/**
 	 * Constructs a new 3D render target.
 	 *
@@ -16,9 +15,8 @@ class RenderTarget3D extends RenderTarget {
 	 * @param {number} [depth=1] - The height of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( width = 1, height = 1, depth = 1, options = {} ) {
-
-		super( width, height, options );
+	constructor(width = 1, height = 1, depth = 1, options = {}) {
+		super(width, height, options)
 
 		/**
 		 * This flag can be used for type testing.
@@ -27,21 +25,19 @@ class RenderTarget3D extends RenderTarget {
 		 * @readonly
 		 * @default true
 		 */
-		this.isRenderTarget3D = true;
+		this.isRenderTarget3D = true
 
-		this.depth = depth;
+		this.depth = depth
 
 		/**
 		 * Overwritten with a different texture type.
 		 *
 		 * @type {Data3DTexture}
 		 */
-		this.texture = new Data3DTexture( null, width, height, depth );
+		this.texture = new Data3DTexture(null, width, height, depth)
 
-		this.texture.isRenderTargetTexture = true;
-
+		this.texture.isRenderTargetTexture = true
 	}
-
 }
 
-export { RenderTarget3D };
+export { RenderTarget3D }

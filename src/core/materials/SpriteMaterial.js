@@ -1,5 +1,5 @@
-import { Material } from './Material.js';
-import { Color } from '../math/Color.js';
+import { Material } from "./Material.js"
+import { Color } from "../math/Color.js"
 
 /**
  * A material for rendering instances of {@link Sprite}.
@@ -16,7 +16,6 @@ import { Color } from '../math/Color.js';
  * @augments Material
  */
 class SpriteMaterial extends Material {
-
 	/**
 	 * Constructs a new sprite material.
 	 *
@@ -26,9 +25,8 @@ class SpriteMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -37,9 +35,9 @@ class SpriteMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSpriteMaterial = true;
+		this.isSpriteMaterial = true
 
-		this.type = 'SpriteMaterial';
+		this.type = "SpriteMaterial"
 
 		/**
 		 * Color of the material.
@@ -47,7 +45,7 @@ class SpriteMaterial extends Material {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.color = new Color( 0xffffff );
+		this.color = new Color(0xffffff)
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -57,7 +55,7 @@ class SpriteMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -72,7 +70,7 @@ class SpriteMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * The rotation of the sprite in radians.
@@ -80,7 +78,7 @@ class SpriteMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.rotation = 0;
+		this.rotation = 0
 
 		/**
 		 * Specifies whether size of the sprite is attenuated by the camera depth (perspective camera only).
@@ -88,7 +86,7 @@ class SpriteMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.sizeAttenuation = true;
+		this.sizeAttenuation = true
 
 		/**
 		 * Overwritten since sprite materials are transparent
@@ -97,7 +95,7 @@ class SpriteMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.transparent = true;
+		this.transparent = true
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -105,32 +103,28 @@ class SpriteMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.color.copy( source.color );
+		this.map = source.map
 
-		this.map = source.map;
+		this.alphaMap = source.alphaMap
 
-		this.alphaMap = source.alphaMap;
+		this.rotation = source.rotation
 
-		this.rotation = source.rotation;
+		this.sizeAttenuation = source.sizeAttenuation
 
-		this.sizeAttenuation = source.sizeAttenuation;
+		this.fog = source.fog
 
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { SpriteMaterial };
+export { SpriteMaterial }

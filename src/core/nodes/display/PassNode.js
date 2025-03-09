@@ -1,16 +1,16 @@
-import TempNode from '../core/TempNode.js';
-import { default as TextureNode/*, texture*/ } from '../accessors/TextureNode.js';
-import { NodeUpdateType } from '../core/constants.js';
-import { nodeObject } from '../tsl/TSLBase.js';
-import { uniform } from '../core/UniformNode.js';
-import { viewZToOrthographicDepth, perspectiveDepthToViewZ } from './ViewportDepthNode.js';
+import TempNode from "../core/TempNode.js"
+import { default as TextureNode /*, texture*/ } from "../accessors/TextureNode.js"
+import { NodeUpdateType } from "../core/constants.js"
+import { nodeObject } from "../tsl/TSLBase.js"
+import { uniform } from "../core/UniformNode.js"
+import { viewZToOrthographicDepth, perspectiveDepthToViewZ } from "./ViewportDepthNode.js"
 
-import { HalfFloatType/*, FloatType*/ } from '../../constants.js';
-import { Vector2 } from '../../math/Vector2.js';
-import { DepthTexture } from '../../textures/DepthTexture.js';
-import { RenderTarget } from '../../core/RenderTarget.js';
+import { HalfFloatType /*, FloatType*/ } from "../../constants.js"
+import { Vector2 } from "../../math/Vector2.js"
+import { DepthTexture } from "../../textures/DepthTexture.js"
+import { RenderTarget } from "../../core/RenderTarget.js"
 
-const _size = /*@__PURE__*/ new Vector2();
+const _size = /*@__PURE__*/ new Vector2()
 
 /**
  * Represents the texture of a pass node.
@@ -18,11 +18,8 @@ const _size = /*@__PURE__*/ new Vector2();
  * @augments TextureNode
  */
 class PassTextureNode extends TextureNode {
-
 	static get type() {
-
-		return 'PassTextureNode';
-
+		return "PassTextureNode"
 	}
 
 	/**
@@ -31,35 +28,28 @@ class PassTextureNode extends TextureNode {
 	 * @param {PassNode} passNode - The pass node.
 	 * @param {Texture} texture - The output texture.
 	 */
-	constructor( passNode, texture ) {
-
-		super( texture );
+	constructor(passNode, texture) {
+		super(texture)
 
 		/**
 		 * A reference to the pass node.
 		 *
 		 * @type {PassNode}
 		 */
-		this.passNode = passNode;
+		this.passNode = passNode
 
-		this.setUpdateMatrix( false );
-
+		this.setUpdateMatrix(false)
 	}
 
-	setup( builder ) {
+	setup(builder) {
+		if (builder.object.isQuadMesh) this.passNode.build(builder)
 
-		if ( builder.object.isQuadMesh ) this.passNode.build( builder );
-
-		return super.setup( builder );
-
+		return super.setup(builder)
 	}
 
 	clone() {
-
-		return new this.constructor( this.passNode, this.value );
-
+		return new this.constructor(this.passNode, this.value)
 	}
-
 }
 
 /**
@@ -69,11 +59,8 @@ class PassTextureNode extends TextureNode {
  * @augments PassTextureNode
  */
 class PassMultipleTextureNode extends PassTextureNode {
-
 	static get type() {
-
-		return 'PassMultipleTextureNode';
-
+		return "PassMultipleTextureNode"
 	}
 
 	/**
@@ -83,53 +70,44 @@ class PassMultipleTextureNode extends PassTextureNode {
 	 * @param {string} textureName - The output texture name.
 	 * @param {boolean} [previousTexture=false] - Whether previous frame data should be used or not.
 	 */
-	constructor( passNode, textureName, previousTexture = false ) {
-
+	constructor(passNode, textureName, previousTexture = false) {
 		// null is passed to the super call since this class does not
 		// use an external texture for rendering pass data into. Instead
 		// the texture is managed by the pass node itself
 
-		super( passNode, null );
+		super(passNode, null)
 
 		/**
 		 * The output texture name.
 		 *
 		 * @type {string}
 		 */
-		this.textureName = textureName;
+		this.textureName = textureName
 
 		/**
 		 * Whether previous frame data should be used or not.
 		 *
 		 * @type {boolean}
 		 */
-		this.previousTexture = previousTexture;
-
+		this.previousTexture = previousTexture
 	}
 
 	/**
 	 * Updates the texture reference of this node.
 	 */
 	updateTexture() {
-
-		this.value = this.previousTexture ? this.passNode.getPreviousTexture( this.textureName ) : this.passNode.getTexture( this.textureName );
-
+		this.value = this.previousTexture ? this.passNode.getPreviousTexture(this.textureName) : this.passNode.getTexture(this.textureName)
 	}
 
-	setup( builder ) {
+	setup(builder) {
+		this.updateTexture()
 
-		this.updateTexture();
-
-		return super.setup( builder );
-
+		return super.setup(builder)
 	}
 
 	clone() {
-
-		return new this.constructor( this.passNode, this.textureName, this.previousTexture );
-
+		return new this.constructor(this.passNode, this.textureName, this.previousTexture)
 	}
-
 }
 
 /**
@@ -148,11 +126,8 @@ class PassMultipleTextureNode extends PassTextureNode {
  * @augments TempNode
  */
 class PassNode extends TempNode {
-
 	static get type() {
-
-		return 'PassNode';
-
+		return "PassNode"
 	}
 
 	/**
@@ -163,37 +138,36 @@ class PassNode extends TempNode {
 	 * @param {Camera} camera - A reference to the camera.
 	 * @param {Object} options - Options for the internal render target.
 	 */
-	constructor( scope, scene, camera, options = {} ) {
-
-		super( 'vec4' );
+	constructor(scope, scene, camera, options = {}) {
+		super("vec4")
 
 		/**
 		 * The scope of the pass. The scope determines whether the node outputs color or depth.
 		 *
 		 * @type {('color'|'depth')}
 		 */
-		this.scope = scope;
+		this.scope = scope
 
 		/**
 		 * A reference to the scene.
 		 *
 		 * @type {Scene}
 		 */
-		this.scene = scene;
+		this.scene = scene
 
 		/**
 		 * A reference to the camera.
 		 *
 		 * @type {Camera}
 		 */
-		this.camera = camera;
+		this.camera = camera
 
 		/**
 		 * Options for the internal render target.
 		 *
 		 * @type {Object}
 		 */
-		this.options = options;
+		this.options = options
 
 		/**
 		 * The pass's pixel ratio. Will be kept automatically kept in sync with the renderer's pixel ratio.
@@ -202,7 +176,7 @@ class PassNode extends TempNode {
 		 * @type {number}
 		 * @default 1
 		 */
-		this._pixelRatio = 1;
+		this._pixelRatio = 1
 
 		/**
 		 * The pass's pixel width. Will be kept automatically kept in sync with the renderer's width.
@@ -210,7 +184,7 @@ class PassNode extends TempNode {
 		 * @type {number}
 		 * @default 1
 		 */
-		this._width = 1;
+		this._width = 1
 
 		/**
 		 * The pass's pixel height. Will be kept automatically kept in sync with the renderer's height.
@@ -218,23 +192,23 @@ class PassNode extends TempNode {
 		 * @type {number}
 		 * @default 1
 		 */
-		this._height = 1;
+		this._height = 1
 
-		const depthTexture = new DepthTexture();
-		depthTexture.isRenderTargetTexture = true;
+		const depthTexture = new DepthTexture()
+		depthTexture.isRenderTargetTexture = true
 		//depthTexture.type = FloatType;
-		depthTexture.name = 'depth';
+		depthTexture.name = "depth"
 
-		const renderTarget = new RenderTarget( this._width * this._pixelRatio, this._height * this._pixelRatio, { type: HalfFloatType, ...options, } );
-		renderTarget.texture.name = 'output';
-		renderTarget.depthTexture = depthTexture;
+		const renderTarget = new RenderTarget(this._width * this._pixelRatio, this._height * this._pixelRatio, { type: HalfFloatType, ...options })
+		renderTarget.texture.name = "output"
+		renderTarget.depthTexture = depthTexture
 
 		/**
 		 * The pass's render target.
 		 *
 		 * @type {RenderTarget}
 		 */
-		this.renderTarget = renderTarget;
+		this.renderTarget = renderTarget
 
 		/**
 		 * A dictionary holding the internal result textures.
@@ -244,8 +218,8 @@ class PassNode extends TempNode {
 		 */
 		this._textures = {
 			output: renderTarget.texture,
-			depth: depthTexture
-		};
+			depth: depthTexture,
+		}
 
 		/**
 		 * A dictionary holding the internal texture nodes.
@@ -253,7 +227,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {Object<string, TextureNode>}
 		 */
-		this._textureNodes = {};
+		this._textureNodes = {}
 
 		/**
 		 * A dictionary holding the internal depth nodes.
@@ -261,7 +235,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {Object}
 		 */
-		this._linearDepthNodes = {};
+		this._linearDepthNodes = {}
 
 		/**
 		 * A dictionary holding the internal viewZ nodes.
@@ -269,7 +243,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {Object}
 		 */
-		this._viewZNodes = {};
+		this._viewZNodes = {}
 
 		/**
 		 * A dictionary holding the texture data of the previous frame.
@@ -278,7 +252,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {Object<string, Texture>}
 		 */
-		this._previousTextures = {};
+		this._previousTextures = {}
 
 		/**
 		 * A dictionary holding the texture nodes of the previous frame.
@@ -287,7 +261,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {Object<string, TextureNode>}
 		 */
-		this._previousTextureNodes = {};
+		this._previousTextureNodes = {}
 
 		/**
 		 * The `near` property of the camera as a uniform.
@@ -295,7 +269,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {UniformNode}
 		 */
-		this._cameraNear = uniform( 0 );
+		this._cameraNear = uniform(0)
 
 		/**
 		 * The `far` property of the camera as a uniform.
@@ -303,7 +277,7 @@ class PassNode extends TempNode {
 		 * @private
 		 * @type {UniformNode}
 		 */
-		this._cameraFar = uniform( 0 );
+		this._cameraFar = uniform(0)
 
 		/**
 		 * A MRT node configuring the MRT settings.
@@ -312,11 +286,11 @@ class PassNode extends TempNode {
 		 * @type {?MRTNode}
 		 * @default null
 		 */
-		this._mrt = null;
+		this._mrt = null
 
-		this._layers = null;
+		this._layers = null
 
-		this._resolution = 1;
+		this._resolution = 1
 
 		/**
 		 * This flag can be used for type testing.
@@ -325,7 +299,7 @@ class PassNode extends TempNode {
 		 * @readonly
 		 * @default true
 		 */
-		this.isPassNode = true;
+		this.isPassNode = true
 
 		/**
 		 * The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders the
@@ -334,8 +308,7 @@ class PassNode extends TempNode {
 		 * @type {string}
 		 * @default 'frame'
 		 */
-		this.updateBeforeType = NodeUpdateType.FRAME;
-
+		this.updateBeforeType = NodeUpdateType.FRAME
 	}
 
 	/**
@@ -345,12 +318,10 @@ class PassNode extends TempNode {
 	 * @param {number} resolution - The resolution to set. A value of `1` means full resolution.
 	 * @return {PassNode} A reference to this pass.
 	 */
-	setResolution( resolution ) {
+	setResolution(resolution) {
+		this._resolution = resolution
 
-		this._resolution = resolution;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -360,23 +331,17 @@ class PassNode extends TempNode {
 	 * @default 1
 	 */
 	getResolution() {
-
-		return this._resolution;
-
+		return this._resolution
 	}
 
-	setLayers( layers ) {
+	setLayers(layers) {
+		this._layers = layers
 
-		this._layers = layers;
-
-		return this;
-
+		return this
 	}
 
 	getLayers() {
-
-		return this._layers;
-
+		return this._layers
 	}
 
 	/**
@@ -385,12 +350,10 @@ class PassNode extends TempNode {
 	 * @param {MRTNode} mrt - The MRT object.
 	 * @return {PassNode} A reference to this pass.
 	 */
-	setMRT( mrt ) {
+	setMRT(mrt) {
+		this._mrt = mrt
 
-		this._mrt = mrt;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -399,9 +362,7 @@ class PassNode extends TempNode {
 	 * @return {MRTNode} The current MRT node.
 	 */
 	getMRT() {
-
-		return this._mrt;
-
+		return this._mrt
 	}
 
 	/**
@@ -410,9 +371,7 @@ class PassNode extends TempNode {
 	 * @return {boolean} Whether this node is global or not.
 	 */
 	isGlobal() {
-
-		return true;
-
+		return true
 	}
 
 	/**
@@ -421,25 +380,21 @@ class PassNode extends TempNode {
 	 * @param {string} name - The output name to get the texture for.
 	 * @return {Texture} The texture.
 	 */
-	getTexture( name ) {
+	getTexture(name) {
+		let texture = this._textures[name]
 
-		let texture = this._textures[ name ];
+		if (texture === undefined) {
+			const refTexture = this.renderTarget.texture
 
-		if ( texture === undefined ) {
+			texture = refTexture.clone()
+			texture.name = name
 
-			const refTexture = this.renderTarget.texture;
+			this._textures[name] = texture
 
-			texture = refTexture.clone();
-			texture.name = name;
-
-			this._textures[ name ] = texture;
-
-			this.renderTarget.textures.push( texture );
-
+			this.renderTarget.textures.push(texture)
 		}
 
-		return texture;
-
+		return texture
 	}
 
 	/**
@@ -448,20 +403,16 @@ class PassNode extends TempNode {
 	 * @param {string} name - The output name to get the texture for.
 	 * @return {Texture} The texture holding the data of the previous frame.
 	 */
-	getPreviousTexture( name ) {
+	getPreviousTexture(name) {
+		let texture = this._previousTextures[name]
 
-		let texture = this._previousTextures[ name ];
+		if (texture === undefined) {
+			texture = this.getTexture(name).clone()
 
-		if ( texture === undefined ) {
-
-			texture = this.getTexture( name ).clone();
-
-			this._previousTextures[ name ] = texture;
-
+			this._previousTextures[name] = texture
 		}
 
-		return texture;
-
+		return texture
 	}
 
 	/**
@@ -469,25 +420,21 @@ class PassNode extends TempNode {
 	 *
 	 * @param {string} name - The output name.
 	 */
-	toggleTexture( name ) {
+	toggleTexture(name) {
+		const prevTexture = this._previousTextures[name]
 
-		const prevTexture = this._previousTextures[ name ];
+		if (prevTexture !== undefined) {
+			const texture = this._textures[name]
 
-		if ( prevTexture !== undefined ) {
+			const index = this.renderTarget.textures.indexOf(texture)
+			this.renderTarget.textures[index] = prevTexture
 
-			const texture = this._textures[ name ];
+			this._textures[name] = prevTexture
+			this._previousTextures[name] = texture
 
-			const index = this.renderTarget.textures.indexOf( texture );
-			this.renderTarget.textures[ index ] = prevTexture;
-
-			this._textures[ name ] = prevTexture;
-			this._previousTextures[ name ] = texture;
-
-			this._textureNodes[ name ].updateTexture();
-			this._previousTextureNodes[ name ].updateTexture();
-
+			this._textureNodes[name].updateTexture()
+			this._previousTextureNodes[name].updateTexture()
 		}
-
 	}
 
 	/**
@@ -496,20 +443,16 @@ class PassNode extends TempNode {
 	 * @param {string} [name='output'] - The output name to get the texture node for.
 	 * @return {TextureNode} The texture node.
 	 */
-	getTextureNode( name = 'output' ) {
+	getTextureNode(name = "output") {
+		let textureNode = this._textureNodes[name]
 
-		let textureNode = this._textureNodes[ name ];
-
-		if ( textureNode === undefined ) {
-
-			textureNode = nodeObject( new PassMultipleTextureNode( this, name ) );
-			textureNode.updateTexture();
-			this._textureNodes[ name ] = textureNode;
-
+		if (textureNode === undefined) {
+			textureNode = nodeObject(new PassMultipleTextureNode(this, name))
+			textureNode.updateTexture()
+			this._textureNodes[name] = textureNode
 		}
 
-		return textureNode;
-
+		return textureNode
 	}
 
 	/**
@@ -518,22 +461,18 @@ class PassNode extends TempNode {
 	 * @param {string} [name='output'] - The output name to get the previous texture node for.
 	 * @return {TextureNode} The previous texture node.
 	 */
-	getPreviousTextureNode( name = 'output' ) {
+	getPreviousTextureNode(name = "output") {
+		let textureNode = this._previousTextureNodes[name]
 
-		let textureNode = this._previousTextureNodes[ name ];
+		if (textureNode === undefined) {
+			if (this._textureNodes[name] === undefined) this.getTextureNode(name)
 
-		if ( textureNode === undefined ) {
-
-			if ( this._textureNodes[ name ] === undefined ) this.getTextureNode( name );
-
-			textureNode = nodeObject( new PassMultipleTextureNode( this, name, true ) );
-			textureNode.updateTexture();
-			this._previousTextureNodes[ name ] = textureNode;
-
+			textureNode = nodeObject(new PassMultipleTextureNode(this, name, true))
+			textureNode.updateTexture()
+			this._previousTextureNodes[name] = textureNode
 		}
 
-		return textureNode;
-
+		return textureNode
 	}
 
 	/**
@@ -542,21 +481,17 @@ class PassNode extends TempNode {
 	 * @param {string} [name='depth'] - The output name to get the viewZ node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
 	 * @return {Node} The viewZ node.
 	 */
-	getViewZNode( name = 'depth' ) {
+	getViewZNode(name = "depth") {
+		let viewZNode = this._viewZNodes[name]
 
-		let viewZNode = this._viewZNodes[ name ];
+		if (viewZNode === undefined) {
+			const cameraNear = this._cameraNear
+			const cameraFar = this._cameraFar
 
-		if ( viewZNode === undefined ) {
-
-			const cameraNear = this._cameraNear;
-			const cameraFar = this._cameraFar;
-
-			this._viewZNodes[ name ] = viewZNode = perspectiveDepthToViewZ( this.getTextureNode( name ), cameraNear, cameraFar );
-
+			this._viewZNodes[name] = viewZNode = perspectiveDepthToViewZ(this.getTextureNode(name), cameraNear, cameraFar)
 		}
 
-		return viewZNode;
-
+		return viewZNode
 	}
 
 	/**
@@ -565,104 +500,86 @@ class PassNode extends TempNode {
 	 * @param {string} [name='depth'] - The output name to get the linear depth node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
 	 * @return {Node} The linear depth node.
 	 */
-	getLinearDepthNode( name = 'depth' ) {
+	getLinearDepthNode(name = "depth") {
+		let linearDepthNode = this._linearDepthNodes[name]
 
-		let linearDepthNode = this._linearDepthNodes[ name ];
-
-		if ( linearDepthNode === undefined ) {
-
-			const cameraNear = this._cameraNear;
-			const cameraFar = this._cameraFar;
-			const viewZNode = this.getViewZNode( name );
+		if (linearDepthNode === undefined) {
+			const cameraNear = this._cameraNear
+			const cameraFar = this._cameraFar
+			const viewZNode = this.getViewZNode(name)
 
 			// TODO: just if ( builder.camera.isPerspectiveCamera )
 
-			this._linearDepthNodes[ name ] = linearDepthNode = viewZToOrthographicDepth( viewZNode, cameraNear, cameraFar );
-
+			this._linearDepthNodes[name] = linearDepthNode = viewZToOrthographicDepth(viewZNode, cameraNear, cameraFar)
 		}
 
-		return linearDepthNode;
-
+		return linearDepthNode
 	}
 
-	setup( { renderer } ) {
-
-		this.renderTarget.samples = this.options.samples === undefined ? renderer.samples : this.options.samples;
+	setup({ renderer }) {
+		this.renderTarget.samples = this.options.samples === undefined ? renderer.samples : this.options.samples
 
 		// TODO: Disable MSAA for WebGL backend for now
-		if ( renderer.backend.isWebGLBackend === true ) {
-
-			this.renderTarget.samples = 0;
-
+		if (renderer.backend.isWebGLBackend === true) {
+			this.renderTarget.samples = 0
 		}
 
-		this.renderTarget.texture.type = renderer.getColorBufferType();
+		this.renderTarget.texture.type = renderer.getColorBufferType()
 
-		return this.scope === PassNode.COLOR ? this.getTextureNode() : this.getLinearDepthNode();
-
+		return this.scope === PassNode.COLOR ? this.getTextureNode() : this.getLinearDepthNode()
 	}
 
-	updateBefore( frame ) {
+	updateBefore(frame) {
+		const { renderer } = frame
+		const { scene } = this
 
-		const { renderer } = frame;
-		const { scene } = this;
+		let camera
+		let pixelRatio
 
-		let camera;
-		let pixelRatio;
+		const outputRenderTarget = renderer.getOutputRenderTarget()
 
-		const outputRenderTarget = renderer.getOutputRenderTarget();
+		if (outputRenderTarget && outputRenderTarget.isXRRenderTarget === true) {
+			pixelRatio = 1
+			camera = renderer.xr.getCamera()
 
-		if ( outputRenderTarget && outputRenderTarget.isXRRenderTarget === true ) {
+			renderer.xr.updateCamera(camera)
 
-			pixelRatio = 1;
-			camera = renderer.xr.getCamera();
-
-			renderer.xr.updateCamera( camera );
-
-			_size.set( outputRenderTarget.width, outputRenderTarget.height );
-
+			_size.set(outputRenderTarget.width, outputRenderTarget.height)
 		} else {
+			camera = this.camera
+			pixelRatio = renderer.getPixelRatio()
 
-			camera = this.camera;
-			pixelRatio = renderer.getPixelRatio();
-
-			renderer.getSize( _size );
-
+			renderer.getSize(_size)
 		}
 
-		this._pixelRatio = pixelRatio;
+		this._pixelRatio = pixelRatio
 
-		this.setSize( _size.width, _size.height );
+		this.setSize(_size.width, _size.height)
 
-		const currentRenderTarget = renderer.getRenderTarget();
-		const currentMRT = renderer.getMRT();
-		const currentMask = camera.layers.mask;
+		const currentRenderTarget = renderer.getRenderTarget()
+		const currentMRT = renderer.getMRT()
+		const currentMask = camera.layers.mask
 
-		this._cameraNear.value = camera.near;
-		this._cameraFar.value = camera.far;
+		this._cameraNear.value = camera.near
+		this._cameraFar.value = camera.far
 
-		if ( this._layers !== null ) {
-
-			camera.layers.mask = this._layers.mask;
-
+		if (this._layers !== null) {
+			camera.layers.mask = this._layers.mask
 		}
 
-		for ( const name in this._previousTextures ) {
-
-			this.toggleTexture( name );
-
+		for (const name in this._previousTextures) {
+			this.toggleTexture(name)
 		}
 
-		renderer.setRenderTarget( this.renderTarget );
-		renderer.setMRT( this._mrt );
+		renderer.setRenderTarget(this.renderTarget)
+		renderer.setMRT(this._mrt)
 
-		renderer.render( scene, camera );
+		renderer.render(scene, camera)
 
-		renderer.setRenderTarget( currentRenderTarget );
-		renderer.setMRT( currentMRT );
+		renderer.setRenderTarget(currentRenderTarget)
+		renderer.setMRT(currentMRT)
 
-		camera.layers.mask = currentMask;
-
+		camera.layers.mask = currentMask
 	}
 
 	/**
@@ -671,16 +588,14 @@ class PassNode extends TempNode {
 	 * @param {number} width - The width to set.
 	 * @param {number} height - The height to set.
 	 */
-	setSize( width, height ) {
+	setSize(width, height) {
+		this._width = width
+		this._height = height
 
-		this._width = width;
-		this._height = height;
+		const effectiveWidth = this._width * this._pixelRatio * this._resolution
+		const effectiveHeight = this._height * this._pixelRatio * this._resolution
 
-		const effectiveWidth = this._width * this._pixelRatio * this._resolution;
-		const effectiveHeight = this._height * this._pixelRatio * this._resolution;
-
-		this.renderTarget.setSize( effectiveWidth, effectiveHeight );
-
+		this.renderTarget.setSize(effectiveWidth, effectiveHeight)
 	}
 
 	/**
@@ -688,24 +603,18 @@ class PassNode extends TempNode {
 	 *
 	 * @param {number} pixelRatio - The pixel ratio to set.
 	 */
-	setPixelRatio( pixelRatio ) {
+	setPixelRatio(pixelRatio) {
+		this._pixelRatio = pixelRatio
 
-		this._pixelRatio = pixelRatio;
-
-		this.setSize( this._width, this._height );
-
+		this.setSize(this._width, this._height)
 	}
 
 	/**
 	 * Frees internal resources. Should be called when the node is no longer in use.
 	 */
 	dispose() {
-
-		this.renderTarget.dispose();
-
+		this.renderTarget.dispose()
 	}
-
-
 }
 
 /**
@@ -713,16 +622,16 @@ class PassNode extends TempNode {
  * @type {'color'}
  * @default 'color'
  */
-PassNode.COLOR = 'color';
+PassNode.COLOR = "color"
 
 /**
  * @static
  * @type {'depth'}
  * @default 'depth'
  */
-PassNode.DEPTH = 'depth';
+PassNode.DEPTH = "depth"
 
-export default PassNode;
+export default PassNode
 
 /**
  * TSL function for creating a pass node.
@@ -734,7 +643,7 @@ export default PassNode;
  * @param {Object} options - Options for the internal render target.
  * @returns {PassNode}
  */
-export const pass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.COLOR, scene, camera, options ) );
+export const pass = (scene, camera, options) => nodeObject(new PassNode(PassNode.COLOR, scene, camera, options))
 
 /**
  * TSL function for creating a pass texture node.
@@ -745,7 +654,7 @@ export const pass = ( scene, camera, options ) => nodeObject( new PassNode( Pass
  * @param {Texture} texture - The output texture.
  * @returns {PassTextureNode}
  */
-export const passTexture = ( pass, texture ) => nodeObject( new PassTextureNode( pass, texture ) );
+export const passTexture = (pass, texture) => nodeObject(new PassTextureNode(pass, texture))
 
 /**
  * TSL function for creating a depth pass node.
@@ -757,4 +666,4 @@ export const passTexture = ( pass, texture ) => nodeObject( new PassTextureNode(
  * @param {Object} options - Options for the internal render target.
  * @returns {PassNode}
  */
-export const depthPass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.DEPTH, scene, camera, options ) );
+export const depthPass = (scene, camera, options) => nodeObject(new PassNode(PassNode.DEPTH, scene, camera, options))

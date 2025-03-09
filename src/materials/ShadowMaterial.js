@@ -1,5 +1,5 @@
-import { Material } from './Material.js';
-import { Color } from '../math/Color.js';
+import { Material } from "./Material.js"
+import { Color } from "../math/Color.js"
 
 /**
  * This material can receive shadows, but otherwise is completely transparent.
@@ -20,7 +20,6 @@ import { Color } from '../math/Color.js';
  * @augments Material
  */
 class ShadowMaterial extends Material {
-
 	/**
 	 * Constructs a new shadow material.
 	 *
@@ -30,9 +29,8 @@ class ShadowMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -41,9 +39,9 @@ class ShadowMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isShadowMaterial = true;
+		this.isShadowMaterial = true
 
-		this.type = 'ShadowMaterial';
+		this.type = "ShadowMaterial"
 
 		/**
 		 * Color of the material.
@@ -51,7 +49,7 @@ class ShadowMaterial extends Material {
 		 * @type {Color}
 		 * @default (0,0,0)
 		 */
-		this.color = new Color( 0x000000 );
+		this.color = new Color(0x000000)
 
 		/**
 		 * Overwritten since shadow materials are transparent
@@ -60,7 +58,7 @@ class ShadowMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.transparent = true;
+		this.transparent = true
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -68,24 +66,20 @@ class ShadowMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.color.copy( source.color );
+		this.fog = source.fog
 
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { ShadowMaterial };
+export { ShadowMaterial }

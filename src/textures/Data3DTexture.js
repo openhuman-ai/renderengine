@@ -1,5 +1,5 @@
-import { Texture } from './Texture.js';
-import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
+import { Texture } from "./Texture.js"
+import { ClampToEdgeWrapping, NearestFilter } from "../constants.js"
 
 /**
  * Creates a three-dimensional texture from raw data, with parameters to
@@ -8,7 +8,6 @@ import { ClampToEdgeWrapping, NearestFilter } from '../constants.js';
  * @augments Texture
  */
 class Data3DTexture extends Texture {
-
 	/**
 	 * Constructs a new data array texture.
 	 *
@@ -17,8 +16,7 @@ class Data3DTexture extends Texture {
 	 * @param {number} [height=1] - The height of the texture.
 	 * @param {number} [depth=1] - The depth of the texture.
 	 */
-	constructor( data = null, width = 1, height = 1, depth = 1 ) {
-
+	constructor(data = null, width = 1, height = 1, depth = 1) {
 		// We're going to add .setXXX() methods for setting properties later.
 		// Users can still set in Data3DTexture directly.
 		//
@@ -27,7 +25,7 @@ class Data3DTexture extends Texture {
 		//
 		// See #14839
 
-		super( null );
+		super(null)
 
 		/**
 		 * This flag can be used for type testing.
@@ -36,14 +34,14 @@ class Data3DTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isData3DTexture = true;
+		this.isData3DTexture = true
 
 		/**
 		 * The image definition of a data texture.
 		 *
 		 * @type {{data:TypedArray,width:number,height:number,depth:number}}
 		 */
-		this.image = { data, width, height, depth };
+		this.image = { data, width, height, depth }
 
 		/**
 		 * How the texture is sampled when a texel covers more than one pixel.
@@ -53,7 +51,7 @@ class Data3DTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.magFilter = NearestFilter;
+		this.magFilter = NearestFilter
 
 		/**
 		 * How the texture is sampled when a texel covers less than one pixel.
@@ -63,7 +61,7 @@ class Data3DTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.minFilter = NearestFilter;
+		this.minFilter = NearestFilter
 
 		/**
 		 * This defines how the texture is wrapped in the depth and corresponds to
@@ -72,7 +70,7 @@ class Data3DTexture extends Texture {
 		 * @type {(RepeatWrapping|ClampToEdgeWrapping|MirroredRepeatWrapping)}
 		 * @default ClampToEdgeWrapping
 		 */
-		this.wrapR = ClampToEdgeWrapping;
+		this.wrapR = ClampToEdgeWrapping
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -82,7 +80,7 @@ class Data3DTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -93,7 +91,7 @@ class Data3DTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flipY = false;
+		this.flipY = false
 
 		/**
 		 * Specifies the alignment requirements for the start of each pixel row in memory.
@@ -103,10 +101,8 @@ class Data3DTexture extends Texture {
 		 * @type {boolean}
 		 * @default 1
 		 */
-		this.unpackAlignment = 1;
-
+		this.unpackAlignment = 1
 	}
-
 }
 
-export { Data3DTexture };
+export { Data3DTexture }

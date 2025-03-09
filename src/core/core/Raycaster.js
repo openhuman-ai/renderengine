@@ -1,8 +1,8 @@
-import { Matrix4 } from '../math/Matrix4.js';
-import { Ray } from '../math/Ray.js';
-import { Layers } from './Layers.js';
+import { Matrix4 } from "../math/Matrix4.js"
+import { Ray } from "../math/Ray.js"
+import { Layers } from "./Layers.js"
 
-const _matrix = /*@__PURE__*/ new Matrix4();
+const _matrix = /*@__PURE__*/ new Matrix4()
 
 /**
  * This class is designed to assist with raycasting. Raycasting is used for
@@ -10,7 +10,6 @@ const _matrix = /*@__PURE__*/ new Matrix4();
  * amongst other things.
  */
 class Raycaster {
-
 	/**
 	 * Constructs a new raycaster.
 	 *
@@ -19,14 +18,13 @@ class Raycaster {
 	 * @param {number} [near=0] - All results returned are further away than near. Near can't be negative.
 	 * @param {number} [far=Infinity] - All results returned are closer than far. Far can't be lower than near.
 	 */
-	constructor( origin, direction, near = 0, far = Infinity ) {
-
+	constructor(origin, direction, near = 0, far = Infinity) {
 		/**
 		 * The ray used for raycasting.
 		 *
 		 * @type {Ray}
 		 */
-		this.ray = new Ray( origin, direction );
+		this.ray = new Ray(origin, direction)
 
 		/**
 		 * All results returned are further away than near. Near can't be negative.
@@ -34,7 +32,7 @@ class Raycaster {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.near = near;
+		this.near = near
 
 		/**
 		 * All results returned are further away than near. Near can't be negative.
@@ -42,7 +40,7 @@ class Raycaster {
 		 * @type {number}
 		 * @default Infinity
 		 */
-		this.far = far;
+		this.far = far
 
 		/**
 		 * The camera to use when raycasting against view-dependent objects such as
@@ -52,7 +50,7 @@ class Raycaster {
 		 * @type {?Camera}
 		 * @default null
 		 */
-		this.camera = null;
+		this.camera = null
 
 		/**
 		 * Allows to selectively ignore 3D objects when performing intersection tests.
@@ -65,8 +63,7 @@ class Raycaster {
 		 *
 		 * @type {Layers}
 		 */
-		this.layers = new Layers();
-
+		this.layers = new Layers()
 
 		/**
 		 * A parameter object that configures the raycasting. It has the structure:
@@ -89,9 +86,8 @@ class Raycaster {
 			Line: { threshold: 1 },
 			LOD: {},
 			Points: { threshold: 1 },
-			Sprite: {}
-		};
-
+			Sprite: {},
+		}
 	}
 
 	/**
@@ -100,12 +96,10 @@ class Raycaster {
 	 * @param {Vector3} origin - The origin vector where the ray casts from.
 	 * @param {Vector3} direction - The (normalized) direction vector that gives direction to the ray.
 	 */
-	set( origin, direction ) {
-
+	set(origin, direction) {
 		// direction is assumed to be normalized (for accurate distance calculations)
 
-		this.ray.set( origin, direction );
-
+		this.ray.set(origin, direction)
 	}
 
 	/**
@@ -115,26 +109,18 @@ class Raycaster {
 	 * X and Y components should be between `-1` and `1`.
 	 * @param {Camera} camera - The camera from which the ray should originate.
 	 */
-	setFromCamera( coords, camera ) {
-
-		if ( camera.isPerspectiveCamera ) {
-
-			this.ray.origin.setFromMatrixPosition( camera.matrixWorld );
-			this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ).sub( this.ray.origin ).normalize();
-			this.camera = camera;
-
-		} else if ( camera.isOrthographicCamera ) {
-
-			this.ray.origin.set( coords.x, coords.y, ( camera.near + camera.far ) / ( camera.near - camera.far ) ).unproject( camera ); // set origin in plane of camera
-			this.ray.direction.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
-			this.camera = camera;
-
+	setFromCamera(coords, camera) {
+		if (camera.isPerspectiveCamera) {
+			this.ray.origin.setFromMatrixPosition(camera.matrixWorld)
+			this.ray.direction.set(coords.x, coords.y, 0.5).unproject(camera).sub(this.ray.origin).normalize()
+			this.camera = camera
+		} else if (camera.isOrthographicCamera) {
+			this.ray.origin.set(coords.x, coords.y, (camera.near + camera.far) / (camera.near - camera.far)).unproject(camera) // set origin in plane of camera
+			this.ray.direction.set(0, 0, -1).transformDirection(camera.matrixWorld)
+			this.camera = camera
 		} else {
-
-			console.error( 'THREE.Raycaster: Unsupported camera type: ' + camera.type );
-
+			console.error("THREE.Raycaster: Unsupported camera type: " + camera.type)
 		}
-
 	}
 
 	/**
@@ -143,15 +129,13 @@ class Raycaster {
 	 * @param {WebXRController} controller - The controller to copy the position and direction from.
 	 * @return {Raycaster} A reference to this raycaster.
 	 */
-	setFromXRController( controller ) {
+	setFromXRController(controller) {
+		_matrix.identity().extractRotation(controller.matrixWorld)
 
-		_matrix.identity().extractRotation( controller.matrixWorld );
+		this.ray.origin.setFromMatrixPosition(controller.matrixWorld)
+		this.ray.direction.set(0, 0, -1).applyMatrix4(_matrix)
 
-		this.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-		this.ray.direction.set( 0, 0, - 1 ).applyMatrix4( _matrix );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -190,14 +174,12 @@ class Raycaster {
 	 * @param {Array<Raycaster~Intersection>} [intersects=[]] The target array that holds the result of the method.
 	 * @return {Array<Raycaster~Intersection>} An array holding the intersection points.
 	 */
-	intersectObject( object, recursive = true, intersects = [] ) {
+	intersectObject(object, recursive = true, intersects = []) {
+		intersect(object, this, intersects, recursive)
 
-		intersect( object, this, intersects, recursive );
+		intersects.sort(ascSort)
 
-		intersects.sort( ascSort );
-
-		return intersects;
-
+		return intersects
 	}
 
 	/**
@@ -210,52 +192,37 @@ class Raycaster {
 	 * @param {Array<Raycaster~Intersection>} [intersects=[]] The target array that holds the result of the method.
 	 * @return {Array<Raycaster~Intersection>} An array holding the intersection points.
 	 */
-	intersectObjects( objects, recursive = true, intersects = [] ) {
-
-		for ( let i = 0, l = objects.length; i < l; i ++ ) {
-
-			intersect( objects[ i ], this, intersects, recursive );
-
+	intersectObjects(objects, recursive = true, intersects = []) {
+		for (let i = 0, l = objects.length; i < l; i++) {
+			intersect(objects[i], this, intersects, recursive)
 		}
 
-		intersects.sort( ascSort );
+		intersects.sort(ascSort)
 
-		return intersects;
-
+		return intersects
 	}
-
 }
 
-function ascSort( a, b ) {
-
-	return a.distance - b.distance;
-
+function ascSort(a, b) {
+	return a.distance - b.distance
 }
 
-function intersect( object, raycaster, intersects, recursive ) {
+function intersect(object, raycaster, intersects, recursive) {
+	let propagate = true
 
-	let propagate = true;
+	if (object.layers.test(raycaster.layers)) {
+		const result = object.raycast(raycaster, intersects)
 
-	if ( object.layers.test( raycaster.layers ) ) {
-
-		const result = object.raycast( raycaster, intersects );
-
-		if ( result === false ) propagate = false;
-
+		if (result === false) propagate = false
 	}
 
-	if ( propagate === true && recursive === true ) {
+	if (propagate === true && recursive === true) {
+		const children = object.children
 
-		const children = object.children;
-
-		for ( let i = 0, l = children.length; i < l; i ++ ) {
-
-			intersect( children[ i ], raycaster, intersects, true );
-
+		for (let i = 0, l = children.length; i < l; i++) {
+			intersect(children[i], raycaster, intersects, true)
 		}
-
 	}
-
 }
 
-export { Raycaster };
+export { Raycaster }

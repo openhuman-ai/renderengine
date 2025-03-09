@@ -1,11 +1,11 @@
-import { Vector3 } from '../math/Vector3.js';
-import { Quaternion } from '../math/Quaternion.js';
-import { Audio } from './Audio.js';
+import { Vector3 } from "../math/Vector3.js"
+import { Quaternion } from "../math/Quaternion.js"
+import { Audio } from "./Audio.js"
 
-const _position = /*@__PURE__*/ new Vector3();
-const _quaternion = /*@__PURE__*/ new Quaternion();
-const _scale = /*@__PURE__*/ new Vector3();
-const _orientation = /*@__PURE__*/ new Vector3();
+const _position = /*@__PURE__*/ new Vector3()
+const _quaternion = /*@__PURE__*/ new Quaternion()
+const _scale = /*@__PURE__*/ new Vector3()
+const _orientation = /*@__PURE__*/ new Vector3()
 
 /**
  * Represents a positional audio object.
@@ -38,15 +38,13 @@ const _orientation = /*@__PURE__*/ new Vector3();
  * @augments Audio
  */
 class PositionalAudio extends Audio {
-
 	/**
 	 * Constructs a positional audio.
 	 *
 	 * @param {AudioListener} listener - The global audio listener.
 	 */
-	constructor( listener ) {
-
-		super( listener );
+	constructor(listener) {
+		super(listener)
 
 		/**
 		 * The panner node represents the location, direction, and behavior of an audio
@@ -55,36 +53,29 @@ class PositionalAudio extends Audio {
 		 * @type {PannerNode}
 		 * @readonly
 		 */
-		this.panner = this.context.createPanner();
-		this.panner.panningModel = 'HRTF';
-		this.panner.connect( this.gain );
-
+		this.panner = this.context.createPanner()
+		this.panner.panningModel = "HRTF"
+		this.panner.connect(this.gain)
 	}
 
 	connect() {
+		super.connect()
 
-		super.connect();
+		this.panner.connect(this.gain)
 
-		this.panner.connect( this.gain );
-
-		return this;
-
+		return this
 	}
 
 	disconnect() {
+		super.disconnect()
 
-		super.disconnect();
+		this.panner.disconnect(this.gain)
 
-		this.panner.disconnect( this.gain );
-
-		return this;
-
+		return this
 	}
 
 	getOutput() {
-
-		return this.panner;
-
+		return this.panner
 	}
 
 	/**
@@ -93,9 +84,7 @@ class PositionalAudio extends Audio {
 	 * @return {number} The reference distance.
 	 */
 	getRefDistance() {
-
-		return this.panner.refDistance;
-
+		return this.panner.refDistance
 	}
 
 	/**
@@ -106,12 +95,10 @@ class PositionalAudio extends Audio {
 	 * @param {number} value - The reference distance to set.
 	 * @return {PositionalAudio} A reference to this instance.
 	 */
-	setRefDistance( value ) {
+	setRefDistance(value) {
+		this.panner.refDistance = value
 
-		this.panner.refDistance = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -120,9 +107,7 @@ class PositionalAudio extends Audio {
 	 * @return {number} The rolloff factor.
 	 */
 	getRolloffFactor() {
-
-		return this.panner.rolloffFactor;
-
+		return this.panner.rolloffFactor
 	}
 
 	/**
@@ -131,12 +116,10 @@ class PositionalAudio extends Audio {
 	 * @param {number} value - The rolloff factor.
 	 * @return {PositionalAudio} A reference to this instance.
 	 */
-	setRolloffFactor( value ) {
+	setRolloffFactor(value) {
+		this.panner.rolloffFactor = value
 
-		this.panner.rolloffFactor = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -145,9 +128,7 @@ class PositionalAudio extends Audio {
 	 * @return {('linear'|'inverse'|'exponential')} The distance model.
 	 */
 	getDistanceModel() {
-
-		return this.panner.distanceModel;
-
+		return this.panner.distanceModel
 	}
 
 	/**
@@ -160,12 +141,10 @@ class PositionalAudio extends Audio {
 	 * @param {('linear'|'inverse'|'exponential')} value - The distance model to set.
 	 * @return {PositionalAudio} A reference to this instance.
 	 */
-	setDistanceModel( value ) {
+	setDistanceModel(value) {
+		this.panner.distanceModel = value
 
-		this.panner.distanceModel = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -174,9 +153,7 @@ class PositionalAudio extends Audio {
 	 * @return {number} The max distance.
 	 */
 	getMaxDistance() {
-
-		return this.panner.maxDistance;
-
+		return this.panner.maxDistance
 	}
 
 	/**
@@ -188,12 +165,10 @@ class PositionalAudio extends Audio {
 	 * @param {number} value - The max distance.
 	 * @return {PositionalAudio} A reference to this instance.
 	 */
-	setMaxDistance( value ) {
+	setMaxDistance(value) {
+		this.panner.maxDistance = value
 
-		this.panner.maxDistance = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -204,50 +179,41 @@ class PositionalAudio extends Audio {
 	 * @param {number} coneOuterGain - The amount of volume reduction outside the cone defined by the `coneOuterAngle`. When set to `0`, no sound can be heard.
 	 * @return {PositionalAudio} A reference to this instance.
 	 */
-	setDirectionalCone( coneInnerAngle, coneOuterAngle, coneOuterGain ) {
+	setDirectionalCone(coneInnerAngle, coneOuterAngle, coneOuterGain) {
+		this.panner.coneInnerAngle = coneInnerAngle
+		this.panner.coneOuterAngle = coneOuterAngle
+		this.panner.coneOuterGain = coneOuterGain
 
-		this.panner.coneInnerAngle = coneInnerAngle;
-		this.panner.coneOuterAngle = coneOuterAngle;
-		this.panner.coneOuterGain = coneOuterGain;
-
-		return this;
-
+		return this
 	}
 
-	updateMatrixWorld( force ) {
+	updateMatrixWorld(force) {
+		super.updateMatrixWorld(force)
 
-		super.updateMatrixWorld( force );
+		if (this.hasPlaybackControl === true && this.isPlaying === false) return
 
-		if ( this.hasPlaybackControl === true && this.isPlaying === false ) return;
+		this.matrixWorld.decompose(_position, _quaternion, _scale)
 
-		this.matrixWorld.decompose( _position, _quaternion, _scale );
+		_orientation.set(0, 0, 1).applyQuaternion(_quaternion)
 
-		_orientation.set( 0, 0, 1 ).applyQuaternion( _quaternion );
+		const panner = this.panner
 
-		const panner = this.panner;
-
-		if ( panner.positionX ) {
-
+		if (panner.positionX) {
 			// code path for Chrome and Firefox (see #14393)
 
-			const endTime = this.context.currentTime + this.listener.timeDelta;
+			const endTime = this.context.currentTime + this.listener.timeDelta
 
-			panner.positionX.linearRampToValueAtTime( _position.x, endTime );
-			panner.positionY.linearRampToValueAtTime( _position.y, endTime );
-			panner.positionZ.linearRampToValueAtTime( _position.z, endTime );
-			panner.orientationX.linearRampToValueAtTime( _orientation.x, endTime );
-			panner.orientationY.linearRampToValueAtTime( _orientation.y, endTime );
-			panner.orientationZ.linearRampToValueAtTime( _orientation.z, endTime );
-
+			panner.positionX.linearRampToValueAtTime(_position.x, endTime)
+			panner.positionY.linearRampToValueAtTime(_position.y, endTime)
+			panner.positionZ.linearRampToValueAtTime(_position.z, endTime)
+			panner.orientationX.linearRampToValueAtTime(_orientation.x, endTime)
+			panner.orientationY.linearRampToValueAtTime(_orientation.y, endTime)
+			panner.orientationZ.linearRampToValueAtTime(_orientation.z, endTime)
 		} else {
-
-			panner.setPosition( _position.x, _position.y, _position.z );
-			panner.setOrientation( _orientation.x, _orientation.y, _orientation.z );
-
+			panner.setPosition(_position.x, _position.y, _position.z)
+			panner.setOrientation(_orientation.x, _orientation.y, _orientation.z)
 		}
-
 	}
-
 }
 
-export { PositionalAudio };
+export { PositionalAudio }

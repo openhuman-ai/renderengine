@@ -1,4 +1,4 @@
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { KeyframeTrack } from "../KeyframeTrack.js"
 
 /**
  * A track for vector keyframe values.
@@ -6,7 +6,6 @@ import { KeyframeTrack } from '../KeyframeTrack.js';
  * @augments KeyframeTrack
  */
 class VectorKeyframeTrack extends KeyframeTrack {
-
 	/**
 	 * Constructs a new vector keyframe track.
 	 *
@@ -15,12 +14,9 @@ class VectorKeyframeTrack extends KeyframeTrack {
 	 * @param {Array<number>} values - A list of keyframe values.
 	 * @param {(InterpolateLinear|InterpolateDiscrete|InterpolateSmooth)} [interpolation] - The interpolation type.
 	 */
-	constructor( name, times, values, interpolation ) {
-
-		super( name, times, values, interpolation );
-
+	constructor(name, times, values, interpolation) {
+		super(name, times, values, interpolation)
 	}
-
 }
 
 /**
@@ -29,8 +25,8 @@ class VectorKeyframeTrack extends KeyframeTrack {
  * @type {String}
  * @default 'vector'
  */
-VectorKeyframeTrack.prototype.ValueTypeName = 'vector';
+VectorKeyframeTrack.prototype.ValueTypeName = "vector"
 // ValueBufferType is inherited
 // DefaultInterpolation is inherited
 
-export { VectorKeyframeTrack };
+export { VectorKeyframeTrack }

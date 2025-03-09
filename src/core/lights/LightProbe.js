@@ -1,5 +1,5 @@
-import { SphericalHarmonics3 } from '../math/SphericalHarmonics3.js';
-import { Light } from './Light.js';
+import { SphericalHarmonics3 } from "../math/SphericalHarmonics3.js"
+import { Light } from "./Light.js"
 
 /**
  * Light probes are an alternative way of adding light to a 3D scene. Unlike
@@ -21,16 +21,14 @@ import { Light } from './Light.js';
  * @augments Light
  */
 class LightProbe extends Light {
-
 	/**
 	 * Constructs a new light probe.
 	 *
 	 * @param {SphericalHarmonics3} sh - The spherical harmonics which represents encoded lighting information.
 	 * @param {number} [intensity=1] - The light's strength/intensity.
 	 */
-	constructor( sh = new SphericalHarmonics3(), intensity = 1 ) {
-
-		super( undefined, intensity );
+	constructor(sh = new SphericalHarmonics3(), intensity = 1) {
+		super(undefined, intensity)
 
 		/**
 		 * This flag can be used for type testing.
@@ -39,25 +37,22 @@ class LightProbe extends Light {
 		 * @readonly
 		 * @default true
 		 */
-		this.isLightProbe = true;
+		this.isLightProbe = true
 
 		/**
 		 * A light probe uses spherical harmonics to encode lighting information.
 		 *
 		 * @type {SphericalHarmonics3}
 		 */
-		this.sh = sh;
-
+		this.sh = sh
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.sh.copy(source.sh)
 
-		this.sh.copy( source.sh );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -66,25 +61,20 @@ class LightProbe extends Light {
 	 * @param {Object} json - The JSON holding the serialized light probe.
 	 * @return {LightProbe} A reference to this light probe.
 	 */
-	fromJSON( json ) {
+	fromJSON(json) {
+		this.intensity = json.intensity // TODO: Move this bit to Light.fromJSON();
+		this.sh.fromArray(json.sh)
 
-		this.intensity = json.intensity; // TODO: Move this bit to Light.fromJSON();
-		this.sh.fromArray( json.sh );
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.object.sh = this.sh.toArray()
 
-		data.object.sh = this.sh.toArray();
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { LightProbe };
+export { LightProbe }

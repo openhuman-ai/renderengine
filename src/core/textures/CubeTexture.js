@@ -1,5 +1,5 @@
-import { Texture } from './Texture.js';
-import { CubeReflectionMapping } from '../constants.js';
+import { Texture } from "./Texture.js"
+import { CubeReflectionMapping } from "../constants.js"
 
 /**
  * Creates a cube texture made up of six images.
@@ -18,7 +18,6 @@ import { CubeReflectionMapping } from '../constants.js';
  * @augments Texture
  */
 class CubeTexture extends Texture {
-
 	/**
 	 * Constructs a new cube texture.
 	 *
@@ -33,9 +32,8 @@ class CubeTexture extends Texture {
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 * @param {string} [colorSpace=NoColorSpace] - The color space value.
 	 */
-	constructor( images = [], mapping = CubeReflectionMapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace ) {
-
-		super( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace );
+	constructor(images = [], mapping = CubeReflectionMapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace) {
+		super(images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace)
 
 		/**
 		 * This flag can be used for type testing.
@@ -44,7 +42,7 @@ class CubeTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isCubeTexture = true;
+		this.isCubeTexture = true
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -55,8 +53,7 @@ class CubeTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flipY = false;
-
+		this.flipY = false
 	}
 
 	/**
@@ -65,17 +62,12 @@ class CubeTexture extends Texture {
 	 * @type {Array<Image>}
 	 */
 	get images() {
-
-		return this.image;
-
+		return this.image
 	}
 
-	set images( value ) {
-
-		this.image = value;
-
+	set images(value) {
+		this.image = value
 	}
-
 }
 
-export { CubeTexture };
+export { CubeTexture }

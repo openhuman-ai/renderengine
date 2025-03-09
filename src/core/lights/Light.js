@@ -1,5 +1,5 @@
-import { Object3D } from '../core/Object3D.js';
-import { Color } from '../math/Color.js';
+import { Object3D } from "../core/Object3D.js"
+import { Color } from "../math/Color.js"
 
 /**
  * Abstract base class for lights - all other light types inherit the
@@ -9,16 +9,14 @@ import { Color } from '../math/Color.js';
  * @augments Object3D
  */
 class Light extends Object3D {
-
 	/**
 	 * Constructs a new light.
 	 *
 	 * @param {(number|Color|string)} [color=0xffffff] - The light's color.
 	 * @param {number} [intensity=1] - The light's strength/intensity.
 	 */
-	constructor( color, intensity = 1 ) {
-
-		super();
+	constructor(color, intensity = 1) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -27,16 +25,16 @@ class Light extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.isLight = true;
+		this.isLight = true
 
-		this.type = 'Light';
+		this.type = "Light"
 
 		/**
 		 * The light's color.
 		 *
 		 * @type {Color}
 		 */
-		this.color = new Color( color );
+		this.color = new Color(color)
 
 		/**
 		 * The light's intensity.
@@ -44,8 +42,7 @@ class Light extends Object3D {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.intensity = intensity;
-
+		this.intensity = intensity
 	}
 
 	/**
@@ -53,43 +50,36 @@ class Light extends Object3D {
 	 * method whenever this instance is no longer used in your app.
 	 */
 	dispose() {
-
 		// Empty here in base class; some subclasses override.
-
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.color.copy(source.color)
+		this.intensity = source.intensity
 
-		this.color.copy( source.color );
-		this.intensity = source.intensity;
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.object.color = this.color.getHex()
+		data.object.intensity = this.intensity
 
-		data.object.color = this.color.getHex();
-		data.object.intensity = this.intensity;
+		if (this.groundColor !== undefined) data.object.groundColor = this.groundColor.getHex()
 
-		if ( this.groundColor !== undefined ) data.object.groundColor = this.groundColor.getHex();
+		if (this.distance !== undefined) data.object.distance = this.distance
+		if (this.angle !== undefined) data.object.angle = this.angle
+		if (this.decay !== undefined) data.object.decay = this.decay
+		if (this.penumbra !== undefined) data.object.penumbra = this.penumbra
 
-		if ( this.distance !== undefined ) data.object.distance = this.distance;
-		if ( this.angle !== undefined ) data.object.angle = this.angle;
-		if ( this.decay !== undefined ) data.object.decay = this.decay;
-		if ( this.penumbra !== undefined ) data.object.penumbra = this.penumbra;
+		if (this.shadow !== undefined) data.object.shadow = this.shadow.toJSON()
+		if (this.target !== undefined) data.object.target = this.target.uuid
 
-		if ( this.shadow !== undefined ) data.object.shadow = this.shadow.toJSON();
-		if ( this.target !== undefined ) data.object.target = this.target.uuid;
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { Light };
+export { Light }

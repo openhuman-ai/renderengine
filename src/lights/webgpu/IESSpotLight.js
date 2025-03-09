@@ -1,4 +1,4 @@
-import { SpotLight } from '../SpotLight.js';
+import { SpotLight } from "../SpotLight.js"
 
 /**
  * A IES version of {@link SpotLight}. Can only be used with {@link WebGPURenderer}.
@@ -6,7 +6,6 @@ import { SpotLight } from '../SpotLight.js';
  * @augments SpotLight
  */
 class IESSpotLight extends SpotLight {
-
 	/**
 	 * Constructs a new IES spot light.
 	 *
@@ -17,9 +16,8 @@ class IESSpotLight extends SpotLight {
 	 * @param {number} [penumbra=0] - Percent of the spotlight cone that is attenuated due to penumbra. Value range is `[0,1]`.
 	 * @param {number} [decay=2] - The amount the light dims along the distance of the light.
 	 */
-	constructor( color, intensity, distance, angle, penumbra, decay ) {
-
-		super( color, intensity, distance, angle, penumbra, decay );
+	constructor(color, intensity, distance, angle, penumbra, decay) {
+		super(color, intensity, distance, angle, penumbra, decay)
 
 		/**
 		 * TODO
@@ -27,20 +25,16 @@ class IESSpotLight extends SpotLight {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.iesMap = null;
-
+		this.iesMap = null
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.iesMap = source.iesMap
 
-		this.iesMap = source.iesMap;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export default IESSpotLight;
+export default IESSpotLight

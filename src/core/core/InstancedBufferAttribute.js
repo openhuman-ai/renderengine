@@ -1,4 +1,4 @@
-import { BufferAttribute } from './BufferAttribute.js';
+import { BufferAttribute } from "./BufferAttribute.js"
 
 /**
  * An instanced version of a buffer attribute.
@@ -6,7 +6,6 @@ import { BufferAttribute } from './BufferAttribute.js';
  * @augments BufferAttribute
  */
 class InstancedBufferAttribute extends BufferAttribute {
-
 	/**
 	 * Constructs a new instanced buffer attribute.
 	 *
@@ -15,9 +14,8 @@ class InstancedBufferAttribute extends BufferAttribute {
 	 * @param {boolean} [normalized=false] - Whether the data are normalized or not.
 	 * @param {number} [meshPerAttribute=1] - How often a value of this buffer attribute should be repeated.
 	 */
-	constructor( array, itemSize, normalized, meshPerAttribute = 1 ) {
-
-		super( array, itemSize, normalized );
+	constructor(array, itemSize, normalized, meshPerAttribute = 1) {
+		super(array, itemSize, normalized)
 
 		/**
 		 * This flag can be used for type testing.
@@ -26,7 +24,7 @@ class InstancedBufferAttribute extends BufferAttribute {
 		 * @readonly
 		 * @default true
 		 */
-		this.isInstancedBufferAttribute = true;
+		this.isInstancedBufferAttribute = true
 
 		/**
 		 * Defines how often a value of this buffer attribute should be repeated. A
@@ -37,32 +35,26 @@ class InstancedBufferAttribute extends BufferAttribute {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.meshPerAttribute = meshPerAttribute;
-
+		this.meshPerAttribute = meshPerAttribute
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.meshPerAttribute = source.meshPerAttribute
 
-		this.meshPerAttribute = source.meshPerAttribute;
-
-		return this;
-
+		return this
 	}
 
 	toJSON() {
+		const data = super.toJSON()
 
-		const data = super.toJSON();
+		data.meshPerAttribute = this.meshPerAttribute
 
-		data.meshPerAttribute = this.meshPerAttribute;
+		data.isInstancedBufferAttribute = true
 
-		data.isInstancedBufferAttribute = true;
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { InstancedBufferAttribute };
+export { InstancedBufferAttribute }

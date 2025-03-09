@@ -1,4 +1,4 @@
-import { EllipseCurve } from './EllipseCurve.js';
+import { EllipseCurve } from "./EllipseCurve.js"
 
 /**
  * A curve representing an arc.
@@ -6,7 +6,6 @@ import { EllipseCurve } from './EllipseCurve.js';
  * @augments EllipseCurve
  */
 class ArcCurve extends EllipseCurve {
-
 	/**
 	 * Constructs a new arc curve.
 	 *
@@ -17,9 +16,8 @@ class ArcCurve extends EllipseCurve {
 	 * @param {number} [aEndAngle=Math.PI*2] - The end angle of the curve in radians starting from the positive X axis.
 	 * @param {boolean} [aClockwise=false] - Whether the ellipse is drawn clockwise or not.
 	 */
-	constructor( aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise ) {
-
-		super( aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise );
+	constructor(aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise) {
+		super(aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise)
 
 		/**
 		 * This flag can be used for type testing.
@@ -28,12 +26,10 @@ class ArcCurve extends EllipseCurve {
 		 * @readonly
 		 * @default true
 		 */
-		this.isArcCurve = true;
+		this.isArcCurve = true
 
-		this.type = 'ArcCurve';
-
+		this.type = "ArcCurve"
 	}
-
 }
 
-export { ArcCurve };
+export { ArcCurve }

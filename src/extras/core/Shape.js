@@ -1,5 +1,5 @@
-import { Path } from './Path.js';
-import { generateUUID } from '../../math/MathUtils.js';
+import { Path } from "./Path.js"
+import { generateUUID } from "../../math/MathUtils.js"
 
 /**
  * Defines an arbitrary 2d shape plane using paths with optional holes. It
@@ -33,15 +33,13 @@ import { generateUUID } from '../../math/MathUtils.js';
  * @augments Path
  */
 class Shape extends Path {
-
 	/**
 	 * Constructs a new shape.
 	 *
 	 * @param {Array<Vector2>} [points] - An array of 2D points defining the shape.
 	 */
-	constructor( points ) {
-
-		super( points );
+	constructor(points) {
+		super(points)
 
 		/**
 		 * The UUID of the shape.
@@ -49,9 +47,9 @@ class Shape extends Path {
 		 * @type {string}
 		 * @readonly
 		 */
-		this.uuid = generateUUID();
+		this.uuid = generateUUID()
 
-		this.type = 'Shape';
+		this.type = "Shape"
 
 		/**
 		 * Defines the holes in the shape. Hole definitions must use the
@@ -60,8 +58,7 @@ class Shape extends Path {
 		 * @type {Array<Path>}
 		 * @readonly
 		 */
-		this.holes = [];
-
+		this.holes = []
 	}
 
 	/**
@@ -71,18 +68,14 @@ class Shape extends Path {
 	 * @param {number} divisions - The fineness of the result.
 	 * @return {Array<Array<Vector2>>} The holes as a series of 2D points.
 	 */
-	getPointsHoles( divisions ) {
+	getPointsHoles(divisions) {
+		const holesPts = []
 
-		const holesPts = [];
-
-		for ( let i = 0, l = this.holes.length; i < l; i ++ ) {
-
-			holesPts[ i ] = this.holes[ i ].getPoints( divisions );
-
+		for (let i = 0, l = this.holes.length; i < l; i++) {
+			holesPts[i] = this.holes[i].getPoints(divisions)
 		}
 
-		return holesPts;
-
+		return holesPts
 	}
 
 	// get points of shape and holes (keypoints based on segments parameter)
@@ -94,72 +87,54 @@ class Shape extends Path {
 	 * @param {number} divisions - The fineness of the result.
 	 * @return {{shape:Array<Vector2>,holes:Array<Array<Vector2>>}} An object with contour data.
 	 */
-	extractPoints( divisions ) {
-
+	extractPoints(divisions) {
 		return {
-
-			shape: this.getPoints( divisions ),
-			holes: this.getPointsHoles( divisions )
-
-		};
-
+			shape: this.getPoints(divisions),
+			holes: this.getPointsHoles(divisions),
+		}
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.holes = []
 
-		this.holes = [];
+		for (let i = 0, l = source.holes.length; i < l; i++) {
+			const hole = source.holes[i]
 
-		for ( let i = 0, l = source.holes.length; i < l; i ++ ) {
-
-			const hole = source.holes[ i ];
-
-			this.holes.push( hole.clone() );
-
+			this.holes.push(hole.clone())
 		}
 
-		return this;
-
+		return this
 	}
 
 	toJSON() {
+		const data = super.toJSON()
 
-		const data = super.toJSON();
+		data.uuid = this.uuid
+		data.holes = []
 
-		data.uuid = this.uuid;
-		data.holes = [];
-
-		for ( let i = 0, l = this.holes.length; i < l; i ++ ) {
-
-			const hole = this.holes[ i ];
-			data.holes.push( hole.toJSON() );
-
+		for (let i = 0, l = this.holes.length; i < l; i++) {
+			const hole = this.holes[i]
+			data.holes.push(hole.toJSON())
 		}
 
-		return data;
-
+		return data
 	}
 
-	fromJSON( json ) {
+	fromJSON(json) {
+		super.fromJSON(json)
 
-		super.fromJSON( json );
+		this.uuid = json.uuid
+		this.holes = []
 
-		this.uuid = json.uuid;
-		this.holes = [];
-
-		for ( let i = 0, l = json.holes.length; i < l; i ++ ) {
-
-			const hole = json.holes[ i ];
-			this.holes.push( new Path().fromJSON( hole ) );
-
+		for (let i = 0, l = json.holes.length; i < l; i++) {
+			const hole = json.holes[i]
+			this.holes.push(new Path().fromJSON(hole))
 		}
 
-		return this;
-
+		return this
 	}
-
 }
 
-
-export { Shape };
+export { Shape }

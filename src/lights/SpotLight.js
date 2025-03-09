@@ -1,6 +1,6 @@
-import { Light } from './Light.js';
-import { SpotLightShadow } from './SpotLightShadow.js';
-import { Object3D } from '../core/Object3D.js';
+import { Light } from "./Light.js"
+import { SpotLightShadow } from "./SpotLightShadow.js"
+import { Object3D } from "../core/Object3D.js"
 
 /**
  * This light gets emitted from a single point in one direction, along a cone
@@ -25,7 +25,6 @@ import { Object3D } from '../core/Object3D.js';
  * @augments Light
  */
 class SpotLight extends Light {
-
 	/**
 	 * Constructs a new spot light.
 	 *
@@ -36,9 +35,8 @@ class SpotLight extends Light {
 	 * @param {number} [penumbra=0] - Percent of the spotlight cone that is attenuated due to penumbra. Value range is `[0,1]`.
 	 * @param {number} [decay=2] - The amount the light dims along the distance of the light.
 	 */
-	constructor( color, intensity, distance = 0, angle = Math.PI / 3, penumbra = 0, decay = 2 ) {
-
-		super( color, intensity );
+	constructor(color, intensity, distance = 0, angle = Math.PI / 3, penumbra = 0, decay = 2) {
+		super(color, intensity)
 
 		/**
 		 * This flag can be used for type testing.
@@ -47,12 +45,12 @@ class SpotLight extends Light {
 		 * @readonly
 		 * @default true
 		 */
-		this.isSpotLight = true;
+		this.isSpotLight = true
 
-		this.type = 'SpotLight';
+		this.type = "SpotLight"
 
-		this.position.copy( Object3D.DEFAULT_UP );
-		this.updateMatrix();
+		this.position.copy(Object3D.DEFAULT_UP)
+		this.updateMatrix()
 
 		/**
 		 * The spot light points from its position to the
@@ -66,7 +64,7 @@ class SpotLight extends Light {
 		 *
 		 * @type {Object3D}
 		 */
-		this.target = new Object3D();
+		this.target = new Object3D()
 
 		/**
 		 * Maximum range of the light. `0` means no limit.
@@ -74,7 +72,7 @@ class SpotLight extends Light {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.distance = distance;
+		this.distance = distance
 
 		/**
 		 * Maximum angle of light dispersion from its direction whose upper bound is `Math.PI/2`.
@@ -82,7 +80,7 @@ class SpotLight extends Light {
 		 * @type {number}
 		 * @default Math.PI/3
 		 */
-		this.angle = angle;
+		this.angle = angle
 
 		/**
 		 * Percent of the spotlight cone that is attenuated due to penumbra.
@@ -91,7 +89,7 @@ class SpotLight extends Light {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.penumbra = penumbra;
+		this.penumbra = penumbra
 
 		/**
 		 * The amount the light dims along the distance of the light. In context of
@@ -100,7 +98,7 @@ class SpotLight extends Light {
 		 * @type {number}
 		 * @default 2
 		 */
-		this.decay = decay;
+		this.decay = decay
 
 		/**
 		 * A texture used to modulate the color of the light. The spot light
@@ -113,15 +111,14 @@ class SpotLight extends Light {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * This property holds the light's shadow configuration.
 		 *
 		 * @type {SpotLightShadow}
 		 */
-		this.shadow = new SpotLightShadow();
-
+		this.shadow = new SpotLightShadow()
 	}
 
 	/**
@@ -131,43 +128,34 @@ class SpotLight extends Light {
 	 * @type {number}
 	 */
 	get power() {
-
 		// compute the light's luminous power (in lumens) from its intensity (in candela)
 		// by convention for a spotlight, luminous power (lm) = π * luminous intensity (cd)
-		return this.intensity * Math.PI;
-
+		return this.intensity * Math.PI
 	}
 
-	set power( power ) {
-
+	set power(power) {
 		// set the light's intensity (in candela) from the desired luminous power (in lumens)
-		this.intensity = power / Math.PI;
-
+		this.intensity = power / Math.PI
 	}
 
 	dispose() {
-
-		this.shadow.dispose();
-
+		this.shadow.dispose()
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.distance = source.distance
+		this.angle = source.angle
+		this.penumbra = source.penumbra
+		this.decay = source.decay
 
-		this.distance = source.distance;
-		this.angle = source.angle;
-		this.penumbra = source.penumbra;
-		this.decay = source.decay;
+		this.target = source.target.clone()
 
-		this.target = source.target.clone();
+		this.shadow = source.shadow.clone()
 
-		this.shadow = source.shadow.clone();
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { SpotLight };
+export { SpotLight }

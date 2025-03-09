@@ -1,4 +1,4 @@
-import { RenderTarget } from '../core/RenderTarget.js';
+import { RenderTarget } from "../core/RenderTarget.js"
 
 /**
  * A render target used in context of {@link WebGLRenderer}.
@@ -6,7 +6,6 @@ import { RenderTarget } from '../core/RenderTarget.js';
  * @augments RenderTarget
  */
 class WebGLRenderTarget extends RenderTarget {
-
 	/**
 	 * Constructs a new 3D render target.
 	 *
@@ -14,9 +13,8 @@ class WebGLRenderTarget extends RenderTarget {
 	 * @param {number} [height=1] - The height of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( width = 1, height = 1, options = {} ) {
-
-		super( width, height, options );
+	constructor(width = 1, height = 1, options = {}) {
+		super(width, height, options)
 
 		/**
 		 * This flag can be used for type testing.
@@ -25,10 +23,8 @@ class WebGLRenderTarget extends RenderTarget {
 		 * @readonly
 		 * @default true
 		 */
-		this.isWebGLRenderTarget = true;
-
+		this.isWebGLRenderTarget = true
 	}
-
 }
 
-export { WebGLRenderTarget };
+export { WebGLRenderTarget }

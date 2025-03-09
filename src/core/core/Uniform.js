@@ -12,21 +12,18 @@
  * in {@link WebGLRenderer}.
  */
 class Uniform {
-
 	/**
 	 * Constructs a new uniform.
 	 *
 	 * @param {any} value - The uniform value.
 	 */
-	constructor( value ) {
-
+	constructor(value) {
 		/**
 		 * The uniform value.
 		 *
 		 * @type {any}
 		 */
-		this.value = value;
-
+		this.value = value
 	}
 
 	/**
@@ -36,11 +33,8 @@ class Uniform {
 	 * @return {Uniform} A clone of this instance.
 	 */
 	clone() {
-
-		return new Uniform( this.value.clone === undefined ? this.value : this.value.clone() );
-
+		return new Uniform(this.value.clone === undefined ? this.value : this.value.clone())
 	}
-
 }
 
-export { Uniform };
+export { Uniform }

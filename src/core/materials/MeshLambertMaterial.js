@@ -1,8 +1,8 @@
-import { MultiplyOperation, TangentSpaceNormalMap } from '../constants.js';
-import { Material } from './Material.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
-import { Euler } from '../math/Euler.js';
+import { MultiplyOperation, TangentSpaceNormalMap } from "../constants.js"
+import { Material } from "./Material.js"
+import { Vector2 } from "../math/Vector2.js"
+import { Color } from "../math/Color.js"
+import { Euler } from "../math/Euler.js"
 
 /**
  * A material for non-shiny surfaces, without specular highlights.
@@ -21,7 +21,6 @@ import { Euler } from '../math/Euler.js';
  * @augments Material
  */
 class MeshLambertMaterial extends Material {
-
 	/**
 	 * Constructs a new mesh lambert material.
 	 *
@@ -31,9 +30,8 @@ class MeshLambertMaterial extends Material {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -42,9 +40,9 @@ class MeshLambertMaterial extends Material {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshLambertMaterial = true;
+		this.isMeshLambertMaterial = true
 
-		this.type = 'MeshLambertMaterial';
+		this.type = "MeshLambertMaterial"
 
 		/**
 		 * Color of the material.
@@ -52,7 +50,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.color = new Color( 0xffffff ); // diffuse
+		this.color = new Color(0xffffff) // diffuse
 
 		/**
 		 * The color map. May optionally include an alpha channel, typically combined
@@ -62,7 +60,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.map = null;
+		this.map = null
 
 		/**
 		 * The light map. Requires a second set of UVs.
@@ -70,7 +68,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.lightMap = null;
+		this.lightMap = null
 
 		/**
 		 * Intensity of the baked light.
@@ -78,7 +76,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.lightMapIntensity = 1.0;
+		this.lightMapIntensity = 1.0
 
 		/**
 		 * The red channel of this texture is used as the ambient occlusion map.
@@ -87,7 +85,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.aoMap = null;
+		this.aoMap = null
 
 		/**
 		 * Intensity of the ambient occlusion effect. Range is `[0,1]`, where `0`
@@ -97,7 +95,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.aoMapIntensity = 1.0;
+		this.aoMapIntensity = 1.0
 
 		/**
 		 * Emissive (light) color of the material, essentially a solid color
@@ -106,7 +104,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {Color}
 		 * @default (0,0,0)
 		 */
-		this.emissive = new Color( 0x000000 );
+		this.emissive = new Color(0x000000)
 
 		/**
 		 * Intensity of the emissive light. Modulates the emissive color.
@@ -114,7 +112,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.emissiveIntensity = 1.0;
+		this.emissiveIntensity = 1.0
 
 		/**
 		 * Set emissive (glow) map. The emissive map color is modulated by the
@@ -124,7 +122,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.emissiveMap = null;
+		this.emissiveMap = null
 
 		/**
 		 * The texture to create a bump map. The black and white values map to the
@@ -135,7 +133,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.bumpMap = null;
+		this.bumpMap = null
 
 		/**
 		 * How much the bump map affects the material. Typical range is `[0,1]`.
@@ -143,7 +141,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.bumpScale = 1;
+		this.bumpScale = 1
 
 		/**
 		 * The texture to create a normal map. The RGB values affect the surface
@@ -156,7 +154,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.normalMap = null;
+		this.normalMap = null
 
 		/**
 		 * The type of normal map.
@@ -164,7 +162,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {(TangentSpaceNormalMap|ObjectSpaceNormalMap)}
 		 * @default TangentSpaceNormalMap
 		 */
-		this.normalMapType = TangentSpaceNormalMap;
+		this.normalMapType = TangentSpaceNormalMap
 
 		/**
 		 * How much the normal map affects the material. Typical value range is `[0,1]`.
@@ -172,7 +170,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {Vector2}
 		 * @default (1,1)
 		 */
-		this.normalScale = new Vector2( 1, 1 );
+		this.normalScale = new Vector2(1, 1)
 
 		/**
 		 * The displacement map affects the position of the mesh's vertices. Unlike
@@ -185,7 +183,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.displacementMap = null;
+		this.displacementMap = null
 
 		/**
 		 * How much the displacement map affects the mesh (where black is no
@@ -195,7 +193,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementScale = 1;
+		this.displacementScale = 1
 
 		/**
 		 * The offset of the displacement map's values on the mesh's vertices.
@@ -205,7 +203,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.displacementBias = 0;
+		this.displacementBias = 0
 
 		/**
 		 * Specular map used by the material.
@@ -213,7 +211,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.specularMap = null;
+		this.specularMap = null
 
 		/**
 		 * The alpha map is a grayscale texture that controls the opacity across the
@@ -228,7 +226,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.alphaMap = null;
+		this.alphaMap = null
 
 		/**
 		 * The environment map.
@@ -236,7 +234,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.envMap = null;
+		this.envMap = null
 
 		/**
 		 * The rotation of the environment map in radians.
@@ -244,7 +242,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {Euler}
 		 * @default (0,0,0)
 		 */
-		this.envMapRotation = new Euler();
+		this.envMapRotation = new Euler()
 
 		/**
 		 * How to combine the result of the surface's color with the environment map, if any.
@@ -255,7 +253,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {(MultiplyOperation|MixOperation|AddOperation)}
 		 * @default MultiplyOperation
 		 */
-		this.combine = MultiplyOperation;
+		this.combine = MultiplyOperation
 
 		/**
 		 * How much the environment map affects the surface.
@@ -264,7 +262,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.reflectivity = 1;
+		this.reflectivity = 1
 
 		/**
 		 * The index of refraction (IOR) of air (approximately 1) divided by the
@@ -275,7 +273,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 0.98
 		 */
-		this.refractionRatio = 0.98;
+		this.refractionRatio = 0.98
 
 		/**
 		 * Renders the geometry as a wireframe.
@@ -283,7 +281,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.wireframe = false;
+		this.wireframe = false
 
 		/**
 		 * Controls the thickness of the wireframe.
@@ -293,7 +291,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.wireframeLinewidth = 1;
+		this.wireframeLinewidth = 1
 
 		/**
 		 * Defines appearance of wireframe ends.
@@ -303,7 +301,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {('round'|'bevel'|'miter')}
 		 * @default 'round'
 		 */
-		this.wireframeLinecap = 'round';
+		this.wireframeLinecap = "round"
 
 		/**
 		 * Defines appearance of wireframe joints.
@@ -313,7 +311,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {('round'|'bevel'|'miter')}
 		 * @default 'round'
 		 */
-		this.wireframeLinejoin = 'round';
+		this.wireframeLinejoin = "round"
 
 		/**
 		 * Whether the material is rendered with flat shading or not.
@@ -321,7 +319,7 @@ class MeshLambertMaterial extends Material {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.flatShading = false;
+		this.flatShading = false
 
 		/**
 		 * Whether the material is affected by fog or not.
@@ -329,64 +327,60 @@ class MeshLambertMaterial extends Material {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.fog = true;
+		this.fog = true
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
-	copy( source ) {
+	copy(source) {
+		super.copy(source)
 
-		super.copy( source );
+		this.color.copy(source.color)
 
-		this.color.copy( source.color );
+		this.map = source.map
 
-		this.map = source.map;
+		this.lightMap = source.lightMap
+		this.lightMapIntensity = source.lightMapIntensity
 
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
+		this.aoMap = source.aoMap
+		this.aoMapIntensity = source.aoMapIntensity
 
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
+		this.emissive.copy(source.emissive)
+		this.emissiveMap = source.emissiveMap
+		this.emissiveIntensity = source.emissiveIntensity
 
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
+		this.bumpMap = source.bumpMap
+		this.bumpScale = source.bumpScale
 
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
+		this.normalMap = source.normalMap
+		this.normalMapType = source.normalMapType
+		this.normalScale.copy(source.normalScale)
 
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
+		this.displacementMap = source.displacementMap
+		this.displacementScale = source.displacementScale
+		this.displacementBias = source.displacementBias
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
+		this.specularMap = source.specularMap
 
-		this.specularMap = source.specularMap;
+		this.alphaMap = source.alphaMap
 
-		this.alphaMap = source.alphaMap;
+		this.envMap = source.envMap
+		this.envMapRotation.copy(source.envMapRotation)
+		this.combine = source.combine
+		this.reflectivity = source.reflectivity
+		this.refractionRatio = source.refractionRatio
 
-		this.envMap = source.envMap;
-		this.envMapRotation.copy( source.envMapRotation );
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
+		this.wireframe = source.wireframe
+		this.wireframeLinewidth = source.wireframeLinewidth
+		this.wireframeLinecap = source.wireframeLinecap
+		this.wireframeLinejoin = source.wireframeLinejoin
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
+		this.flatShading = source.flatShading
 
-		this.flatShading = source.flatShading;
+		this.fog = source.fog
 
-		this.fog = source.fog;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshLambertMaterial };
+export { MeshLambertMaterial }

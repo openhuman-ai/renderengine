@@ -1,5 +1,5 @@
-import { ClampToEdgeWrapping } from '../constants.js';
-import { CompressedTexture } from './CompressedTexture.js';
+import { ClampToEdgeWrapping } from "../constants.js"
+import { CompressedTexture } from "./CompressedTexture.js"
 
 /**
  * Creates a texture 2D array based on data in compressed form.
@@ -9,7 +9,6 @@ import { CompressedTexture } from './CompressedTexture.js';
  * @augments CompressedTexture
  */
 class CompressedArrayTexture extends CompressedTexture {
-
 	/**
 	 * Constructs a new compressed array texture.
 	 *
@@ -21,9 +20,8 @@ class CompressedArrayTexture extends CompressedTexture {
 	 * @param {number} [format=RGBAFormat] - The min filter value.
 	 * @param {number} [type=UnsignedByteType] - The min filter value.
 	 */
-	constructor( mipmaps, width, height, depth, format, type ) {
-
-		super( mipmaps, width, height, format, type );
+	constructor(mipmaps, width, height, depth, format, type) {
+		super(mipmaps, width, height, format, type)
 
 		/**
 		 * This flag can be used for type testing.
@@ -32,7 +30,7 @@ class CompressedArrayTexture extends CompressedTexture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isCompressedArrayTexture = true;
+		this.isCompressedArrayTexture = true
 
 		/**
 		 * The image property of a compressed texture just defines its dimensions.
@@ -40,7 +38,7 @@ class CompressedArrayTexture extends CompressedTexture {
 		 * @name CompressedArrayTexture#image
 		 * @type {{width:number,height:number,depth:number}}
 		 */
-		this.image.depth = depth;
+		this.image.depth = depth
 
 		/**
 		 * This defines how the texture is wrapped in the depth and corresponds to
@@ -49,15 +47,14 @@ class CompressedArrayTexture extends CompressedTexture {
 		 * @type {(RepeatWrapping|ClampToEdgeWrapping|MirroredRepeatWrapping)}
 		 * @default ClampToEdgeWrapping
 		 */
-		this.wrapR = ClampToEdgeWrapping;
+		this.wrapR = ClampToEdgeWrapping
 
 		/**
 		 * A set of all layers which need to be updated in the texture.
 		 *
 		 * @type {Set<number>}
 		 */
-		this.layerUpdates = new Set();
-
+		this.layerUpdates = new Set()
 	}
 
 	/**
@@ -69,21 +66,16 @@ class CompressedArrayTexture extends CompressedTexture {
 	 *
 	 * @param {number} layerIndex - The layer index that should be updated.
 	 */
-	addLayerUpdate( layerIndex ) {
-
-		this.layerUpdates.add( layerIndex );
-
+	addLayerUpdate(layerIndex) {
+		this.layerUpdates.add(layerIndex)
 	}
 
 	/**
 	 * Resets the layer updates registry.
 	 */
 	clearLayerUpdates() {
-
-		this.layerUpdates.clear();
-
+		this.layerUpdates.clear()
 	}
-
 }
 
-export { CompressedArrayTexture };
+export { CompressedArrayTexture }

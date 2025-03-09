@@ -1,4 +1,4 @@
-import { Color } from '../math/Color.js';
+import { Color } from "../math/Color.js"
 
 /**
  * This class can be used to define an exponential squared fog,
@@ -11,15 +11,13 @@ import { Color } from '../math/Color.js';
  * ```
  */
 class FogExp2 {
-
 	/**
 	 * Constructs a new fog.
 	 *
 	 * @param {number|Color} color - The fog's color.
 	 * @param {number} [density=0.00025] - Defines how fast the fog will grow dense.
 	 */
-	constructor( color, density = 0.00025 ) {
-
+	constructor(color, density = 0.00025) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -27,21 +25,21 @@ class FogExp2 {
 		 * @readonly
 		 * @default true
 		 */
-		this.isFogExp2 = true;
+		this.isFogExp2 = true
 
 		/**
 		 * The name of the fog.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The fog's color.
 		 *
 		 * @type {Color}
 		 */
-		this.color = new Color( color );
+		this.color = new Color(color)
 
 		/**
 		 *  Defines how fast the fog will grow dense.
@@ -49,8 +47,7 @@ class FogExp2 {
 		 * @type {number}
 		 * @default 0.00025
 		 */
-		this.density = density;
-
+		this.density = density
 	}
 
 	/**
@@ -59,9 +56,7 @@ class FogExp2 {
 	 * @return {FogExp2} A clone of this instance.
 	 */
 	clone() {
-
-		return new FogExp2( this.color, this.density );
-
+		return new FogExp2(this.color, this.density)
 	}
 
 	/**
@@ -70,17 +65,14 @@ class FogExp2 {
 	 * @param {?(Object|string)} meta - An optional value holding meta information about the serialization.
 	 * @return {Object} A JSON object representing the serialized fog
 	 */
-	toJSON( /* meta */ ) {
-
+	toJSON(/* meta */) {
 		return {
-			type: 'FogExp2',
+			type: "FogExp2",
 			name: this.name,
 			color: this.color.getHex(),
-			density: this.density
-		};
-
+			density: this.density,
+		}
 	}
-
 }
 
-export { FogExp2 };
+export { FogExp2 }

@@ -16,7 +16,6 @@
  * ```
  */
 class LoadingManager {
-
 	/**
 	 * Constructs a new loading manager.
 	 *
@@ -24,15 +23,14 @@ class LoadingManager {
 	 * @param {Function} [onProgress] - Executes when single items have been loaded.
 	 * @param {Function} [onError] - Executes when an error occurs.
 	 */
-	constructor( onLoad, onProgress, onError ) {
+	constructor(onLoad, onProgress, onError) {
+		const scope = this
 
-		const scope = this;
-
-		let isLoading = false;
-		let itemsLoaded = 0;
-		let itemsTotal = 0;
-		let urlModifier = undefined;
-		const handlers = [];
+		let isLoading = false
+		let itemsLoaded = 0
+		let itemsTotal = 0
+		let urlModifier = undefined
+		const handlers = []
 
 		// Refer to #5689 for the reason why we don't set .onStart
 		// in the constructor
@@ -43,7 +41,7 @@ class LoadingManager {
 		 * @type {Function|undefined}
 		 * @default undefined
 		 */
-		this.onStart = undefined;
+		this.onStart = undefined
 
 		/**
 		 * Executes when all items have been loaded.
@@ -51,7 +49,7 @@ class LoadingManager {
 		 * @type {Function|undefined}
 		 * @default undefined
 		 */
-		this.onLoad = onLoad;
+		this.onLoad = onLoad
 
 		/**
 		 * Executes when single items have been loaded.
@@ -59,7 +57,7 @@ class LoadingManager {
 		 * @type {Function|undefined}
 		 * @default undefined
 		 */
-		this.onProgress = onProgress;
+		this.onProgress = onProgress
 
 		/**
 		 * Executes when an error occurs.
@@ -67,7 +65,7 @@ class LoadingManager {
 		 * @type {Function|undefined}
 		 * @default undefined
 		 */
-		this.onError = onError;
+		this.onError = onError
 
 		/**
 		 * This should be called by any loader using the manager when the loader
@@ -75,23 +73,17 @@ class LoadingManager {
 		 *
 		 * @param {string} url - The URL to load.
 		 */
-		this.itemStart = function ( url ) {
+		this.itemStart = function (url) {
+			itemsTotal++
 
-			itemsTotal ++;
-
-			if ( isLoading === false ) {
-
-				if ( scope.onStart !== undefined ) {
-
-					scope.onStart( url, itemsLoaded, itemsTotal );
-
+			if (isLoading === false) {
+				if (scope.onStart !== undefined) {
+					scope.onStart(url, itemsLoaded, itemsTotal)
 				}
-
 			}
 
-			isLoading = true;
-
-		};
+			isLoading = true
+		}
 
 		/**
 		 * This should be called by any loader using the manager when the loader
@@ -99,29 +91,21 @@ class LoadingManager {
 		 *
 		 * @param {string} url - The URL of the loaded item.
 		 */
-		this.itemEnd = function ( url ) {
+		this.itemEnd = function (url) {
+			itemsLoaded++
 
-			itemsLoaded ++;
-
-			if ( scope.onProgress !== undefined ) {
-
-				scope.onProgress( url, itemsLoaded, itemsTotal );
-
+			if (scope.onProgress !== undefined) {
+				scope.onProgress(url, itemsLoaded, itemsTotal)
 			}
 
-			if ( itemsLoaded === itemsTotal ) {
+			if (itemsLoaded === itemsTotal) {
+				isLoading = false
 
-				isLoading = false;
-
-				if ( scope.onLoad !== undefined ) {
-
-					scope.onLoad();
-
+				if (scope.onLoad !== undefined) {
+					scope.onLoad()
 				}
-
 			}
-
-		};
+		}
 
 		/**
 		 * This should be called by any loader using the manager when the loader
@@ -129,15 +113,11 @@ class LoadingManager {
 		 *
 		 * @param {string} url - The URL of the item that produces an error.
 		 */
-		this.itemError = function ( url ) {
-
-			if ( scope.onError !== undefined ) {
-
-				scope.onError( url );
-
+		this.itemError = function (url) {
+			if (scope.onError !== undefined) {
+				scope.onError(url)
 			}
-
-		};
+		}
 
 		/**
 		 * Given a URL, uses the URL modifier callback (if any) and returns a
@@ -146,17 +126,13 @@ class LoadingManager {
 		 * @param {string} url - The URL to load.
 		 * @return {string} The resolved URL.
 		 */
-		this.resolveURL = function ( url ) {
-
-			if ( urlModifier ) {
-
-				return urlModifier( url );
-
+		this.resolveURL = function (url) {
+			if (urlModifier) {
+				return urlModifier(url)
 			}
 
-			return url;
-
-		};
+			return url
+		}
 
 		/**
 		 * If provided, the callback will be passed each resource URL before a
@@ -192,13 +168,11 @@ class LoadingManager {
 		 * @param {function(string):string} transform - URL modifier callback. Called with an URL and must return a resolved URL.
 		 * @return {LoadingManager} A reference to this loading manager.
 		 */
-		this.setURLModifier = function ( transform ) {
+		this.setURLModifier = function (transform) {
+			urlModifier = transform
 
-			urlModifier = transform;
-
-			return this;
-
-		};
+			return this
+		}
 
 		/**
 		 * Registers a loader with the given regular expression. Can be used to
@@ -214,13 +188,11 @@ class LoadingManager {
 		 * @param {Loader} loader - A loader that should handle matched cases.
 		 * @return {LoadingManager} A reference to this loading manager.
 		 */
-		this.addHandler = function ( regex, loader ) {
+		this.addHandler = function (regex, loader) {
+			handlers.push(regex, loader)
 
-			handlers.push( regex, loader );
-
-			return this;
-
-		};
+			return this
+		}
 
 		/**
 		 * Removes the loader for the given regular expression.
@@ -228,19 +200,15 @@ class LoadingManager {
 		 * @param {string} regex - A regular expression.
 		 * @return {LoadingManager} A reference to this loading manager.
 		 */
-		this.removeHandler = function ( regex ) {
+		this.removeHandler = function (regex) {
+			const index = handlers.indexOf(regex)
 
-			const index = handlers.indexOf( regex );
-
-			if ( index !== - 1 ) {
-
-				handlers.splice( index, 2 );
-
+			if (index !== -1) {
+				handlers.splice(index, 2)
 			}
 
-			return this;
-
-		};
+			return this
+		}
 
 		/**
 		 * Can be used to retrieve the registered loader for the given file path.
@@ -248,29 +216,21 @@ class LoadingManager {
 		 * @param {string} file - The file path.
 		 * @return {?Loader} The registered loader. Returns `null` if no loader was found.
 		 */
-		this.getHandler = function ( file ) {
+		this.getHandler = function (file) {
+			for (let i = 0, l = handlers.length; i < l; i += 2) {
+				const regex = handlers[i]
+				const loader = handlers[i + 1]
 
-			for ( let i = 0, l = handlers.length; i < l; i += 2 ) {
+				if (regex.global) regex.lastIndex = 0 // see #17920
 
-				const regex = handlers[ i ];
-				const loader = handlers[ i + 1 ];
-
-				if ( regex.global ) regex.lastIndex = 0; // see #17920
-
-				if ( regex.test( file ) ) {
-
-					return loader;
-
+				if (regex.test(file)) {
+					return loader
 				}
-
 			}
 
-			return null;
-
-		};
-
+			return null
+		}
 	}
-
 }
 
 /**
@@ -279,6 +239,6 @@ class LoadingManager {
  * @constant
  * @type {LoadingManager}
  */
-const DefaultLoadingManager = /*@__PURE__*/ new LoadingManager();
+const DefaultLoadingManager = /*@__PURE__*/ new LoadingManager()
 
-export { DefaultLoadingManager, LoadingManager };
+export { DefaultLoadingManager, LoadingManager }

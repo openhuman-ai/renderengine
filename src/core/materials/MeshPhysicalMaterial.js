@@ -1,7 +1,7 @@
-import { Vector2 } from '../math/Vector2.js';
-import { MeshStandardMaterial } from './MeshStandardMaterial.js';
-import { Color } from '../math/Color.js';
-import { clamp } from '../math/MathUtils.js';
+import { Vector2 } from "../math/Vector2.js"
+import { MeshStandardMaterial } from "./MeshStandardMaterial.js"
+import { Color } from "../math/Color.js"
+import { clamp } from "../math/MathUtils.js"
 
 /**
  * An extension of the {@link MeshStandardMaterial}, providing more advanced
@@ -29,7 +29,6 @@ import { clamp } from '../math/MathUtils.js';
  * @augments MeshStandardMaterial
  */
 class MeshPhysicalMaterial extends MeshStandardMaterial {
-
 	/**
 	 * Constructs a new mesh physical material.
 	 *
@@ -39,9 +38,8 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * in here. Color values can be passed any type of value accepted
 	 * by {@link Color#set}.
 	 */
-	constructor( parameters ) {
-
-		super();
+	constructor(parameters) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -50,16 +48,14 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @readonly
 		 * @default true
 		 */
-		this.isMeshPhysicalMaterial = true;
+		this.isMeshPhysicalMaterial = true
 
 		this.defines = {
+			STANDARD: "",
+			PHYSICAL: "",
+		}
 
-			'STANDARD': '',
-			'PHYSICAL': ''
-
-		};
-
-		this.type = 'MeshPhysicalMaterial';
+		this.type = "MeshPhysicalMaterial"
 
 		/**
 		 * The rotation of the anisotropy in tangent, bitangent space, measured in radians
@@ -69,7 +65,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.anisotropyRotation = 0;
+		this.anisotropyRotation = 0
 
 		/**
 		 * Red and green channels represent the anisotropy direction in `[-1, 1]` tangent,
@@ -79,7 +75,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.anisotropyMap = null;
+		this.anisotropyMap = null
 
 		/**
 		 * The red channel of this texture is multiplied against `clearcoat`,
@@ -88,7 +84,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.clearcoatMap = null;
+		this.clearcoatMap = null
 
 		/**
 		 * Roughness of the clear coat layer, from `0.0` to `1.0`.
@@ -96,7 +92,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.clearcoatRoughness = 0.0;
+		this.clearcoatRoughness = 0.0
 
 		/**
 		 * The green channel of this texture is multiplied against
@@ -105,7 +101,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.clearcoatRoughnessMap = null;
+		this.clearcoatRoughnessMap = null
 
 		/**
 		 * How much `clearcoatNormalMap` affects the clear coat layer, from
@@ -114,7 +110,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {Vector2}
 		 * @default (1,1)
 		 */
-		this.clearcoatNormalScale = new Vector2( 1, 1 );
+		this.clearcoatNormalScale = new Vector2(1, 1)
 
 		/**
 		 * Can be used to enable independent normals for the clear coat layer.
@@ -122,7 +118,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.clearcoatNormalMap = null;
+		this.clearcoatNormalMap = null
 
 		/**
 		 * Index-of-refraction for non-metallic materials, from `1.0` to `2.333`.
@@ -130,7 +126,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 1.5
 		 */
-		this.ior = 1.5;
+		this.ior = 1.5
 
 		/**
 		 * Degree of reflectivity, from `0.0` to `1.0`. Default is `0.5`, which
@@ -143,18 +139,14 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 0.5
 		 */
-		Object.defineProperty( this, 'reflectivity', {
+		Object.defineProperty(this, "reflectivity", {
 			get: function () {
-
-				return ( clamp( 2.5 * ( this.ior - 1 ) / ( this.ior + 1 ), 0, 1 ) );
-
+				return clamp((2.5 * (this.ior - 1)) / (this.ior + 1), 0, 1)
 			},
-			set: function ( reflectivity ) {
-
-				this.ior = ( 1 + 0.4 * reflectivity ) / ( 1 - 0.4 * reflectivity );
-
-			}
-		} );
+			set: function (reflectivity) {
+				this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity)
+			},
+		})
 
 		/**
 		 * The red channel of this texture is multiplied against `iridescence`, for per-pixel
@@ -163,7 +155,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.iridescenceMap = null;
+		this.iridescenceMap = null
 
 		/**
 		 * Strength of the iridescence RGB color shift effect, represented by an index-of-refraction.
@@ -172,7 +164,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 1.3
 		 */
-		this.iridescenceIOR = 1.3;
+		this.iridescenceIOR = 1.3
 
 		/**
 		 *Array of exactly 2 elements, specifying minimum and maximum thickness of the iridescence layer.
@@ -181,7 +173,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {Array<number,number>}
 		 * @default [100,400]
 		 */
-		this.iridescenceThicknessRange = [ 100, 400 ];
+		this.iridescenceThicknessRange = [100, 400]
 
 		/**
 		 * A texture that defines the thickness of the iridescence layer, stored in the green channel.
@@ -193,7 +185,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.iridescenceThicknessMap = null;
+		this.iridescenceThicknessMap = null
 
 		/**
 		 * The sheen tint.
@@ -201,7 +193,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {Color}
 		 * @default (0,0,0)
 		 */
-		this.sheenColor = new Color( 0x000000 );
+		this.sheenColor = new Color(0x000000)
 
 		/**
 		 * The RGB channels of this texture are multiplied against  `sheenColor`, for per-pixel control
@@ -210,7 +202,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.sheenColorMap = null;
+		this.sheenColorMap = null
 
 		/**
 		 * Roughness of the sheen layer, from `0.0` to `1.0`.
@@ -218,7 +210,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.sheenRoughness = 1.0;
+		this.sheenRoughness = 1.0
 
 		/**
 		 * The alpha channel of this texture is multiplied against `sheenRoughness`, for per-pixel control
@@ -227,7 +219,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.sheenRoughnessMap = null;
+		this.sheenRoughnessMap = null
 
 		/**
 		 * The red channel of this texture is multiplied against `transmission`, for per-pixel control over
@@ -236,7 +228,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.transmissionMap = null;
+		this.transmissionMap = null
 
 		/**
 		 * The thickness of the volume beneath the surface. The value is given in the
@@ -246,7 +238,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.thickness = 0;
+		this.thickness = 0
 
 		/**
 		 * A texture that defines the thickness, stored in the green channel. This will
@@ -255,7 +247,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.thicknessMap = null;
+		this.thicknessMap = null
 
 		/**
 		 * Density of the medium given as the average distance that light travels in
@@ -265,7 +257,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default Infinity
 		 */
-		this.attenuationDistance = Infinity;
+		this.attenuationDistance = Infinity
 
 		/**
 		 * The color that white light turns into due to absorption when reaching the
@@ -274,7 +266,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.attenuationColor = new Color( 1, 1, 1 );
+		this.attenuationColor = new Color(1, 1, 1)
 
 		/**
 		 * A float that scales the amount of specular reflection for non-metals only.
@@ -283,7 +275,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.specularIntensity = 1.0;
+		this.specularIntensity = 1.0
 
 		/**
 		 * The alpha channel of this texture is multiplied against `specularIntensity`,
@@ -292,7 +284,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.specularIntensityMap = null;
+		this.specularIntensityMap = null
 
 		/**
 		 * Tints the specular reflection at normal incidence for non-metals only.
@@ -300,7 +292,7 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {Color}
 		 * @default (1,1,1)
 		 */
-		this.specularColor = new Color( 1, 1, 1 );
+		this.specularColor = new Color(1, 1, 1)
 
 		/**
 		 * The RGB channels of this texture are multiplied against `specularColor`,
@@ -309,17 +301,16 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.specularColorMap = null;
+		this.specularColorMap = null
 
-		this._anisotropy = 0;
-		this._clearcoat = 0;
-		this._dispersion = 0;
-		this._iridescence = 0;
-		this._sheen = 0.0;
-		this._transmission = 0;
+		this._anisotropy = 0
+		this._clearcoat = 0
+		this._dispersion = 0
+		this._iridescence = 0
+		this._sheen = 0.0
+		this._transmission = 0
 
-		this.setValues( parameters );
-
+		this.setValues(parameters)
 	}
 
 	/**
@@ -329,21 +320,15 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get anisotropy() {
-
-		return this._anisotropy;
-
+		return this._anisotropy
 	}
 
-	set anisotropy( value ) {
-
-		if ( this._anisotropy > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set anisotropy(value) {
+		if (this._anisotropy > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._anisotropy = value;
-
+		this._anisotropy = value
 	}
 
 	/**
@@ -355,21 +340,15 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get clearcoat() {
-
-		return this._clearcoat;
-
+		return this._clearcoat
 	}
 
-	set clearcoat( value ) {
-
-		if ( this._clearcoat > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set clearcoat(value) {
+		if (this._clearcoat > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._clearcoat = value;
-
+		this._clearcoat = value
 	}
 	/**
 	 * The intensity of the iridescence layer, simulating RGB color shift based on the angle between
@@ -379,21 +358,15 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get iridescence() {
-
-		return this._iridescence;
-
+		return this._iridescence
 	}
 
-	set iridescence( value ) {
-
-		if ( this._iridescence > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set iridescence(value) {
+		if (this._iridescence > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._iridescence = value;
-
+		this._iridescence = value
 	}
 
 	/**
@@ -405,21 +378,15 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get dispersion() {
-
-		return this._dispersion;
-
+		return this._dispersion
 	}
 
-	set dispersion( value ) {
-
-		if ( this._dispersion > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set dispersion(value) {
+		if (this._dispersion > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._dispersion = value;
-
+		this._dispersion = value
 	}
 
 	/**
@@ -429,21 +396,15 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get sheen() {
-
-		return this._sheen;
-
+		return this._sheen
 	}
 
-	set sheen( value ) {
-
-		if ( this._sheen > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set sheen(value) {
+		if (this._sheen > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._sheen = value;
-
+		this._sheen = value
 	}
 
 	/**
@@ -459,77 +420,66 @@ class MeshPhysicalMaterial extends MeshStandardMaterial {
 	 * @default 0
 	 */
 	get transmission() {
-
-		return this._transmission;
-
+		return this._transmission
 	}
 
-	set transmission( value ) {
-
-		if ( this._transmission > 0 !== value > 0 ) {
-
-			this.version ++;
-
+	set transmission(value) {
+		if (this._transmission > 0 !== value > 0) {
+			this.version++
 		}
 
-		this._transmission = value;
-
+		this._transmission = value
 	}
 
-	copy( source ) {
-
-		super.copy( source );
+	copy(source) {
+		super.copy(source)
 
 		this.defines = {
+			STANDARD: "",
+			PHYSICAL: "",
+		}
 
-			'STANDARD': '',
-			'PHYSICAL': ''
+		this.anisotropy = source.anisotropy
+		this.anisotropyRotation = source.anisotropyRotation
+		this.anisotropyMap = source.anisotropyMap
 
-		};
+		this.clearcoat = source.clearcoat
+		this.clearcoatMap = source.clearcoatMap
+		this.clearcoatRoughness = source.clearcoatRoughness
+		this.clearcoatRoughnessMap = source.clearcoatRoughnessMap
+		this.clearcoatNormalMap = source.clearcoatNormalMap
+		this.clearcoatNormalScale.copy(source.clearcoatNormalScale)
 
-		this.anisotropy = source.anisotropy;
-		this.anisotropyRotation = source.anisotropyRotation;
-		this.anisotropyMap = source.anisotropyMap;
+		this.dispersion = source.dispersion
+		this.ior = source.ior
 
-		this.clearcoat = source.clearcoat;
-		this.clearcoatMap = source.clearcoatMap;
-		this.clearcoatRoughness = source.clearcoatRoughness;
-		this.clearcoatRoughnessMap = source.clearcoatRoughnessMap;
-		this.clearcoatNormalMap = source.clearcoatNormalMap;
-		this.clearcoatNormalScale.copy( source.clearcoatNormalScale );
+		this.iridescence = source.iridescence
+		this.iridescenceMap = source.iridescenceMap
+		this.iridescenceIOR = source.iridescenceIOR
+		this.iridescenceThicknessRange = [...source.iridescenceThicknessRange]
+		this.iridescenceThicknessMap = source.iridescenceThicknessMap
 
-		this.dispersion = source.dispersion;
-		this.ior = source.ior;
+		this.sheen = source.sheen
+		this.sheenColor.copy(source.sheenColor)
+		this.sheenColorMap = source.sheenColorMap
+		this.sheenRoughness = source.sheenRoughness
+		this.sheenRoughnessMap = source.sheenRoughnessMap
 
-		this.iridescence = source.iridescence;
-		this.iridescenceMap = source.iridescenceMap;
-		this.iridescenceIOR = source.iridescenceIOR;
-		this.iridescenceThicknessRange = [ ...source.iridescenceThicknessRange ];
-		this.iridescenceThicknessMap = source.iridescenceThicknessMap;
+		this.transmission = source.transmission
+		this.transmissionMap = source.transmissionMap
 
-		this.sheen = source.sheen;
-		this.sheenColor.copy( source.sheenColor );
-		this.sheenColorMap = source.sheenColorMap;
-		this.sheenRoughness = source.sheenRoughness;
-		this.sheenRoughnessMap = source.sheenRoughnessMap;
+		this.thickness = source.thickness
+		this.thicknessMap = source.thicknessMap
+		this.attenuationDistance = source.attenuationDistance
+		this.attenuationColor.copy(source.attenuationColor)
 
-		this.transmission = source.transmission;
-		this.transmissionMap = source.transmissionMap;
+		this.specularIntensity = source.specularIntensity
+		this.specularIntensityMap = source.specularIntensityMap
+		this.specularColor.copy(source.specularColor)
+		this.specularColorMap = source.specularColorMap
 
-		this.thickness = source.thickness;
-		this.thicknessMap = source.thicknessMap;
-		this.attenuationDistance = source.attenuationDistance;
-		this.attenuationColor.copy( source.attenuationColor );
-
-		this.specularIntensity = source.specularIntensity;
-		this.specularIntensityMap = source.specularIntensityMap;
-		this.specularColor.copy( source.specularColor );
-		this.specularColorMap = source.specularColorMap;
-
-		return this;
-
+		return this
 	}
-
 }
 
-export { MeshPhysicalMaterial };
+export { MeshPhysicalMaterial }

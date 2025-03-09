@@ -1,8 +1,8 @@
-import { EventDispatcher } from './EventDispatcher.js';
-import { Texture } from '../textures/Texture.js';
-import { LinearFilter } from '../constants.js';
-import { Vector4 } from '../math/Vector4.js';
-import { Source } from '../textures/Source.js';
+import { EventDispatcher } from "./EventDispatcher.js"
+import { Texture } from "../textures/Texture.js"
+import { LinearFilter } from "../constants.js"
+import { Vector4 } from "../math/Vector4.js"
+import { Source } from "../textures/Source.js"
 
 /**
  * A render target is a buffer where the video card draws pixels for a scene
@@ -13,7 +13,6 @@ import { Source } from '../textures/Source.js';
  * @augments EventDispatcher
  */
 class RenderTarget extends EventDispatcher {
-
 	/**
 	 * Render target options.
 	 *
@@ -44,9 +43,8 @@ class RenderTarget extends EventDispatcher {
 	 * @param {number} [height=1] - The height of the render target.
 	 * @param {RenderTarget~Options} [options] - The configuration object.
 	 */
-	constructor( width = 1, height = 1, options = {} ) {
-
-		super();
+	constructor(width = 1, height = 1, options = {}) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -55,7 +53,7 @@ class RenderTarget extends EventDispatcher {
 		 * @readonly
 		 * @default true
 		 */
-		this.isRenderTarget = true;
+		this.isRenderTarget = true
 
 		/**
 		 * The width of the render target.
@@ -63,7 +61,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.width = width;
+		this.width = width
 
 		/**
 		 * The height of the render target.
@@ -71,7 +69,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.height = height;
+		this.height = height
 
 		/**
 		 * The depth of the render target.
@@ -79,7 +77,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.depth = 1;
+		this.depth = 1
 
 		/**
 		 * A rectangular area inside the render target's viewport. Fragments that are
@@ -88,7 +86,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {Vector4}
 		 * @default (0,0,width,height)
 		 */
-		this.scissor = new Vector4( 0, 0, width, height );
+		this.scissor = new Vector4(0, 0, width, height)
 
 		/**
 		 * Indicates whether the scissor test should be enabled when rendering into
@@ -97,7 +95,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.scissorTest = false;
+		this.scissorTest = false
 
 		/**
 		 * A rectangular area representing the render target's viewport.
@@ -105,28 +103,42 @@ class RenderTarget extends EventDispatcher {
 		 * @type {Vector4}
 		 * @default (0,0,width,height)
 		 */
-		this.viewport = new Vector4( 0, 0, width, height );
+		this.viewport = new Vector4(0, 0, width, height)
 
-		const image = { width: width, height: height, depth: 1 };
+		const image = { width: width, height: height, depth: 1 }
 
-		options = Object.assign( {
-			generateMipmaps: false,
-			internalFormat: null,
-			minFilter: LinearFilter,
-			depthBuffer: true,
-			stencilBuffer: false,
-			resolveDepthBuffer: true,
-			resolveStencilBuffer: true,
-			depthTexture: null,
-			samples: 0,
-			count: 1
-		}, options );
+		options = Object.assign(
+			{
+				generateMipmaps: false,
+				internalFormat: null,
+				minFilter: LinearFilter,
+				depthBuffer: true,
+				stencilBuffer: false,
+				resolveDepthBuffer: true,
+				resolveStencilBuffer: true,
+				depthTexture: null,
+				samples: 0,
+				count: 1,
+			},
+			options
+		)
 
-		const texture = new Texture( image, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
+		const texture = new Texture(
+			image,
+			options.mapping,
+			options.wrapS,
+			options.wrapT,
+			options.magFilter,
+			options.minFilter,
+			options.format,
+			options.type,
+			options.anisotropy,
+			options.colorSpace
+		)
 
-		texture.flipY = false;
-		texture.generateMipmaps = options.generateMipmaps;
-		texture.internalFormat = options.internalFormat;
+		texture.flipY = false
+		texture.generateMipmaps = options.generateMipmaps
+		texture.internalFormat = options.internalFormat
 
 		/**
 		 * An array of textures. Each color attachment is represented as a separate texture.
@@ -134,15 +146,13 @@ class RenderTarget extends EventDispatcher {
 		 *
 		 * @type {Array<Texture>}
 		 */
-		this.textures = [];
+		this.textures = []
 
-		const count = options.count;
-		for ( let i = 0; i < count; i ++ ) {
-
-			this.textures[ i ] = texture.clone();
-			this.textures[ i ].isRenderTargetTexture = true;
-			this.textures[ i ].renderTarget = this;
-
+		const count = options.count
+		for (let i = 0; i < count; i++) {
+			this.textures[i] = texture.clone()
+			this.textures[i].isRenderTargetTexture = true
+			this.textures[i].renderTarget = this
 		}
 
 		/**
@@ -151,7 +161,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.depthBuffer = options.depthBuffer;
+		this.depthBuffer = options.depthBuffer
 
 		/**
 		 * Whether to allocate a stencil buffer or not.
@@ -159,7 +169,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.stencilBuffer = options.stencilBuffer;
+		this.stencilBuffer = options.stencilBuffer
 
 		/**
 		 * Whether to resolve the depth buffer or not.
@@ -167,7 +177,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.resolveDepthBuffer = options.resolveDepthBuffer;
+		this.resolveDepthBuffer = options.resolveDepthBuffer
 
 		/**
 		 * Whether to resolve the stencil buffer or not.
@@ -175,9 +185,9 @@ class RenderTarget extends EventDispatcher {
 		 * @type {boolean}
 		 * @default true
 		 */
-		this.resolveStencilBuffer = options.resolveStencilBuffer;
+		this.resolveStencilBuffer = options.resolveStencilBuffer
 
-		this._depthTexture = options.depthTexture;
+		this._depthTexture = options.depthTexture
 
 		/**
 		 * The number of MSAA samples.
@@ -187,8 +197,7 @@ class RenderTarget extends EventDispatcher {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.samples = options.samples;
-
+		this.samples = options.samples
 	}
 
 	/**
@@ -197,24 +206,18 @@ class RenderTarget extends EventDispatcher {
 	 * @type {Texture}
 	 */
 	get texture() {
-
-		return this.textures[ 0 ];
-
+		return this.textures[0]
 	}
 
-	set texture( value ) {
-
-		this.textures[ 0 ] = value;
-
+	set texture(value) {
+		this.textures[0] = value
 	}
 
-	set depthTexture( current ) {
+	set depthTexture(current) {
+		if (this._depthTexture !== null) this._depthTexture.renderTarget = null
+		if (current !== null) current.renderTarget = this
 
-		if ( this._depthTexture !== null ) this._depthTexture.renderTarget = null;
-		if ( current !== null ) current.renderTarget = this;
-
-		this._depthTexture = current;
-
+		this._depthTexture = current
 	}
 
 	/**
@@ -226,9 +229,7 @@ class RenderTarget extends EventDispatcher {
 	 * @default null
 	 */
 	get depthTexture() {
-
-		return this._depthTexture;
-
+		return this._depthTexture
 	}
 
 	/**
@@ -238,29 +239,23 @@ class RenderTarget extends EventDispatcher {
 	 * @param {number} height - The height.
 	 * @param {number} [depth=1] - The depth.
 	 */
-	setSize( width, height, depth = 1 ) {
+	setSize(width, height, depth = 1) {
+		if (this.width !== width || this.height !== height || this.depth !== depth) {
+			this.width = width
+			this.height = height
+			this.depth = depth
 
-		if ( this.width !== width || this.height !== height || this.depth !== depth ) {
-
-			this.width = width;
-			this.height = height;
-			this.depth = depth;
-
-			for ( let i = 0, il = this.textures.length; i < il; i ++ ) {
-
-				this.textures[ i ].image.width = width;
-				this.textures[ i ].image.height = height;
-				this.textures[ i ].image.depth = depth;
-
+			for (let i = 0, il = this.textures.length; i < il; i++) {
+				this.textures[i].image.width = width
+				this.textures[i].image.height = height
+				this.textures[i].image.depth = depth
 			}
 
-			this.dispose();
-
+			this.dispose()
 		}
 
-		this.viewport.set( 0, 0, width, height );
-		this.scissor.set( 0, 0, width, height );
-
+		this.viewport.set(0, 0, width, height)
+		this.scissor.set(0, 0, width, height)
 	}
 
 	/**
@@ -269,9 +264,7 @@ class RenderTarget extends EventDispatcher {
 	 * @return {RenderTarget} A clone of this instance.
 	 */
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
 
 	/**
@@ -282,44 +275,40 @@ class RenderTarget extends EventDispatcher {
 	 * @param {RenderTarget} source - The render target to copy.
 	 * @return {RenderTarget} A reference to this instance.
 	 */
-	copy( source ) {
+	copy(source) {
+		this.width = source.width
+		this.height = source.height
+		this.depth = source.depth
 
-		this.width = source.width;
-		this.height = source.height;
-		this.depth = source.depth;
+		this.scissor.copy(source.scissor)
+		this.scissorTest = source.scissorTest
 
-		this.scissor.copy( source.scissor );
-		this.scissorTest = source.scissorTest;
+		this.viewport.copy(source.viewport)
 
-		this.viewport.copy( source.viewport );
+		this.textures.length = 0
 
-		this.textures.length = 0;
-
-		for ( let i = 0, il = source.textures.length; i < il; i ++ ) {
-
-			this.textures[ i ] = source.textures[ i ].clone();
-			this.textures[ i ].isRenderTargetTexture = true;
-			this.textures[ i ].renderTarget = this;
+		for (let i = 0, il = source.textures.length; i < il; i++) {
+			this.textures[i] = source.textures[i].clone()
+			this.textures[i].isRenderTargetTexture = true
+			this.textures[i].renderTarget = this
 
 			// ensure image object is not shared, see #20328
 
-			const image = Object.assign( {}, source.textures[ i ].image );
-			this.textures[ i ].source = new Source( image );
-
+			const image = Object.assign({}, source.textures[i].image)
+			this.textures[i].source = new Source(image)
 		}
 
-		this.depthBuffer = source.depthBuffer;
-		this.stencilBuffer = source.stencilBuffer;
+		this.depthBuffer = source.depthBuffer
+		this.stencilBuffer = source.stencilBuffer
 
-		this.resolveDepthBuffer = source.resolveDepthBuffer;
-		this.resolveStencilBuffer = source.resolveStencilBuffer;
+		this.resolveDepthBuffer = source.resolveDepthBuffer
+		this.resolveStencilBuffer = source.resolveStencilBuffer
 
-		if ( source.depthTexture !== null ) this.depthTexture = source.depthTexture.clone();
+		if (source.depthTexture !== null) this.depthTexture = source.depthTexture.clone()
 
-		this.samples = source.samples;
+		this.samples = source.samples
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -329,11 +318,8 @@ class RenderTarget extends EventDispatcher {
 	 * @fires RenderTarget#dispose
 	 */
 	dispose() {
-
-		this.dispatchEvent( { type: 'dispose' } );
-
+		this.dispatchEvent({ type: "dispose" })
 	}
-
 }
 
-export { RenderTarget };
+export { RenderTarget }

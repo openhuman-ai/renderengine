@@ -1,13 +1,13 @@
-import LightingNode from './LightingNode.js';
-import { NodeUpdateType } from '../core/constants.js';
-import { uniform } from '../core/UniformNode.js';
-import { Color } from '../../math/Color.js';
-import { renderGroup } from '../core/UniformGroupNode.js';
-import { hash } from '../core/NodeUtils.js';
-import { shadow } from './ShadowNode.js';
-import { nodeObject } from '../tsl/TSLCore.js';
-import { lightViewPosition } from '../accessors/Lights.js';
-import { positionView } from '../accessors/Position.js';
+import LightingNode from "./LightingNode.js"
+import { NodeUpdateType } from "../core/constants.js"
+import { uniform } from "../core/UniformNode.js"
+import { Color } from "../../math/Color.js"
+import { renderGroup } from "../core/UniformGroupNode.js"
+import { hash } from "../core/NodeUtils.js"
+import { shadow } from "./ShadowNode.js"
+import { nodeObject } from "../tsl/TSLCore.js"
+import { lightViewPosition } from "../accessors/Lights.js"
+import { positionView } from "../accessors/Position.js"
 
 /**
  * Base class for analytic light nodes.
@@ -15,11 +15,8 @@ import { positionView } from '../accessors/Position.js';
  * @augments LightingNode
  */
 class AnalyticLightNode extends LightingNode {
-
 	static get type() {
-
-		return 'AnalyticLightNode';
-
+		return "AnalyticLightNode"
 	}
 
 	/**
@@ -27,9 +24,8 @@ class AnalyticLightNode extends LightingNode {
 	 *
 	 * @param {?Light} [light=null] - The light source.
 	 */
-	constructor( light = null ) {
-
-		super();
+	constructor(light = null) {
+		super()
 
 		/**
 		 * The light source.
@@ -37,14 +33,14 @@ class AnalyticLightNode extends LightingNode {
 		 * @type {?Light}
 		 * @default null
 		 */
-		this.light = light;
+		this.light = light
 
 		/**
 		 * The light's color value.
 		 *
 		 * @type {Color}
 		 */
-		this.color = new Color();
+		this.color = new Color()
 
 		/**
 		 * The light's color node. Points to `colorNode` of the light source, if set. Otherwise
@@ -52,7 +48,7 @@ class AnalyticLightNode extends LightingNode {
 		 *
 		 * @type {Node}
 		 */
-		this.colorNode = ( light && light.colorNode ) || uniform( this.color ).setGroup( renderGroup );
+		this.colorNode = (light && light.colorNode) || uniform(this.color).setGroup(renderGroup)
 
 		/**
 		 * This property is used to retain a reference to the original value of {@link AnalyticLightNode#colorNode}.
@@ -61,23 +57,23 @@ class AnalyticLightNode extends LightingNode {
 		 * @type {?Node}
 		 * @default null
 		 */
-		this.baseColorNode = null;
+		this.baseColorNode = null
 
 		/**
 		 * Represents the light's shadow.
 		 *
 		 * @type {?ShadowNode}
-   		 * @default null
+		 * @default null
 		 */
-		this.shadowNode = null;
+		this.shadowNode = null
 
 		/**
 		 * Represents the light's shadow color.
 		 *
 		 * @type {?Node}
-   		 * @default null
+		 * @default null
 		 */
-		this.shadowColorNode = null;
+		this.shadowColorNode = null
 
 		/**
 		 * This flag can be used for type testing.
@@ -86,7 +82,7 @@ class AnalyticLightNode extends LightingNode {
 		 * @readonly
 		 * @default true
 		 */
-		this.isAnalyticLightNode = true;
+		this.isAnalyticLightNode = true
 
 		/**
 		 * Overwritten since analytic light nodes are updated
@@ -95,8 +91,7 @@ class AnalyticLightNode extends LightingNode {
 		 * @type {string}
 		 * @default 'frame'
 		 */
-		this.updateType = NodeUpdateType.FRAME;
-
+		this.updateType = NodeUpdateType.FRAME
 	}
 
 	/**
@@ -106,21 +101,15 @@ class AnalyticLightNode extends LightingNode {
 	 * @return {number} The custom cache key.
 	 */
 	customCacheKey() {
-
-		return hash( this.light.id, this.light.castShadow ? 1 : 0 );
-
+		return hash(this.light.id, this.light.castShadow ? 1 : 0)
 	}
 
 	getHash() {
-
-		return this.light.uuid;
-
+		return this.light.uuid
 	}
 
-	getLightVector( builder ) {
-
-		return lightViewPosition( this.light ).sub( builder.context.positionView || positionView );
-
+	getLightVector(builder) {
+		return lightViewPosition(this.light).sub(builder.context.positionView || positionView)
 	}
 
 	/**
@@ -130,7 +119,7 @@ class AnalyticLightNode extends LightingNode {
 	 * @param {NodeBuilder} builder - The builder object used for setting up the light.
 	 * @return {Object|undefined} The direct light data (color and direction).
 	 */
-	setupDirect( /*builder*/ ) { }
+	setupDirect(/*builder*/) {}
 
 	/**
 	 * Sets up the direct rect area lighting for the analytic light node.
@@ -139,7 +128,7 @@ class AnalyticLightNode extends LightingNode {
 	 * @param {NodeBuilder} builder - The builder object used for setting up the light.
 	 * @return {Object|undefined} The direct rect area light data.
 	 */
-	setupDirectRectArea( /*builder*/ ) { }
+	setupDirectRectArea(/*builder*/) {}
 
 	/**
 	 * Setups the shadow node for this light. The method exists so concrete light classes
@@ -148,9 +137,7 @@ class AnalyticLightNode extends LightingNode {
 	 * @return {ShadowNode} The created shadow node.
 	 */
 	setupShadowNode() {
-
-		return shadow( this.light );
-
+		return shadow(this.light)
 	}
 
 	/**
@@ -160,42 +147,34 @@ class AnalyticLightNode extends LightingNode {
 	 *
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	setupShadow( builder ) {
+	setupShadow(builder) {
+		const { renderer } = builder
 
-		const { renderer } = builder;
+		if (renderer.shadowMap.enabled === false) return
 
-		if ( renderer.shadowMap.enabled === false ) return;
+		let shadowColorNode = this.shadowColorNode
 
-		let shadowColorNode = this.shadowColorNode;
+		if (shadowColorNode === null) {
+			const customShadowNode = this.light.shadow.shadowNode
 
-		if ( shadowColorNode === null ) {
+			let shadowNode
 
-			const customShadowNode = this.light.shadow.shadowNode;
-
-			let shadowNode;
-
-			if ( customShadowNode !== undefined ) {
-
-				shadowNode = nodeObject( customShadowNode );
-
+			if (customShadowNode !== undefined) {
+				shadowNode = nodeObject(customShadowNode)
 			} else {
-
-				shadowNode = this.setupShadowNode( builder );
-
+				shadowNode = this.setupShadowNode(builder)
 			}
 
-			this.shadowNode = shadowNode;
+			this.shadowNode = shadowNode
 
-			this.shadowColorNode = shadowColorNode = this.colorNode.mul( shadowNode );
+			this.shadowColorNode = shadowColorNode = this.colorNode.mul(shadowNode)
 
-			this.baseColorNode = this.colorNode;
-
+			this.baseColorNode = this.colorNode
 		}
 
 		//
 
-		this.colorNode = shadowColorNode;
-
+		this.colorNode = shadowColorNode
 	}
 
 	/**
@@ -205,41 +184,29 @@ class AnalyticLightNode extends LightingNode {
 	 *
 	 * @param {NodeBuilder} builder - The current node builder.
 	 */
-	setup( builder ) {
+	setup(builder) {
+		this.colorNode = this.baseColorNode || this.colorNode
 
-		this.colorNode = this.baseColorNode || this.colorNode;
-
-		if ( this.light.castShadow ) {
-
-			if ( builder.object.receiveShadow ) {
-
-				this.setupShadow( builder );
-
+		if (this.light.castShadow) {
+			if (builder.object.receiveShadow) {
+				this.setupShadow(builder)
 			}
-
-		} else if ( this.shadowNode !== null ) {
-
-			this.shadowNode.dispose();
-			this.shadowNode = null;
-			this.shadowColorNode = null;
-
+		} else if (this.shadowNode !== null) {
+			this.shadowNode.dispose()
+			this.shadowNode = null
+			this.shadowColorNode = null
 		}
 
-		const directLightData = this.setupDirect( builder );
-		const directRectAreaLightData = this.setupDirectRectArea( builder );
+		const directLightData = this.setupDirect(builder)
+		const directRectAreaLightData = this.setupDirectRectArea(builder)
 
-		if ( directLightData ) {
-
-			builder.lightsNode.setupDirectLight( builder, this, directLightData );
-
+		if (directLightData) {
+			builder.lightsNode.setupDirectLight(builder, this, directLightData)
 		}
 
-		if ( directRectAreaLightData ) {
-
-			builder.lightsNode.setupDirectRectAreaLight( builder, this, directRectAreaLightData );
-
+		if (directRectAreaLightData) {
+			builder.lightsNode.setupDirectRectAreaLight(builder, this, directRectAreaLightData)
 		}
-
 	}
 
 	/**
@@ -249,14 +216,11 @@ class AnalyticLightNode extends LightingNode {
 	 *
 	 * @param {NodeFrame} frame - A reference to the current node frame.
 	 */
-	update( /*frame*/ ) {
+	update(/*frame*/) {
+		const { light } = this
 
-		const { light } = this;
-
-		this.color.copy( light.color ).multiplyScalar( light.intensity );
-
+		this.color.copy(light.color).multiplyScalar(light.intensity)
 	}
-
 }
 
-export default AnalyticLightNode;
+export default AnalyticLightNode

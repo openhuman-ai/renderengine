@@ -1,4 +1,4 @@
-import { Color } from '../math/Color.js';
+import { Color } from "../math/Color.js"
 
 /**
  * This class can be used to define a linear fog that grows linearly denser
@@ -10,7 +10,6 @@ import { Color } from '../math/Color.js';
  * ```
  */
 class Fog {
-
 	/**
 	 * Constructs a new fog.
 	 *
@@ -18,8 +17,7 @@ class Fog {
 	 * @param {number} [near=1] - The minimum distance to start applying fog.
 	 * @param {number} [far=1000] - The maximum distance at which fog stops being calculated and applied.
 	 */
-	constructor( color, near = 1, far = 1000 ) {
-
+	constructor(color, near = 1, far = 1000) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -27,21 +25,21 @@ class Fog {
 		 * @readonly
 		 * @default true
 		 */
-		this.isFog = true;
+		this.isFog = true
 
 		/**
 		 * The name of the fog.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The fog's color.
 		 *
 		 * @type {Color}
 		 */
-		this.color = new Color( color );
+		this.color = new Color(color)
 
 		/**
 		 * The minimum distance to start applying fog. Objects that are less than
@@ -50,7 +48,7 @@ class Fog {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.near = near;
+		this.near = near
 
 		/**
 		 * The maximum distance at which fog stops being calculated and applied.
@@ -60,8 +58,7 @@ class Fog {
 		 * @type {number}
 		 * @default 1000
 		 */
-		this.far = far;
-
+		this.far = far
 	}
 
 	/**
@@ -70,9 +67,7 @@ class Fog {
 	 * @return {Fog} A clone of this instance.
 	 */
 	clone() {
-
-		return new Fog( this.color, this.near, this.far );
-
+		return new Fog(this.color, this.near, this.far)
 	}
 
 	/**
@@ -81,18 +76,15 @@ class Fog {
 	 * @param {?(Object|string)} meta - An optional value holding meta information about the serialization.
 	 * @return {Object} A JSON object representing the serialized fog
 	 */
-	toJSON( /* meta */ ) {
-
+	toJSON(/* meta */) {
 		return {
-			type: 'Fog',
+			type: "Fog",
 			name: this.name,
 			color: this.color.getHex(),
 			near: this.near,
-			far: this.far
-		};
-
+			far: this.far,
+		}
 	}
-
 }
 
-export { Fog };
+export { Fog }

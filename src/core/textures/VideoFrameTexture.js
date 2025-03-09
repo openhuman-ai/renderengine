@@ -1,4 +1,4 @@
-import { VideoTexture } from './VideoTexture.js';
+import { VideoTexture } from "./VideoTexture.js"
 
 /**
  * This class can be used as an alternative way to define video data. Instead of using
@@ -14,7 +14,6 @@ import { VideoTexture } from './VideoTexture.js';
  * @augments VideoTexture
  */
 class VideoFrameTexture extends VideoTexture {
-
 	/**
 	 * Constructs a new video frame texture.
 	 *
@@ -27,9 +26,8 @@ class VideoFrameTexture extends VideoTexture {
 	 * @param {number} [type=UnsignedByteType] - The texture type.
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 */
-	constructor( mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
-
-		super( {}, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+	constructor(mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+		super({}, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy)
 
 		/**
 		 * This flag can be used for type testing.
@@ -38,8 +36,7 @@ class VideoFrameTexture extends VideoTexture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isVideoFrameTexture = true;
-
+		this.isVideoFrameTexture = true
 	}
 
 	/**
@@ -49,9 +46,7 @@ class VideoFrameTexture extends VideoTexture {
 	update() {}
 
 	clone() {
-
-		return new this.constructor().copy( this ); // restoring Texture.clone()
-
+		return new this.constructor().copy(this) // restoring Texture.clone()
 	}
 
 	/**
@@ -60,13 +55,10 @@ class VideoFrameTexture extends VideoTexture {
 	 *
 	 * @param {VideoFrame} frame - The video frame.
 	 */
-	setFrame( frame ) {
-
-		this.image = frame;
-		this.needsUpdate = true;
-
+	setFrame(frame) {
+		this.image = frame
+		this.needsUpdate = true
 	}
-
 }
 
-export { VideoFrameTexture };
+export { VideoFrameTexture }

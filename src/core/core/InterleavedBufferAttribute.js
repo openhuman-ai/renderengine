@@ -1,8 +1,8 @@
-import { Vector3 } from '../math/Vector3.js';
-import { BufferAttribute } from './BufferAttribute.js';
-import { denormalize, normalize } from '../math/MathUtils.js';
+import { Vector3 } from "../math/Vector3.js"
+import { BufferAttribute } from "./BufferAttribute.js"
+import { denormalize, normalize } from "../math/MathUtils.js"
 
-const _vector = /*@__PURE__*/ new Vector3();
+const _vector = /*@__PURE__*/ new Vector3()
 
 /**
  * An alternative version of a buffer attribute with interleaved data. Interleaved
@@ -10,7 +10,6 @@ const _vector = /*@__PURE__*/ new Vector3();
  * different offsets into the buffer.
  */
 class InterleavedBufferAttribute {
-
 	/**
 	 * Constructs a new interleaved buffer attribute.
 	 *
@@ -19,8 +18,7 @@ class InterleavedBufferAttribute {
 	 * @param {number} offset - The attribute offset into the buffer.
 	 * @param {boolean} [normalized=false] - Whether the data are normalized or not.
 	 */
-	constructor( interleavedBuffer, itemSize, offset, normalized = false ) {
-
+	constructor(interleavedBuffer, itemSize, offset, normalized = false) {
 		/**
 		 * This flag can be used for type testing.
 		 *
@@ -28,43 +26,42 @@ class InterleavedBufferAttribute {
 		 * @readonly
 		 * @default true
 		 */
-		this.isInterleavedBufferAttribute = true;
+		this.isInterleavedBufferAttribute = true
 
 		/**
 		 * The name of the buffer attribute.
 		 *
 		 * @type {string}
 		 */
-		this.name = '';
+		this.name = ""
 
 		/**
 		 * The buffer holding the interleaved data.
 		 *
 		 * @type {InterleavedBuffer}
 		 */
-		this.data = interleavedBuffer;
+		this.data = interleavedBuffer
 
 		/**
 		 * The item size, see {@link BufferAttribute#itemSize}.
 		 *
 		 * @type {number}
 		 */
-		this.itemSize = itemSize;
+		this.itemSize = itemSize
 
 		/**
 		 * The attribute offset into the buffer.
 		 *
 		 * @type {number}
 		 */
-		this.offset = offset;
+		this.offset = offset
 
 		/**
 		 * Whether the data are normalized or not, see {@link BufferAttribute#normalized}
 		 *
 		 * @type {InterleavedBuffer}
 		 */
-		this.normalized = normalized;
-
+		this.normalized = normalized
 	}
 
 	/**
@@ -74,9 +71,7 @@ class InterleavedBufferAttribute {
 	 * @readonly
 	 */
 	get count() {
-
-		return this.data.count;
-
+		return this.data.count
 	}
 
 	/**
@@ -85,9 +80,7 @@ class InterleavedBufferAttribute {
 	 * @type {TypedArray}
 	 */
 	get array() {
-
-		return this.data.array;
-
+		return this.data.array
 	}
 
 	/**
@@ -98,10 +91,8 @@ class InterleavedBufferAttribute {
 	 * @default false
 	 * @param {boolean} value
 	 */
-	set needsUpdate( value ) {
-
-		this.data.needsUpdate = value;
-
+	set needsUpdate(value) {
+		this.data.needsUpdate = value
 	}
 
 	/**
@@ -111,20 +102,16 @@ class InterleavedBufferAttribute {
 	 * @param {Matrix4} m - The matrix to apply.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	applyMatrix4( m ) {
+	applyMatrix4(m) {
+		for (let i = 0, l = this.data.count; i < l; i++) {
+			_vector.fromBufferAttribute(this, i)
 
-		for ( let i = 0, l = this.data.count; i < l; i ++ ) {
+			_vector.applyMatrix4(m)
 
-			_vector.fromBufferAttribute( this, i );
-
-			_vector.applyMatrix4( m );
-
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
-
+			this.setXYZ(i, _vector.x, _vector.y, _vector.z)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -134,20 +121,16 @@ class InterleavedBufferAttribute {
 	 * @param {Matrix3} m - The normal matrix to apply.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	applyNormalMatrix( m ) {
+	applyNormalMatrix(m) {
+		for (let i = 0, l = this.count; i < l; i++) {
+			_vector.fromBufferAttribute(this, i)
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+			_vector.applyNormalMatrix(m)
 
-			_vector.fromBufferAttribute( this, i );
-
-			_vector.applyNormalMatrix( m );
-
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
-
+			this.setXYZ(i, _vector.x, _vector.y, _vector.z)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -157,20 +140,16 @@ class InterleavedBufferAttribute {
 	 * @param {Matrix4} m - The matrix to apply.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	transformDirection( m ) {
+	transformDirection(m) {
+		for (let i = 0, l = this.count; i < l; i++) {
+			_vector.fromBufferAttribute(this, i)
 
-		for ( let i = 0, l = this.count; i < l; i ++ ) {
+			_vector.transformDirection(m)
 
-			_vector.fromBufferAttribute( this, i );
-
-			_vector.transformDirection( m );
-
-			this.setXYZ( i, _vector.x, _vector.y, _vector.z );
-
+			this.setXYZ(i, _vector.x, _vector.y, _vector.z)
 		}
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -180,14 +159,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} component - The component index.
 	 * @return {number} The returned value.
 	 */
-	getComponent( index, component ) {
+	getComponent(index, component) {
+		let value = this.array[index * this.data.stride + this.offset + component]
 
-		let value = this.array[ index * this.data.stride + this.offset + component ];
+		if (this.normalized) value = denormalize(value, this.array)
 
-		if ( this.normalized ) value = denormalize( value, this.array );
-
-		return value;
-
+		return value
 	}
 
 	/**
@@ -198,14 +175,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} value - The value to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setComponent( index, component, value ) {
+	setComponent(index, component, value) {
+		if (this.normalized) value = normalize(value, this.array)
 
-		if ( this.normalized ) value = normalize( value, this.array );
+		this.data.array[index * this.data.stride + this.offset + component] = value
 
-		this.data.array[ index * this.data.stride + this.offset + component ] = value;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -215,14 +190,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} x - The value to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setX( index, x ) {
+	setX(index, x) {
+		if (this.normalized) x = normalize(x, this.array)
 
-		if ( this.normalized ) x = normalize( x, this.array );
+		this.data.array[index * this.data.stride + this.offset] = x
 
-		this.data.array[ index * this.data.stride + this.offset ] = x;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -232,14 +205,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} y - The value to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setY( index, y ) {
+	setY(index, y) {
+		if (this.normalized) y = normalize(y, this.array)
 
-		if ( this.normalized ) y = normalize( y, this.array );
+		this.data.array[index * this.data.stride + this.offset + 1] = y
 
-		this.data.array[ index * this.data.stride + this.offset + 1 ] = y;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -249,14 +220,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} z - The value to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setZ( index, z ) {
+	setZ(index, z) {
+		if (this.normalized) z = normalize(z, this.array)
 
-		if ( this.normalized ) z = normalize( z, this.array );
+		this.data.array[index * this.data.stride + this.offset + 2] = z
 
-		this.data.array[ index * this.data.stride + this.offset + 2 ] = z;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -266,14 +235,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} w - The value to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setW( index, w ) {
+	setW(index, w) {
+		if (this.normalized) w = normalize(w, this.array)
 
-		if ( this.normalized ) w = normalize( w, this.array );
+		this.data.array[index * this.data.stride + this.offset + 3] = w
 
-		this.data.array[ index * this.data.stride + this.offset + 3 ] = w;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -282,14 +249,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} index - The index into the buffer attribute.
 	 * @return {number} The x component.
 	 */
-	getX( index ) {
+	getX(index) {
+		let x = this.data.array[index * this.data.stride + this.offset]
 
-		let x = this.data.array[ index * this.data.stride + this.offset ];
+		if (this.normalized) x = denormalize(x, this.array)
 
-		if ( this.normalized ) x = denormalize( x, this.array );
-
-		return x;
-
+		return x
 	}
 
 	/**
@@ -298,14 +263,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} index - The index into the buffer attribute.
 	 * @return {number} The y component.
 	 */
-	getY( index ) {
+	getY(index) {
+		let y = this.data.array[index * this.data.stride + this.offset + 1]
 
-		let y = this.data.array[ index * this.data.stride + this.offset + 1 ];
+		if (this.normalized) y = denormalize(y, this.array)
 
-		if ( this.normalized ) y = denormalize( y, this.array );
-
-		return y;
-
+		return y
 	}
 
 	/**
@@ -314,14 +277,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} index - The index into the buffer attribute.
 	 * @return {number} The z component.
 	 */
-	getZ( index ) {
+	getZ(index) {
+		let z = this.data.array[index * this.data.stride + this.offset + 2]
 
-		let z = this.data.array[ index * this.data.stride + this.offset + 2 ];
+		if (this.normalized) z = denormalize(z, this.array)
 
-		if ( this.normalized ) z = denormalize( z, this.array );
-
-		return z;
-
+		return z
 	}
 
 	/**
@@ -330,14 +291,12 @@ class InterleavedBufferAttribute {
 	 * @param {number} index - The index into the buffer attribute.
 	 * @return {number} The w component.
 	 */
-	getW( index ) {
+	getW(index) {
+		let w = this.data.array[index * this.data.stride + this.offset + 3]
 
-		let w = this.data.array[ index * this.data.stride + this.offset + 3 ];
+		if (this.normalized) w = denormalize(w, this.array)
 
-		if ( this.normalized ) w = denormalize( w, this.array );
-
-		return w;
-
+		return w
 	}
 
 	/**
@@ -348,22 +307,18 @@ class InterleavedBufferAttribute {
 	 * @param {number} y - The value for the y component to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setXY( index, x, y ) {
+	setXY(index, x, y) {
+		index = index * this.data.stride + this.offset
 
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-
+		if (this.normalized) {
+			x = normalize(x, this.array)
+			y = normalize(y, this.array)
 		}
 
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
+		this.data.array[index + 0] = x
+		this.data.array[index + 1] = y
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -375,24 +330,20 @@ class InterleavedBufferAttribute {
 	 * @param {number} z - The value for the z component to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setXYZ( index, x, y, z ) {
+	setXYZ(index, x, y, z) {
+		index = index * this.data.stride + this.offset
 
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-
+		if (this.normalized) {
+			x = normalize(x, this.array)
+			y = normalize(y, this.array)
+			z = normalize(z, this.array)
 		}
 
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
-		this.data.array[ index + 2 ] = z;
+		this.data.array[index + 0] = x
+		this.data.array[index + 1] = y
+		this.data.array[index + 2] = z
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -405,26 +356,22 @@ class InterleavedBufferAttribute {
 	 * @param {number} w - The value for the w component to set.
 	 * @return {InterleavedBufferAttribute} A reference to this instance.
 	 */
-	setXYZW( index, x, y, z, w ) {
+	setXYZW(index, x, y, z, w) {
+		index = index * this.data.stride + this.offset
 
-		index = index * this.data.stride + this.offset;
-
-		if ( this.normalized ) {
-
-			x = normalize( x, this.array );
-			y = normalize( y, this.array );
-			z = normalize( z, this.array );
-			w = normalize( w, this.array );
-
+		if (this.normalized) {
+			x = normalize(x, this.array)
+			y = normalize(y, this.array)
+			z = normalize(z, this.array)
+			w = normalize(w, this.array)
 		}
 
-		this.data.array[ index + 0 ] = x;
-		this.data.array[ index + 1 ] = y;
-		this.data.array[ index + 2 ] = z;
-		this.data.array[ index + 3 ] = w;
+		this.data.array[index + 0] = x
+		this.data.array[index + 1] = y
+		this.data.array[index + 2] = z
+		this.data.array[index + 3] = w
 
-		return this;
-
+		return this
 	}
 
 	/**
@@ -435,46 +382,32 @@ class InterleavedBufferAttribute {
 	 * @param {Object} [data] - An object with interleaved buffers that allows to retain the interleaved property.
 	 * @return {BufferAttribute|InterleavedBufferAttribute} A clone of this instance.
 	 */
-	clone( data ) {
+	clone(data) {
+		if (data === undefined) {
+			console.log("THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.")
 
-		if ( data === undefined ) {
+			const array = []
 
-			console.log( 'THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.' );
+			for (let i = 0; i < this.count; i++) {
+				const index = i * this.data.stride + this.offset
 
-			const array = [];
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				const index = i * this.data.stride + this.offset;
-
-				for ( let j = 0; j < this.itemSize; j ++ ) {
-
-					array.push( this.data.array[ index + j ] );
-
+				for (let j = 0; j < this.itemSize; j++) {
+					array.push(this.data.array[index + j])
 				}
-
 			}
 
-			return new BufferAttribute( new this.array.constructor( array ), this.itemSize, this.normalized );
-
+			return new BufferAttribute(new this.array.constructor(array), this.itemSize, this.normalized)
 		} else {
-
-			if ( data.interleavedBuffers === undefined ) {
-
-				data.interleavedBuffers = {};
-
+			if (data.interleavedBuffers === undefined) {
+				data.interleavedBuffers = {}
 			}
 
-			if ( data.interleavedBuffers[ this.data.uuid ] === undefined ) {
-
-				data.interleavedBuffers[ this.data.uuid ] = this.data.clone( data );
-
+			if (data.interleavedBuffers[this.data.uuid] === undefined) {
+				data.interleavedBuffers[this.data.uuid] = this.data.clone(data)
 			}
 
-			return new InterleavedBufferAttribute( data.interleavedBuffers[ this.data.uuid ], this.itemSize, this.offset, this.normalized );
-
+			return new InterleavedBufferAttribute(data.interleavedBuffers[this.data.uuid], this.itemSize, this.offset, this.normalized)
 		}
-
 	}
 
 	/**
@@ -485,24 +418,18 @@ class InterleavedBufferAttribute {
 	 * @param {Object} [data] - An optional value holding meta information about the serialization.
 	 * @return {Object} A JSON object representing the serialized buffer attribute.
 	 */
-	toJSON( data ) {
+	toJSON(data) {
+		if (data === undefined) {
+			console.log("THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.")
 
-		if ( data === undefined ) {
+			const array = []
 
-			console.log( 'THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.' );
+			for (let i = 0; i < this.count; i++) {
+				const index = i * this.data.stride + this.offset
 
-			const array = [];
-
-			for ( let i = 0; i < this.count; i ++ ) {
-
-				const index = i * this.data.stride + this.offset;
-
-				for ( let j = 0; j < this.itemSize; j ++ ) {
-
-					array.push( this.data.array[ index + j ] );
-
+				for (let j = 0; j < this.itemSize; j++) {
+					array.push(this.data.array[index + j])
 				}
-
 			}
 
 			// de-interleave data and save it as an ordinary buffer attribute for now
@@ -511,23 +438,17 @@ class InterleavedBufferAttribute {
 				itemSize: this.itemSize,
 				type: this.array.constructor.name,
 				array: array,
-				normalized: this.normalized
-			};
-
+				normalized: this.normalized,
+			}
 		} else {
-
 			// save as true interleaved attribute
 
-			if ( data.interleavedBuffers === undefined ) {
-
-				data.interleavedBuffers = {};
-
+			if (data.interleavedBuffers === undefined) {
+				data.interleavedBuffers = {}
 			}
 
-			if ( data.interleavedBuffers[ this.data.uuid ] === undefined ) {
-
-				data.interleavedBuffers[ this.data.uuid ] = this.data.toJSON( data );
-
+			if (data.interleavedBuffers[this.data.uuid] === undefined) {
+				data.interleavedBuffers[this.data.uuid] = this.data.toJSON(data)
 			}
 
 			return {
@@ -535,14 +456,10 @@ class InterleavedBufferAttribute {
 				itemSize: this.itemSize,
 				data: this.data.uuid,
 				offset: this.offset,
-				normalized: this.normalized
-			};
-
+				normalized: this.normalized,
+			}
 		}
-
 	}
-
 }
 
-
-export { InterleavedBufferAttribute };
+export { InterleavedBufferAttribute }

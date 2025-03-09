@@ -1,5 +1,5 @@
-import { KeyframeTrack } from '../KeyframeTrack.js';
-import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionLinearInterpolant.js';
+import { KeyframeTrack } from "../KeyframeTrack.js"
+import { QuaternionLinearInterpolant } from "../../math/interpolants/QuaternionLinearInterpolant.js"
 
 /**
  * A track for Quaternion keyframe values.
@@ -7,7 +7,6 @@ import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionL
  * @augments KeyframeTrack
  */
 class QuaternionKeyframeTrack extends KeyframeTrack {
-
 	/**
 	 * Constructs a new Quaternion keyframe track.
 	 *
@@ -16,10 +15,8 @@ class QuaternionKeyframeTrack extends KeyframeTrack {
 	 * @param {Array<number>} values - A list of keyframe values.
 	 * @param {(InterpolateLinear|InterpolateDiscrete|InterpolateSmooth)} [interpolation] - The interpolation type.
 	 */
-	constructor( name, times, values, interpolation ) {
-
-		super( name, times, values, interpolation );
-
+	constructor(name, times, values, interpolation) {
+		super(name, times, values, interpolation)
 	}
 
 	/**
@@ -29,12 +26,9 @@ class QuaternionKeyframeTrack extends KeyframeTrack {
 	 * @param {TypedArray} [result] - The result buffer.
 	 * @return {QuaternionLinearInterpolant} The new interpolant.
 	 */
-	InterpolantFactoryMethodLinear( result ) {
-
-		return new QuaternionLinearInterpolant( this.times, this.values, this.getValueSize(), result );
-
+	InterpolantFactoryMethodLinear(result) {
+		return new QuaternionLinearInterpolant(this.times, this.values, this.getValueSize(), result)
 	}
-
 }
 
 /**
@@ -43,9 +37,9 @@ class QuaternionKeyframeTrack extends KeyframeTrack {
  * @type {String}
  * @default 'quaternion'
  */
-QuaternionKeyframeTrack.prototype.ValueTypeName = 'quaternion';
+QuaternionKeyframeTrack.prototype.ValueTypeName = "quaternion"
 // ValueBufferType is inherited
 // DefaultInterpolation is inherited;
-QuaternionKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+QuaternionKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined
 
-export { QuaternionKeyframeTrack };
+export { QuaternionKeyframeTrack }

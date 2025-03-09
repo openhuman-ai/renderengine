@@ -1,4 +1,4 @@
-import { Object3D } from '../core/Object3D.js';
+import { Object3D } from "../core/Object3D.js"
 
 /**
  * This is almost identical to an {@link Object3D}. Its purpose is to
@@ -18,10 +18,8 @@ import { Object3D } from '../core/Object3D.js';
  * @augments Object3D
  */
 class Group extends Object3D {
-
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -30,12 +28,10 @@ class Group extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.isGroup = true;
+		this.isGroup = true
 
-		this.type = 'Group';
-
+		this.type = "Group"
 	}
-
 }
 
-export { Group };
+export { Group }

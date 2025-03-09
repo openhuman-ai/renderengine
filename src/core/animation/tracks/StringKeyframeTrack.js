@@ -1,5 +1,5 @@
-import { InterpolateDiscrete } from '../../constants.js';
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { InterpolateDiscrete } from "../../constants.js"
+import { KeyframeTrack } from "../KeyframeTrack.js"
 
 /**
  * A track for string keyframe values.
@@ -7,7 +7,6 @@ import { KeyframeTrack } from '../KeyframeTrack.js';
  * @augments KeyframeTrack
  */
 class StringKeyframeTrack extends KeyframeTrack {
-
 	/**
 	 * Constructs a new string keyframe track.
 	 *
@@ -18,12 +17,9 @@ class StringKeyframeTrack extends KeyframeTrack {
 	 * @param {Array<number>} times - A list of keyframe times.
 	 * @param {Array<number>} values - A list of keyframe values.
 	 */
-	constructor( name, times, values ) {
-
-		super( name, times, values );
-
+	constructor(name, times, values) {
+		super(name, times, values)
 	}
-
 }
 
 /**
@@ -32,7 +28,7 @@ class StringKeyframeTrack extends KeyframeTrack {
  * @type {String}
  * @default 'string'
  */
-StringKeyframeTrack.prototype.ValueTypeName = 'string';
+StringKeyframeTrack.prototype.ValueTypeName = "string"
 
 /**
  * The value buffer type of this keyframe track.
@@ -40,7 +36,7 @@ StringKeyframeTrack.prototype.ValueTypeName = 'string';
  * @type {TypedArray|Array}
  * @default Array.constructor
  */
-StringKeyframeTrack.prototype.ValueBufferType = Array;
+StringKeyframeTrack.prototype.ValueBufferType = Array
 
 /**
  * The default interpolation type of this keyframe track.
@@ -48,8 +44,8 @@ StringKeyframeTrack.prototype.ValueBufferType = Array;
  * @type {(InterpolateLinear|InterpolateDiscrete|InterpolateSmooth)}
  * @default InterpolateDiscrete
  */
-StringKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete;
-StringKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined;
-StringKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined;
+StringKeyframeTrack.prototype.DefaultInterpolation = InterpolateDiscrete
+StringKeyframeTrack.prototype.InterpolantFactoryMethodLinear = undefined
+StringKeyframeTrack.prototype.InterpolantFactoryMethodSmooth = undefined
 
-export { StringKeyframeTrack };
+export { StringKeyframeTrack }

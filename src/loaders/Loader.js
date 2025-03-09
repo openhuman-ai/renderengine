@@ -1,4 +1,4 @@
-import { DefaultLoadingManager } from './LoadingManager.js';
+import { DefaultLoadingManager } from "./LoadingManager.js"
 
 /**
  * Abstract base class for loaders.
@@ -6,21 +6,19 @@ import { DefaultLoadingManager } from './LoadingManager.js';
  * @abstract
  */
 class Loader {
-
 	/**
 	 * Constructs a new loader.
 	 *
 	 * @param {LoadingManager} [manager] - The loading manager.
 	 */
-	constructor( manager ) {
-
+	constructor(manager) {
 		/**
 		 * The loading manager.
 		 *
 		 * @type {LoadingManager}
 		 * @default DefaultLoadingManager
 		 */
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		this.manager = manager !== undefined ? manager : DefaultLoadingManager
 
 		/**
 		 * The crossOrigin string to implement CORS for loading the url from a
@@ -29,7 +27,7 @@ class Loader {
 		 * @type {string}
 		 * @default 'anonymous'
 		 */
-		this.crossOrigin = 'anonymous';
+		this.crossOrigin = "anonymous"
 
 		/**
 		 * Whether the XMLHttpRequest uses credentials.
@@ -37,21 +35,21 @@ class Loader {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.withCredentials = false;
+		this.withCredentials = false
 
 		/**
 		 * The base path from which the asset will be loaded.
 		 *
 		 * @type {string}
 		 */
-		this.path = '';
+		this.path = ""
 
 		/**
 		 * The base path from which additional resources like textures will be loaded.
 		 *
 		 * @type {string}
 		 */
-		this.resourcePath = '';
+		this.resourcePath = ""
 
 		/**
 		 * The [request header]{@link https://developer.mozilla.org/en-US/docs/Glossary/Request_header}
@@ -59,8 +57,7 @@ class Loader {
 		 *
 		 * @type {Object}
 		 */
-		this.requestHeader = {};
-
+		this.requestHeader = {}
 	}
 
 	/**
@@ -72,7 +69,7 @@ class Loader {
 	 * @param {onProgressCallback} onProgress - Executed while the loading is in progress.
 	 * @param {onErrorCallback} onError - Executed when errors occur.
 	 */
-	load( /* url, onLoad, onProgress, onError */ ) {}
+	load(/* url, onLoad, onProgress, onError */) {}
 
 	/**
 	 * A async version of {@link Loader#load}.
@@ -81,16 +78,12 @@ class Loader {
 	 * @param {onProgressCallback} onProgress - Executed while the loading is in progress.
 	 * @return {Promise} A Promise that resolves when the asset has been loaded.
 	 */
-	loadAsync( url, onProgress ) {
+	loadAsync(url, onProgress) {
+		const scope = this
 
-		const scope = this;
-
-		return new Promise( function ( resolve, reject ) {
-
-			scope.load( url, resolve, onProgress, reject );
-
-		} );
-
+		return new Promise(function (resolve, reject) {
+			scope.load(url, resolve, onProgress, reject)
+		})
 	}
 
 	/**
@@ -99,7 +92,7 @@ class Loader {
 	 *
 	 * @param {any} data - The data to parse.
 	 */
-	parse( /* data */ ) {}
+	parse(/* data */) {}
 
 	/**
 	 * Sets the `crossOrigin` String to implement CORS for loading the URL
@@ -108,11 +101,9 @@ class Loader {
 	 * @param {string} crossOrigin - The `crossOrigin` value.
 	 * @return {Loader} A reference to this instance.
 	 */
-	setCrossOrigin( crossOrigin ) {
-
-		this.crossOrigin = crossOrigin;
-		return this;
-
+	setCrossOrigin(crossOrigin) {
+		this.crossOrigin = crossOrigin
+		return this
 	}
 
 	/**
@@ -124,11 +115,9 @@ class Loader {
 	 * @param {boolean} value - The `withCredentials` value.
 	 * @return {Loader} A reference to this instance.
 	 */
-	setWithCredentials( value ) {
-
-		this.withCredentials = value;
-		return this;
-
+	setWithCredentials(value) {
+		this.withCredentials = value
+		return this
 	}
 
 	/**
@@ -137,11 +126,9 @@ class Loader {
 	 * @param {string} path - The base path.
 	 * @return {Loader} A reference to this instance.
 	 */
-	setPath( path ) {
-
-		this.path = path;
-		return this;
-
+	setPath(path) {
+		this.path = path
+		return this
 	}
 
 	/**
@@ -150,11 +137,9 @@ class Loader {
 	 * @param {string} resourcePath - The resource path.
 	 * @return {Loader} A reference to this instance.
 	 */
-	setResourcePath( resourcePath ) {
-
-		this.resourcePath = resourcePath;
-		return this;
-
+	setResourcePath(resourcePath) {
+		this.resourcePath = resourcePath
+		return this
 	}
 
 	/**
@@ -164,13 +149,10 @@ class Loader {
 	 * for configuring the HTTP request.
 	 * @return {Loader} A reference to this instance.
 	 */
-	setRequestHeader( requestHeader ) {
-
-		this.requestHeader = requestHeader;
-		return this;
-
+	setRequestHeader(requestHeader) {
+		this.requestHeader = requestHeader
+		return this
 	}
-
 }
 
 /**
@@ -197,6 +179,6 @@ class Loader {
  * @type {string}
  * @default '__DEFAULT'
  */
-Loader.DEFAULT_MATERIAL_NAME = '__DEFAULT';
+Loader.DEFAULT_MATERIAL_NAME = "__DEFAULT"
 
-export { Loader };
+export { Loader }

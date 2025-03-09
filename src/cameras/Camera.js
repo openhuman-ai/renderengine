@@ -1,6 +1,6 @@
-import { WebGLCoordinateSystem } from '../constants.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Object3D } from '../core/Object3D.js';
+import { WebGLCoordinateSystem } from "../constants.js"
+import { Matrix4 } from "../math/Matrix4.js"
+import { Object3D } from "../core/Object3D.js"
 
 /**
  * Abstract base class for cameras. This class should always be inherited
@@ -10,13 +10,11 @@ import { Object3D } from '../core/Object3D.js';
  * @augments Object3D
  */
 class Camera extends Object3D {
-
 	/**
 	 * Constructs a new camera.
 	 */
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -25,53 +23,50 @@ class Camera extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.isCamera = true;
+		this.isCamera = true
 
-		this.type = 'Camera';
+		this.type = "Camera"
 
 		/**
 		 * The inverse of the camera's world matrix.
 		 *
 		 * @type {Matrix4}
 		 */
-		this.matrixWorldInverse = new Matrix4();
+		this.matrixWorldInverse = new Matrix4()
 
 		/**
 		 * The camera's projection matrix.
 		 *
 		 * @type {Matrix4}
 		 */
-		this.projectionMatrix = new Matrix4();
+		this.projectionMatrix = new Matrix4()
 
 		/**
 		 * The inverse of the camera's projection matrix.
 		 *
 		 * @type {Matrix4}
 		 */
-		this.projectionMatrixInverse = new Matrix4();
+		this.projectionMatrixInverse = new Matrix4()
 
 		/**
 		 * The coordinate system in which the camera is used.
 		 *
 		 * @type {(WebGLCoordinateSystem|WebGPUCoordinateSystem)}
 		 */
-		this.coordinateSystem = WebGLCoordinateSystem;
-
+		this.coordinateSystem = WebGLCoordinateSystem
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.matrixWorldInverse.copy(source.matrixWorldInverse)
 
-		this.matrixWorldInverse.copy( source.matrixWorldInverse );
+		this.projectionMatrix.copy(source.projectionMatrix)
+		this.projectionMatrixInverse.copy(source.projectionMatrixInverse)
 
-		this.projectionMatrix.copy( source.projectionMatrix );
-		this.projectionMatrixInverse.copy( source.projectionMatrixInverse );
+		this.coordinateSystem = source.coordinateSystem
 
-		this.coordinateSystem = source.coordinateSystem;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -83,34 +78,25 @@ class Camera extends Object3D {
 	 * @param {Vector3} target - The target vector the result is stored to.
 	 * @return {Vector3} The 3D object's direction in world space.
 	 */
-	getWorldDirection( target ) {
-
-		return super.getWorldDirection( target ).negate();
-
+	getWorldDirection(target) {
+		return super.getWorldDirection(target).negate()
 	}
 
-	updateMatrixWorld( force ) {
+	updateMatrixWorld(force) {
+		super.updateMatrixWorld(force)
 
-		super.updateMatrixWorld( force );
-
-		this.matrixWorldInverse.copy( this.matrixWorld ).invert();
-
+		this.matrixWorldInverse.copy(this.matrixWorld).invert()
 	}
 
-	updateWorldMatrix( updateParents, updateChildren ) {
+	updateWorldMatrix(updateParents, updateChildren) {
+		super.updateWorldMatrix(updateParents, updateChildren)
 
-		super.updateWorldMatrix( updateParents, updateChildren );
-
-		this.matrixWorldInverse.copy( this.matrixWorld ).invert();
-
+		this.matrixWorldInverse.copy(this.matrixWorld).invert()
 	}
 
 	clone() {
-
-		return new this.constructor().copy( this );
-
+		return new this.constructor().copy(this)
 	}
-
 }
 
-export { Camera };
+export { Camera }

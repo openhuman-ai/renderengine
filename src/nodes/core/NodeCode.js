@@ -5,7 +5,6 @@
  * for this purpose.
  */
 class NodeCode {
-
 	/**
 	 * Constructs a new code node.
 	 *
@@ -13,21 +12,20 @@ class NodeCode {
 	 * @param {string} type - The node type.
 	 * @param {string} [code=''] - The native shader code.
 	 */
-	constructor( name, type, code = '' ) {
-
+	constructor(name, type, code = "") {
 		/**
 		 * The name of the code.
 		 *
 		 * @type {string}
 		 */
-		this.name = name;
+		this.name = name
 
 		/**
 		 * The node type.
 		 *
 		 * @type {string}
 		 */
-		this.type = type;
+		this.type = type
 
 		/**
 		 * The native shader code.
@@ -35,12 +33,10 @@ class NodeCode {
 		 * @type {string}
 		 * @default ''
 		 */
-		this.code = code;
+		this.code = code
 
-		Object.defineProperty( this, 'isNodeCode', { value: true } );
-
+		Object.defineProperty(this, "isNodeCode", { value: true })
 	}
-
 }
 
-export default NodeCode;
+export default NodeCode

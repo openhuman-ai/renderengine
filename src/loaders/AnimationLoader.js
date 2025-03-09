@@ -1,6 +1,6 @@
-import { AnimationClip } from '../animation/AnimationClip.js';
-import { FileLoader } from './FileLoader.js';
-import { Loader } from './Loader.js';
+import { AnimationClip } from "../animation/AnimationClip.js"
+import { FileLoader } from "./FileLoader.js"
+import { Loader } from "./Loader.js"
 
 /**
  * Class for loading animation clips in the JSON format. The files are internally
@@ -14,16 +14,13 @@ import { Loader } from './Loader.js';
  * @augments Loader
  */
 class AnimationLoader extends Loader {
-
 	/**
 	 * Constructs a new animation loader.
 	 *
 	 * @param {LoadingManager} [manager] - The loading manager.
 	 */
-	constructor( manager ) {
-
-		super( manager );
-
+	constructor(manager) {
+		super(manager)
 	}
 
 	/**
@@ -35,38 +32,31 @@ class AnimationLoader extends Loader {
 	 * @param {onProgressCallback} onProgress - Executed while the loading is in progress.
 	 * @param {onErrorCallback} onError - Executed when errors occur.
 	 */
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
+		const scope = this
 
-		const scope = this;
+		const loader = new FileLoader(this.manager)
+		loader.setPath(this.path)
+		loader.setRequestHeader(this.requestHeader)
+		loader.setWithCredentials(this.withCredentials)
+		loader.load(
+			url,
+			function (text) {
+				try {
+					onLoad(scope.parse(JSON.parse(text)))
+				} catch (e) {
+					if (onError) {
+						onError(e)
+					} else {
+						console.error(e)
+					}
 
-		const loader = new FileLoader( this.manager );
-		loader.setPath( this.path );
-		loader.setRequestHeader( this.requestHeader );
-		loader.setWithCredentials( this.withCredentials );
-		loader.load( url, function ( text ) {
-
-			try {
-
-				onLoad( scope.parse( JSON.parse( text ) ) );
-
-			} catch ( e ) {
-
-				if ( onError ) {
-
-					onError( e );
-
-				} else {
-
-					console.error( e );
-
+					scope.manager.itemError(url)
 				}
-
-				scope.manager.itemError( url );
-
-			}
-
-		}, onProgress, onError );
-
+			},
+			onProgress,
+			onError
+		)
 	}
 
 	/**
@@ -75,23 +65,17 @@ class AnimationLoader extends Loader {
 	 * @param {Object} json - The serialized animation clips.
 	 * @return {Array<AnimationClip>} The parsed animation clips.
 	 */
-	parse( json ) {
+	parse(json) {
+		const animations = []
 
-		const animations = [];
+		for (let i = 0; i < json.length; i++) {
+			const clip = AnimationClip.parse(json[i])
 
-		for ( let i = 0; i < json.length; i ++ ) {
-
-			const clip = AnimationClip.parse( json[ i ] );
-
-			animations.push( clip );
-
+			animations.push(clip)
 		}
 
-		return animations;
-
+		return animations
 	}
-
 }
 
-
-export { AnimationLoader };
+export { AnimationLoader }

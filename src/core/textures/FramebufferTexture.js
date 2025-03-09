@@ -1,5 +1,5 @@
-import { Texture } from './Texture.js';
-import { NearestFilter } from '../constants.js';
+import { Texture } from "./Texture.js"
+import { NearestFilter } from "../constants.js"
 
 /**
  * This class can only be used in combination with `copyFramebufferToTexture()` methods
@@ -26,16 +26,14 @@ import { NearestFilter } from '../constants.js';
  * @augments Texture
  */
 class FramebufferTexture extends Texture {
-
 	/**
 	 * Constructs a new framebuffer texture.
 	 *
 	 * @param {number} width - The width of the texture.
 	 * @param {number} height - The height of the texture.
 	 */
-	constructor( width, height ) {
-
-		super( { width, height } );
+	constructor(width, height) {
+		super({ width, height })
 
 		/**
 		 * This flag can be used for type testing.
@@ -44,7 +42,7 @@ class FramebufferTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isFramebufferTexture = true;
+		this.isFramebufferTexture = true
 
 		/**
 		 * How the texture is sampled when a texel covers more than one pixel.
@@ -54,7 +52,7 @@ class FramebufferTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.magFilter = NearestFilter;
+		this.magFilter = NearestFilter
 
 		/**
 		 * How the texture is sampled when a texel covers less than one pixel.
@@ -64,7 +62,7 @@ class FramebufferTexture extends Texture {
 		 * @type {(NearestFilter|NearestMipmapNearestFilter|NearestMipmapLinearFilter|LinearFilter|LinearMipmapNearestFilter|LinearMipmapLinearFilter)}
 		 * @default NearestFilter
 		 */
-		this.minFilter = NearestFilter;
+		this.minFilter = NearestFilter
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -74,12 +72,10 @@ class FramebufferTexture extends Texture {
 		 * @type {boolean}
 		 * @default false
 		 */
-		this.generateMipmaps = false;
+		this.generateMipmaps = false
 
-		this.needsUpdate = true;
-
+		this.needsUpdate = true
 	}
-
 }
 
-export { FramebufferTexture };
+export { FramebufferTexture }

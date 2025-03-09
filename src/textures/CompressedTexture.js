@@ -1,4 +1,4 @@
-import { Texture } from './Texture.js';
+import { Texture } from "./Texture.js"
 
 /**
  * Creates a texture based on data in compressed form.
@@ -8,7 +8,6 @@ import { Texture } from './Texture.js';
  * @augments Texture
  */
 class CompressedTexture extends Texture {
-
 	/**
 	 * Constructs a new compressed texture.
 	 *
@@ -26,9 +25,8 @@ class CompressedTexture extends Texture {
 	 * @param {number} [anisotropy=Texture.DEFAULT_ANISOTROPY] - The anisotropy value.
 	 * @param {string} [colorSpace=NoColorSpace] - The color space.
 	 */
-	constructor( mipmaps, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, colorSpace ) {
-
-		super( null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace );
+	constructor(mipmaps, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, colorSpace) {
+		super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, colorSpace)
 
 		/**
 		 * This flag can be used for type testing.
@@ -37,21 +35,21 @@ class CompressedTexture extends Texture {
 		 * @readonly
 		 * @default true
 		 */
-		this.isCompressedTexture = true;
+		this.isCompressedTexture = true
 
 		/**
 		 * The image property of a compressed texture just defines its dimensions.
 		 *
 		 * @type {{width:number,height:number}}
 		 */
-		this.image = { width: width, height: height };
+		this.image = { width: width, height: height }
 
 		/**
 		 * This array holds for all mipmaps (including the bases mip) the data and dimensions.
 		 *
 		 * @type {Array<Object>}
 		 */
-		this.mipmaps = mipmaps;
+		this.mipmaps = mipmaps
 
 		/**
 		 * If set to `true`, the texture is flipped along the vertical axis when
@@ -64,7 +62,7 @@ class CompressedTexture extends Texture {
 		 * @default false
 		 * @readonly
 		 */
-		this.flipY = false;
+		this.flipY = false
 
 		/**
 		 * Whether to generate mipmaps (if possible) for a texture.
@@ -77,10 +75,8 @@ class CompressedTexture extends Texture {
 		 * @default false
 		 * @readonly
 		 */
-		this.generateMipmaps = false;
-
+		this.generateMipmaps = false
 	}
-
 }
 
-export { CompressedTexture };
+export { CompressedTexture }

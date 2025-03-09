@@ -1,4 +1,4 @@
-import { Camera } from './Camera.js';
+import { Camera } from "./Camera.js"
 
 /**
  * Camera that uses [orthographic projection]{@link https://en.wikipedia.org/wiki/Orthographic_projection}.
@@ -15,7 +15,6 @@ import { Camera } from './Camera.js';
  * @augments Camera
  */
 class OrthographicCamera extends Camera {
-
 	/**
 	 * Constructs a new orthographic camera.
 	 *
@@ -26,9 +25,8 @@ class OrthographicCamera extends Camera {
 	 * @param {number} [near=0.1] - The camera's near plane.
 	 * @param {number} [far=2000] - The camera's far plane.
 	 */
-	constructor( left = - 1, right = 1, top = 1, bottom = - 1, near = 0.1, far = 2000 ) {
-
-		super();
+	constructor(left = -1, right = 1, top = 1, bottom = -1, near = 0.1, far = 2000) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -37,9 +35,9 @@ class OrthographicCamera extends Camera {
 		 * @readonly
 		 * @default true
 		 */
-		this.isOrthographicCamera = true;
+		this.isOrthographicCamera = true
 
-		this.type = 'OrthographicCamera';
+		this.type = "OrthographicCamera"
 
 		/**
 		 * The zoom factor of the camera.
@@ -47,7 +45,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.zoom = 1;
+		this.zoom = 1
 
 		/**
 		 * Represents the frustum window specification. This property should not be edited
@@ -56,7 +54,7 @@ class OrthographicCamera extends Camera {
 		 * @type {?Object}
 		 * @default null
 		 */
-		this.view = null;
+		this.view = null
 
 		/**
 		 * The left plane of the camera's frustum.
@@ -64,7 +62,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default -1
 		 */
-		this.left = left;
+		this.left = left
 
 		/**
 		 * The right plane of the camera's frustum.
@@ -72,7 +70,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.right = right;
+		this.right = right
 
 		/**
 		 * The top plane of the camera's frustum.
@@ -80,7 +78,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.top = top;
+		this.top = top
 
 		/**
 		 * The bottom plane of the camera's frustum.
@@ -88,7 +86,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default -1
 		 */
-		this.bottom = bottom;
+		this.bottom = bottom
 
 		/**
 		 * The camera's near plane. The valid range is greater than `0`
@@ -100,7 +98,7 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default 0.1
 		 */
-		this.near = near;
+		this.near = near
 
 		/**
 		 * The camera's far plane. Must be greater than the
@@ -109,28 +107,25 @@ class OrthographicCamera extends Camera {
 		 * @type {number}
 		 * @default 2000
 		 */
-		this.far = far;
+		this.far = far
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		this.left = source.left
+		this.right = source.right
+		this.top = source.top
+		this.bottom = source.bottom
+		this.near = source.near
+		this.far = source.far
 
-		this.left = source.left;
-		this.right = source.right;
-		this.top = source.top;
-		this.bottom = source.bottom;
-		this.near = source.near;
-		this.far = source.far;
+		this.zoom = source.zoom
+		this.view = source.view === null ? null : Object.assign({}, source.view)
 
-		this.zoom = source.zoom;
-		this.view = source.view === null ? null : Object.assign( {}, source.view );
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -145,10 +140,8 @@ class OrthographicCamera extends Camera {
 	 * @param {number} height - The height of subcamera.
 	 * @see {@link PerspectiveCamera#setViewOffset}
 	 */
-	setViewOffset( fullWidth, fullHeight, x, y, width, height ) {
-
-		if ( this.view === null ) {
-
+	setViewOffset(fullWidth, fullHeight, x, y, width, height) {
+		if (this.view === null) {
 			this.view = {
 				enabled: true,
 				fullWidth: 1,
@@ -156,36 +149,30 @@ class OrthographicCamera extends Camera {
 				offsetX: 0,
 				offsetY: 0,
 				width: 1,
-				height: 1
-			};
-
+				height: 1,
+			}
 		}
 
-		this.view.enabled = true;
-		this.view.fullWidth = fullWidth;
-		this.view.fullHeight = fullHeight;
-		this.view.offsetX = x;
-		this.view.offsetY = y;
-		this.view.width = width;
-		this.view.height = height;
+		this.view.enabled = true
+		this.view.fullWidth = fullWidth
+		this.view.fullHeight = fullHeight
+		this.view.offsetX = x
+		this.view.offsetY = y
+		this.view.width = width
+		this.view.height = height
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
 	/**
 	 * Removes the view offset from the projection matrix.
 	 */
 	clearViewOffset() {
-
-		if ( this.view !== null ) {
-
-			this.view.enabled = false;
-
+		if (this.view !== null) {
+			this.view.enabled = false
 		}
 
-		this.updateProjectionMatrix();
-
+		this.updateProjectionMatrix()
 	}
 
 	/**
@@ -193,53 +180,46 @@ class OrthographicCamera extends Camera {
 	 * camera properties.
 	 */
 	updateProjectionMatrix() {
+		const dx = (this.right - this.left) / (2 * this.zoom)
+		const dy = (this.top - this.bottom) / (2 * this.zoom)
+		const cx = (this.right + this.left) / 2
+		const cy = (this.top + this.bottom) / 2
 
-		const dx = ( this.right - this.left ) / ( 2 * this.zoom );
-		const dy = ( this.top - this.bottom ) / ( 2 * this.zoom );
-		const cx = ( this.right + this.left ) / 2;
-		const cy = ( this.top + this.bottom ) / 2;
+		let left = cx - dx
+		let right = cx + dx
+		let top = cy + dy
+		let bottom = cy - dy
 
-		let left = cx - dx;
-		let right = cx + dx;
-		let top = cy + dy;
-		let bottom = cy - dy;
+		if (this.view !== null && this.view.enabled) {
+			const scaleW = (this.right - this.left) / this.view.fullWidth / this.zoom
+			const scaleH = (this.top - this.bottom) / this.view.fullHeight / this.zoom
 
-		if ( this.view !== null && this.view.enabled ) {
-
-			const scaleW = ( this.right - this.left ) / this.view.fullWidth / this.zoom;
-			const scaleH = ( this.top - this.bottom ) / this.view.fullHeight / this.zoom;
-
-			left += scaleW * this.view.offsetX;
-			right = left + scaleW * this.view.width;
-			top -= scaleH * this.view.offsetY;
-			bottom = top - scaleH * this.view.height;
-
+			left += scaleW * this.view.offsetX
+			right = left + scaleW * this.view.width
+			top -= scaleH * this.view.offsetY
+			bottom = top - scaleH * this.view.height
 		}
 
-		this.projectionMatrix.makeOrthographic( left, right, top, bottom, this.near, this.far, this.coordinateSystem );
+		this.projectionMatrix.makeOrthographic(left, right, top, bottom, this.near, this.far, this.coordinateSystem)
 
-		this.projectionMatrixInverse.copy( this.projectionMatrix ).invert();
-
+		this.projectionMatrixInverse.copy(this.projectionMatrix).invert()
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		data.object.zoom = this.zoom
+		data.object.left = this.left
+		data.object.right = this.right
+		data.object.top = this.top
+		data.object.bottom = this.bottom
+		data.object.near = this.near
+		data.object.far = this.far
 
-		data.object.zoom = this.zoom;
-		data.object.left = this.left;
-		data.object.right = this.right;
-		data.object.top = this.top;
-		data.object.bottom = this.bottom;
-		data.object.near = this.near;
-		data.object.far = this.far;
+		if (this.view !== null) data.object.view = Object.assign({}, this.view)
 
-		if ( this.view !== null ) data.object.view = Object.assign( {}, this.view );
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { OrthographicCamera };
+export { OrthographicCamera }

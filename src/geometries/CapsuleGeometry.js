@@ -1,5 +1,5 @@
-import { Path } from '../extras/core/Path.js';
-import { LatheGeometry } from './LatheGeometry.js';
+import { Path } from "../extras/core/Path.js"
+import { LatheGeometry } from "./LatheGeometry.js"
 
 /**
  * A geometry class for a capsule with given radii and height. It is constructed using a lathe.
@@ -14,7 +14,6 @@ import { LatheGeometry } from './LatheGeometry.js';
  * @augments LatheGeometry
  */
 class CapsuleGeometry extends LatheGeometry {
-
 	/**
 	 * Constructs a new capsule geometry.
 	 *
@@ -23,15 +22,14 @@ class CapsuleGeometry extends LatheGeometry {
 	 * @param {number} [capSegments=4] - Number of curve segments used to build the caps.
 	 * @param {number} [radialSegments=8] - Number of segmented faces around the circumference of the capsule.
 	 */
-	constructor( radius = 1, length = 1, capSegments = 4, radialSegments = 8 ) {
+	constructor(radius = 1, length = 1, capSegments = 4, radialSegments = 8) {
+		const path = new Path()
+		path.absarc(0, -length / 2, radius, Math.PI * 1.5, 0)
+		path.absarc(0, length / 2, radius, 0, Math.PI * 0.5)
 
-		const path = new Path();
-		path.absarc( 0, - length / 2, radius, Math.PI * 1.5, 0 );
-		path.absarc( 0, length / 2, radius, 0, Math.PI * 0.5 );
+		super(path.getPoints(capSegments), radialSegments)
 
-		super( path.getPoints( capSegments ), radialSegments );
-
-		this.type = 'CapsuleGeometry';
+		this.type = "CapsuleGeometry"
 
 		/**
 		 * Holds the constructor parameters that have been
@@ -45,8 +43,7 @@ class CapsuleGeometry extends LatheGeometry {
 			length: length,
 			capSegments: capSegments,
 			radialSegments: radialSegments,
-		};
-
+		}
 	}
 
 	/**
@@ -56,12 +53,9 @@ class CapsuleGeometry extends LatheGeometry {
 	 * @param {Object} data - A JSON object representing the serialized geometry.
 	 * @return {CapsuleGeometry} A new instance.
 	 */
-	static fromJSON( data ) {
-
-		return new CapsuleGeometry( data.radius, data.length, data.capSegments, data.radialSegments );
-
+	static fromJSON(data) {
+		return new CapsuleGeometry(data.radius, data.length, data.capSegments, data.radialSegments)
 	}
-
 }
 
-export { CapsuleGeometry };
+export { CapsuleGeometry }

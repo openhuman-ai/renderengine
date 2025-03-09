@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from './PerspectiveCamera.js';
+import { PerspectiveCamera } from "./PerspectiveCamera.js"
 
 /**
  * This type of camera can be used in order to efficiently render a scene with a
@@ -12,15 +12,13 @@ import { PerspectiveCamera } from './PerspectiveCamera.js';
  * @augments PerspectiveCamera
  */
 class ArrayCamera extends PerspectiveCamera {
-
 	/**
 	 * Constructs a new array camera.
 	 *
 	 * @param {Array<PerspectiveCamera>} [array=[]] - An array of perspective sub cameras.
 	 */
-	constructor( array = [] ) {
-
-		super();
+	constructor(array = []) {
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -29,18 +27,16 @@ class ArrayCamera extends PerspectiveCamera {
 		 * @readonly
 		 * @default true
 		 */
-		this.isArrayCamera = true;
+		this.isArrayCamera = true
 
 		/**
 		 * An array of perspective sub cameras.
 		 *
 		 * @type {Array<PerspectiveCamera>}
 		 */
-		this.cameras = array;
-		this.index = 0;
-
+		this.cameras = array
+		this.index = 0
 	}
-
 }
 
-export { ArrayCamera };
+export { ArrayCamera }

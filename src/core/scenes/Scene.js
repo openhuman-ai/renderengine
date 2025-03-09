@@ -1,5 +1,5 @@
-import { Object3D } from '../core/Object3D.js';
-import { Euler } from '../math/Euler.js';
+import { Object3D } from "../core/Object3D.js"
+import { Euler } from "../math/Euler.js"
 
 /**
  * Scenes allow you to set up what is to be rendered and where by three.js.
@@ -8,13 +8,11 @@ import { Euler } from '../math/Euler.js';
  * @augments Object3D
  */
 class Scene extends Object3D {
-
 	/**
 	 * Constructs a new scene.
 	 */
 	constructor() {
-
-		super();
+		super()
 
 		/**
 		 * This flag can be used for type testing.
@@ -23,9 +21,9 @@ class Scene extends Object3D {
 		 * @readonly
 		 * @default true
 		 */
-		this.isScene = true;
+		this.isScene = true
 
-		this.type = 'Scene';
+		this.type = "Scene"
 
 		/**
 		 * Defines the background of the scene. Valid inputs are:
@@ -37,7 +35,7 @@ class Scene extends Object3D {
 		 * @type {?(Color|Texture)}
 		 * @default null
 		 */
-		this.background = null;
+		this.background = null
 
 		/**
 		 * Sets the environment map for all physical materials in the scene. However,
@@ -47,7 +45,7 @@ class Scene extends Object3D {
 		 * @type {?Texture}
 		 * @default null
 		 */
-		this.environment = null;
+		this.environment = null
 
 		/**
 		 * A fog instance defining the type of fog that affects everything
@@ -56,7 +54,7 @@ class Scene extends Object3D {
 		 * @type {?(Fog|FogExp2)}
 		 * @default null
 		 */
-		this.fog = null;
+		this.fog = null
 
 		/**
 		 * Sets the blurriness of the background. Only influences environment maps
@@ -66,7 +64,7 @@ class Scene extends Object3D {
 		 * @type {number}
 		 * @default 0
 		 */
-		this.backgroundBlurriness = 0;
+		this.backgroundBlurriness = 0
 
 		/**
 		 * Attenuates the color of the background. Only applies to background textures.
@@ -74,7 +72,7 @@ class Scene extends Object3D {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.backgroundIntensity = 1;
+		this.backgroundIntensity = 1
 
 		/**
 		 * The rotation of the background in radians. Only influences environment maps
@@ -83,7 +81,7 @@ class Scene extends Object3D {
 		 * @type {Euler}
 		 * @default (0,0,0)
 		 */
-		this.backgroundRotation = new Euler();
+		this.backgroundRotation = new Euler()
 
 		/**
 		 * Attenuates the color of the environment. Only influences environment maps
@@ -92,7 +90,7 @@ class Scene extends Object3D {
 		 * @type {number}
 		 * @default 1
 		 */
-		this.environmentIntensity = 1;
+		this.environmentIntensity = 1
 
 		/**
 		 * The rotation of the environment map in radians. Only influences physical materials
@@ -101,7 +99,7 @@ class Scene extends Object3D {
 		 * @type {Euler}
 		 * @default (0,0,0)
 		 */
-		this.environmentRotation = new Euler();
+		this.environmentRotation = new Euler()
 
 		/**
 		 * Forces everything in the scene to be rendered with the defined material.
@@ -109,56 +107,48 @@ class Scene extends Object3D {
 		 * @type {?Material}
 		 * @default null
 		 */
-		this.overrideMaterial = null;
+		this.overrideMaterial = null
 
-		if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
-
-			__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'observe', { detail: this } ) );
-
+		if (typeof __THREE_DEVTOOLS__ !== "undefined") {
+			__THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("observe", { detail: this }))
 		}
-
 	}
 
-	copy( source, recursive ) {
+	copy(source, recursive) {
+		super.copy(source, recursive)
 
-		super.copy( source, recursive );
+		if (source.background !== null) this.background = source.background.clone()
+		if (source.environment !== null) this.environment = source.environment.clone()
+		if (source.fog !== null) this.fog = source.fog.clone()
 
-		if ( source.background !== null ) this.background = source.background.clone();
-		if ( source.environment !== null ) this.environment = source.environment.clone();
-		if ( source.fog !== null ) this.fog = source.fog.clone();
+		this.backgroundBlurriness = source.backgroundBlurriness
+		this.backgroundIntensity = source.backgroundIntensity
+		this.backgroundRotation.copy(source.backgroundRotation)
 
-		this.backgroundBlurriness = source.backgroundBlurriness;
-		this.backgroundIntensity = source.backgroundIntensity;
-		this.backgroundRotation.copy( source.backgroundRotation );
+		this.environmentIntensity = source.environmentIntensity
+		this.environmentRotation.copy(source.environmentRotation)
 
-		this.environmentIntensity = source.environmentIntensity;
-		this.environmentRotation.copy( source.environmentRotation );
+		if (source.overrideMaterial !== null) this.overrideMaterial = source.overrideMaterial.clone()
 
-		if ( source.overrideMaterial !== null ) this.overrideMaterial = source.overrideMaterial.clone();
+		this.matrixAutoUpdate = source.matrixAutoUpdate
 
-		this.matrixAutoUpdate = source.matrixAutoUpdate;
-
-		return this;
-
+		return this
 	}
 
-	toJSON( meta ) {
+	toJSON(meta) {
+		const data = super.toJSON(meta)
 
-		const data = super.toJSON( meta );
+		if (this.fog !== null) data.object.fog = this.fog.toJSON()
 
-		if ( this.fog !== null ) data.object.fog = this.fog.toJSON();
+		if (this.backgroundBlurriness > 0) data.object.backgroundBlurriness = this.backgroundBlurriness
+		if (this.backgroundIntensity !== 1) data.object.backgroundIntensity = this.backgroundIntensity
+		data.object.backgroundRotation = this.backgroundRotation.toArray()
 
-		if ( this.backgroundBlurriness > 0 ) data.object.backgroundBlurriness = this.backgroundBlurriness;
-		if ( this.backgroundIntensity !== 1 ) data.object.backgroundIntensity = this.backgroundIntensity;
-		data.object.backgroundRotation = this.backgroundRotation.toArray();
+		if (this.environmentIntensity !== 1) data.object.environmentIntensity = this.environmentIntensity
+		data.object.environmentRotation = this.environmentRotation.toArray()
 
-		if ( this.environmentIntensity !== 1 ) data.object.environmentIntensity = this.environmentIntensity;
-		data.object.environmentRotation = this.environmentRotation.toArray();
-
-		return data;
-
+		return data
 	}
-
 }
 
-export { Scene };
+export { Scene }

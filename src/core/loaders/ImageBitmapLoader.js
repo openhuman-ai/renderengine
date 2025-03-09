@@ -1,5 +1,5 @@
-import { Cache } from './Cache.js';
-import { Loader } from './Loader.js';
+import { Cache } from "./Cache.js"
+import { Loader } from "./Loader.js"
 
 /**
  * A loader for loading images as an [ImageBitmap]{@link https://developer.mozilla.org/en-US/docs/Web/API/ImageBitmap}.
@@ -25,15 +25,13 @@ import { Loader } from './Loader.js';
  * @augments Loader
  */
 class ImageBitmapLoader extends Loader {
-
 	/**
 	 * Constructs a new image bitmap loader.
 	 *
 	 * @param {LoadingManager} [manager] - The loading manager.
 	 */
-	constructor( manager ) {
-
-		super( manager );
+	constructor(manager) {
+		super(manager)
 
 		/**
 		 * This flag can be used for type testing.
@@ -42,18 +40,14 @@ class ImageBitmapLoader extends Loader {
 		 * @readonly
 		 * @default true
 		 */
-		this.isImageBitmapLoader = true;
+		this.isImageBitmapLoader = true
 
-		if ( typeof createImageBitmap === 'undefined' ) {
-
-			console.warn( 'THREE.ImageBitmapLoader: createImageBitmap() not supported.' );
-
+		if (typeof createImageBitmap === "undefined") {
+			console.warn("THREE.ImageBitmapLoader: createImageBitmap() not supported.")
 		}
 
-		if ( typeof fetch === 'undefined' ) {
-
-			console.warn( 'THREE.ImageBitmapLoader: fetch() not supported.' );
-
+		if (typeof fetch === "undefined") {
+			console.warn("THREE.ImageBitmapLoader: fetch() not supported.")
 		}
 
 		/**
@@ -62,8 +56,7 @@ class ImageBitmapLoader extends Loader {
 		 * @type {Object}
 		 * @default {premultiplyAlpha:'none'}
 		 */
-		this.options = { premultiplyAlpha: 'none' };
-
+		this.options = { premultiplyAlpha: "none" }
 	}
 
 	/**
@@ -73,12 +66,10 @@ class ImageBitmapLoader extends Loader {
 	 * @param {Object} options - The loader options to set.
 	 * @return {ImageBitmapLoader} A reference to this image bitmap loader.
 	 */
-	setOptions( options ) {
+	setOptions(options) {
+		this.options = options
 
-		this.options = options;
-
-		return this;
-
+		return this
 	}
 
 	/**
@@ -90,91 +81,76 @@ class ImageBitmapLoader extends Loader {
 	 * @param {onErrorCallback} onError - Executed when errors occur.
 	 * @return {ImageBitmap|undefined} The image bitmap.
 	 */
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
+		if (url === undefined) url = ""
 
-		if ( url === undefined ) url = '';
+		if (this.path !== undefined) url = this.path + url
 
-		if ( this.path !== undefined ) url = this.path + url;
+		url = this.manager.resolveURL(url)
 
-		url = this.manager.resolveURL( url );
+		const scope = this
 
-		const scope = this;
+		const cached = Cache.get(url)
 
-		const cached = Cache.get( url );
-
-		if ( cached !== undefined ) {
-
-			scope.manager.itemStart( url );
+		if (cached !== undefined) {
+			scope.manager.itemStart(url)
 
 			// If cached is a promise, wait for it to resolve
-			if ( cached.then ) {
+			if (cached.then) {
+				cached
+					.then((imageBitmap) => {
+						if (onLoad) onLoad(imageBitmap)
 
-				cached.then( imageBitmap => {
-
-					if ( onLoad ) onLoad( imageBitmap );
-
-					scope.manager.itemEnd( url );
-
-				} ).catch( e => {
-
-					if ( onError ) onError( e );
-
-				} );
-				return;
-
+						scope.manager.itemEnd(url)
+					})
+					.catch((e) => {
+						if (onError) onError(e)
+					})
+				return
 			}
 
 			// If cached is not a promise (i.e., it's already an imageBitmap)
-			setTimeout( function () {
+			setTimeout(function () {
+				if (onLoad) onLoad(cached)
 
-				if ( onLoad ) onLoad( cached );
+				scope.manager.itemEnd(url)
+			}, 0)
 
-				scope.manager.itemEnd( url );
-
-			}, 0 );
-
-			return cached;
-
+			return cached
 		}
 
-		const fetchOptions = {};
-		fetchOptions.credentials = ( this.crossOrigin === 'anonymous' ) ? 'same-origin' : 'include';
-		fetchOptions.headers = this.requestHeader;
+		const fetchOptions = {}
+		fetchOptions.credentials = this.crossOrigin === "anonymous" ? "same-origin" : "include"
+		fetchOptions.headers = this.requestHeader
 
-		const promise = fetch( url, fetchOptions ).then( function ( res ) {
+		const promise = fetch(url, fetchOptions)
+			.then(function (res) {
+				return res.blob()
+			})
+			.then(function (blob) {
+				return createImageBitmap(blob, Object.assign(scope.options, { colorSpaceConversion: "none" }))
+			})
+			.then(function (imageBitmap) {
+				Cache.add(url, imageBitmap)
 
-			return res.blob();
+				if (onLoad) onLoad(imageBitmap)
 
-		} ).then( function ( blob ) {
+				scope.manager.itemEnd(url)
 
-			return createImageBitmap( blob, Object.assign( scope.options, { colorSpaceConversion: 'none' } ) );
+				return imageBitmap
+			})
+			.catch(function (e) {
+				if (onError) onError(e)
 
-		} ).then( function ( imageBitmap ) {
+				Cache.remove(url)
 
-			Cache.add( url, imageBitmap );
+				scope.manager.itemError(url)
+				scope.manager.itemEnd(url)
+			})
 
-			if ( onLoad ) onLoad( imageBitmap );
-
-			scope.manager.itemEnd( url );
-
-			return imageBitmap;
-
-		} ).catch( function ( e ) {
-
-			if ( onError ) onError( e );
-
-			Cache.remove( url );
-
-			scope.manager.itemError( url );
-			scope.manager.itemEnd( url );
-
-		} );
-
-		Cache.add( url, promise );
-		scope.manager.itemStart( url );
-
+		Cache.add(url, promise)
+		scope.manager.itemStart(url)
 	}
-
 }
 
-export { ImageBitmapLoader };
+export { ImageBitmapLoader }

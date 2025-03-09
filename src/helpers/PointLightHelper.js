@@ -1,6 +1,6 @@
-import { Mesh } from '../objects/Mesh.js';
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
-import { SphereGeometry } from '../geometries/SphereGeometry.js';
+import { Mesh } from "../objects/Mesh.js"
+import { MeshBasicMaterial } from "../materials/MeshBasicMaterial.js"
+import { SphereGeometry } from "../geometries/SphereGeometry.js"
 
 /**
  * This displays a helper object consisting of a spherical mesh for
@@ -19,7 +19,6 @@ import { SphereGeometry } from '../geometries/SphereGeometry.js';
  * @augments Mesh
  */
 class PointLightHelper extends Mesh {
-
 	/**
 	 * Constructs a new point light helper.
 	 *
@@ -28,19 +27,18 @@ class PointLightHelper extends Mesh {
 	 * @param {number|Color|string} [color] - The helper's color. If not set, the helper will take
 	 * the color of the light.
 	 */
-	constructor( light, sphereSize, color ) {
+	constructor(light, sphereSize, color) {
+		const geometry = new SphereGeometry(sphereSize, 4, 2)
+		const material = new MeshBasicMaterial({ wireframe: true, fog: false, toneMapped: false })
 
-		const geometry = new SphereGeometry( sphereSize, 4, 2 );
-		const material = new MeshBasicMaterial( { wireframe: true, fog: false, toneMapped: false } );
-
-		super( geometry, material );
+		super(geometry, material)
 
 		/**
 		 * The light being visualized.
 		 *
 		 * @type {HemisphereLight}
 		 */
-		this.light = light;
+		this.light = light
 
 		/**
 		 * The color parameter passed in the constructor.
@@ -48,15 +46,14 @@ class PointLightHelper extends Mesh {
 		 *
 		 * @type {number|Color|string}
 		 */
-		this.color = color;
+		this.color = color
 
-		this.type = 'PointLightHelper';
+		this.type = "PointLightHelper"
 
-		this.matrix = this.light.matrixWorld;
-		this.matrixAutoUpdate = false;
+		this.matrix = this.light.matrixWorld
+		this.matrixAutoUpdate = false
 
-		this.update();
-
+		this.update()
 
 		/*
 	// TODO: delete this comment?
@@ -80,7 +77,6 @@ class PointLightHelper extends Mesh {
 
 	this.add( this.lightDistance );
 	*/
-
 	}
 
 	/**
@@ -88,10 +84,8 @@ class PointLightHelper extends Mesh {
 	 * method whenever this instance is no longer used in your app.
 	 */
 	dispose() {
-
-		this.geometry.dispose();
-		this.material.dispose();
-
+		this.geometry.dispose()
+		this.material.dispose()
 	}
 
 	/**
@@ -99,17 +93,12 @@ class PointLightHelper extends Mesh {
 	 * light being visualized.
 	 */
 	update() {
+		this.light.updateWorldMatrix(true, false)
 
-		this.light.updateWorldMatrix( true, false );
-
-		if ( this.color !== undefined ) {
-
-			this.material.color.set( this.color );
-
+		if (this.color !== undefined) {
+			this.material.color.set(this.color)
 		} else {
-
-			this.material.color.copy( this.light.color );
-
+			this.material.color.copy(this.light.color)
 		}
 
 		/*
@@ -126,10 +115,7 @@ class PointLightHelper extends Mesh {
 
 		}
 		*/
-
 	}
-
 }
 
-
-export { PointLightHelper };
+export { PointLightHelper }
