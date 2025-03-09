@@ -7,50 +7,182 @@ import { Mesh } from "./objects/Mesh"
 import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import { Scene } from "./scenes/Scene"
 
-// Create scene
-const scene = new Scene()
+class App {
+	canvas
+	renderer
+	camera
+	scene
+	mixer
+	controls
+	clock
+	material
+	model
+	composer
+	effectFXAA
+	stats
+	gui
+	helpers = {
+		axes: null,
+		box: null,
+		mainLight: null,
+		frontLight: null,
+		backLight: null,
+		point1: null,
+		point2: null,
+	}
+	lights = {
+		ambient: undefined,
+		main: undefined,
+		front: undefined,
+		back: undefined,
+		point1: undefined,
+		point2: undefined,
+	}
 
-// Create camera
-const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.z = 5
+	mouseX = 0
+	mouseY = 0
+	targetX = 0
+	targetY = 0
+	windowHalfX = window.innerWidth / 2
+	windowHalfY = window.innerHeight / 2
 
-// Create renderer
-const canvas = document.querySelector("#scene")
-if (!canvas) throw new Error("Canvas element not found")
-const renderer = new WebGLRenderer({ canvas: canvas, antialias: true })
-renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+	constructor() {
+		this.scene = new Scene()
+		this.setupCamera()
+		this.setupRenderer()
+		this.setupCube()
+		this.setupLights()
+		this.setupEventListeners()
+		this.animate()
+		this.createGUI()
+	}
 
-// Create a cube
-const geometry = new BoxGeometry(1, 1, 1)
-const material = new MeshPhongMaterial({ color: 0x00ff00 })
-const cube = new Mesh(geometry, material)
-scene.add(cube)
+	setupCamera() {
+		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+		this.camera.position.z = 5
+	}
 
-// Add lights
-const ambientLight = new AmbientLight(0xffffff, 0.5)
-scene.add(ambientLight)
+	setupRenderer() {
+		const canvas = document.querySelector("#scene")
+		if (!canvas) throw new Error("Canvas element not found")
 
-const pointLight = new PointLight(0xffffff, 1)
-pointLight.position.set(5, 5, 5)
-scene.add(pointLight)
+		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
+		this.renderer.setSize(window.innerWidth, window.innerHeight)
+		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+		this.renderer.setClearColor(0xffffff, 1)
+	}
 
-// Handle window resize
-window.addEventListener("resize", () => {
-	camera.aspect = window.innerWidth / window.innerHeight
-	camera.updateProjectionMatrix()
-	renderer.setSize(window.innerWidth, window.innerHeight)
-})
+	setupCube() {
+		const geometry = new BoxGeometry(1, 1, 1)
+		const material = new MeshPhongMaterial({ color: 0x00ff00 })
+		this.cube = new Mesh(geometry, material)
+		this.scene.add(this.cube)
+	}
 
-// Animation loop
-function animate() {
-	requestAnimationFrame(animate)
+	setupLights() {
+		const ambientLight = new AmbientLight(0xffffff, 0.5)
+		this.scene.add(ambientLight)
 
-	// Rotate the cube
-	cube.rotation.x += 0.01
-	cube.rotation.y += 0.01
+		const pointLight = new PointLight(0xffffff, 1)
+		pointLight.position.set(5, 5, 5)
+		this.scene.add(pointLight)
+	}
 
-	renderer.render(scene, camera)
+	setupEventListeners() {
+		window.addEventListener("resize", () => this.onWindowResize())
+	}
+
+	onWindowResize() {
+		this.camera.aspect = window.innerWidth / window.innerHeight
+		this.camera.updateProjectionMatrix()
+		this.renderer.setSize(window.innerWidth, window.innerHeight)
+	}
+
+	animate() {
+		requestAnimationFrame(() => this.animate())
+
+		// Rotate the cube
+		this.cube.rotation.x += 0.01
+		this.cube.rotation.y += 0.01
+
+		this.renderer.render(this.scene, this.camera)
+	}
+
+	createGUI() {
+		this.gui = new GUI()
+
+		// Add helper visibility controls
+		const helperFolder = this.gui.addFolder("Helpers")
+		helperFolder.close() // Close by default
+		helperFolder.add({ showAxes: true }, "showAxes").onChange((visible) => {
+			if (this.helpers.axes) this.helpers.axes.visible = visible
+		})
+		helperFolder.add({ showBox: true }, "showBox").onChange((visible) => {
+			if (this.helpers.box) this.helpers.box.visible = visible
+		})
+		helperFolder.add({ showLightHelpers: true }, "showLightHelpers").onChange((visible) => {
+			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
+			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
+			if (this.helpers.backLight) this.helpers.backLight.visible = visible
+			if (this.helpers.point1) this.helpers.point1.visible = visible
+			if (this.helpers.point2) this.helpers.point2.visible = visible
+		})
+
+		// Ambient Light controls
+		const ambientFolder = this.gui.addFolder("Ambient Light")
+		ambientFolder.close() // Close by default
+		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
+		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
+
+		// Main Light controls
+		const mainFolder = this.gui.addFolder("Main Light")
+		mainFolder.close() // Close by default
+		mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
+		mainFolder.addColor(this.lights.main, "color").name("Color")
+		mainFolder.add(this.lights.main.position, "x", -10, 10).name("Position X")
+		mainFolder.add(this.lights.main.position, "y", -10, 10).name("Position Y")
+		mainFolder.add(this.lights.main.position, "z", -10, 10).name("Position Z")
+
+		// Front Light controls
+		const frontFolder = this.gui.addFolder("Front Light")
+		frontFolder.close() // Close by default
+		frontFolder.add(this.lights.front, "intensity", 0, 2).name("Intensity")
+		frontFolder.addColor(this.lights.front, "color").name("Color")
+		frontFolder.add(this.lights.front.position, "x", -10, 10).name("Position X")
+		frontFolder.add(this.lights.front.position, "y", -10, 10).name("Position Y")
+		frontFolder.add(this.lights.front.position, "z", -10, 10).name("Position Z")
+
+		// Back Light controls
+		const backFolder = this.gui.addFolder("Back Light")
+		backFolder.close() // Close by default
+		backFolder.add(this.lights.back, "intensity", 0, 2).name("Intensity")
+		backFolder.addColor(this.lights.back, "color").name("Color")
+		backFolder.add(this.lights.back.position, "x", -10, 10).name("Position X")
+		backFolder.add(this.lights.back.position, "y", -10, 10).name("Position Y")
+		backFolder.add(this.lights.back.position, "z", -10, 10).name("Position Z")
+
+		// // Point Light 1 controls
+		// const point1Folder = this.gui.addFolder('Point Light 1')
+		// point1Folder.close() // Close by default
+		// point1Folder.add(this.lights.point1, 'intensity', 0, 2).name('Intensity')
+		// point1Folder.addColor(this.lights.point1, 'color').name('Color')
+		// point1Folder.add(this.lights.point1.position, 'x', -10, 10).name('Position X')
+		// point1Folder.add(this.lights.point1.position, 'y', -10, 10).name('Position Y')
+		// point1Folder.add(this.lights.point1.position, 'z', -10, 10).name('Position Z')
+		// point1Folder.add(this.lights.point1, 'distance', 0, 2000).name('Distance')
+
+		// // Point Light 2 controls
+		// const point2Folder = this.gui.addFolder('Point Light 2')
+		// point2Folder.close() // Close by default
+		// point2Folder.add(this.lights.point2, 'intensity', 0, 2).name('Intensity')
+		// point2Folder.addColor(this.lights.point2, 'color').name('Color')
+		// point2Folder.add(this.lights.point2.position, 'x', -10, 10).name('Position X')
+		// point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
+		// point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
+		// point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
+		this.gui.close()
+	}
 }
 
-animate()
+// Initialize the app
+const app = new App()

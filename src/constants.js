@@ -1,4 +1,4 @@
-export const REVISION = "175dev"
+export const REVISION = "openhuman"
 
 /**
  * Represents mouse buttons and interaction types in context of controls.
