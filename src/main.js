@@ -1,47 +1,50 @@
-// import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
-// import { BoxGeometry } from "./geometries/BoxGeometry"
-// import { AmbientLight } from "./lights/AmbientLight"
-// import { PointLight } from "./lights/PointLight"
-// import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
-// import { Mesh } from "./objects/Mesh"
-// import { WebGLRenderer } from "./renderers/WebGLRenderer"
-// import { Scene } from "./scenes/Scene"
-import GUI from "./gui/GUI"
-// import { LoadingManager } from "./loaders/LoadingManager"
-// import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
-// import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
-// import { DirectionalLight } from "@/lights/DirectionalLight"
-// import { KTX2Loader } from "./jsm/loaders/KTX2Loader"
-// import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
-// import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
-// import { MeshoptDecoder } from "./jsm/libs/meshopt_decoder.module"
-// import { AnimationMixer } from "./animation/AnimationMixer"
-import {
-	LoadingManager,
-	Scene,
-	Color,
-	Clock,
-	WebGLRenderer,
-	PMREMGenerator,
-	PerspectiveCamera,
-	ACESFilmicToneMapping,
-	DirectionalLight,
-	BoxGeometry,
-	AmbientLight,
-	MeshPhongMaterial,
-	Mesh,
-	AnimationMixer,
-	Box3,
-	Vector3,
-} from "three"
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
-import Stats from "three/addons/libs/stats.module.js"
+import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
+import { BoxGeometry } from "./geometries/BoxGeometry"
+import { AmbientLight } from "./lights/AmbientLight"
+import { PointLight } from "./lights/PointLight"
+import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
+import { Mesh } from "./objects/Mesh"
+import { WebGLRenderer } from "./renderers/WebGLRenderer"
+import { Scene } from "./scenes/Scene"
+import { LoadingManager } from "./loaders/LoadingManager"
+import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
+import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
+import { DirectionalLight } from "@/lights/DirectionalLight"
 
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js"
-import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js"
-import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js"
+import { MeshoptDecoder } from "./jsm/libs/meshopt_decoder.module"
+import { AnimationMixer } from "./animation/AnimationMixer"
+import { ACESFilmicToneMapping } from "./constants"
+import { Clock } from "./core/Clock"
+import GUI from "./gui/GUI"
+import { OrbitControls } from "./jsm/controls/OrbitControls"
+import { KTX2Loader } from "./jsm/loaders/KTX2Loader.js"
+import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
+import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
+
+// import {
+// 	LoadingManager,
+// 	Scene,
+// 	Color,
+// 	Clock,
+// 	WebGLRenderer,
+// 	PMREMGenerator,
+// 	PerspectiveCamera,
+// 	ACESFilmicToneMapping,
+// 	DirectionalLight,
+// 	BoxGeometry,
+// 	AmbientLight,
+// 	MeshPhongMaterial,
+// 	Mesh,
+// 	AnimationMixer,
+// 	Box3,
+// 	Vector3,
+// } from "three"
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+// import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
+// import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js"
+// import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js"
+// import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -64,7 +67,6 @@ class App {
 	effectFXAA
 	meshWithMorphTargets
 	morphTargetFolder
-	stats
 	gui
 	helpers = {
 		axes: null,
