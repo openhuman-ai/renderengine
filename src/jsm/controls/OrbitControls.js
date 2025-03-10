@@ -1,4 +1,14 @@
-import { Controls, MOUSE, Quaternion, Spherical, TOUCH, Vector2, Vector3, Plane, Ray, MathUtils } from "three"
+// import { Controls, MOUSE, Quaternion, Spherical, TOUCH, Vector2, Vector3, Plane, Ray, MathUtils } from "three"
+
+import { MOUSE, TOUCH } from "@/constants"
+import { Controls } from "@/extras/Controls"
+import { MathUtils } from "@/math/MathUtils"
+import { Plane } from "@/math/Plane"
+import { Quaternion } from "@/math/Quaternion"
+import { Ray } from "@/math/Ray"
+import { Spherical } from "@/math/Spherical"
+import { Vector2 } from "@/math/Vector2"
+import { Vector3 } from "@/math/Vector3"
 
 /**
  * Fires when the camera has been transformed by the controls.
