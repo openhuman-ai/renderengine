@@ -21,31 +21,6 @@ import { KTX2Loader } from "./jsm/loaders/KTX2Loader.js"
 import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
 import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
 
-// import {
-// 	LoadingManager,
-// 	Scene,
-// 	Color,
-// 	Clock,
-// 	WebGLRenderer,
-// 	PMREMGenerator,
-// 	PerspectiveCamera,
-// 	ACESFilmicToneMapping,
-// 	DirectionalLight,
-// 	BoxGeometry,
-// 	AmbientLight,
-// 	MeshPhongMaterial,
-// 	Mesh,
-// 	AnimationMixer,
-// 	Box3,
-// 	Vector3,
-// } from "three"
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
-// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
-// import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
-// import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js"
-// import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js"
-// import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js"
-
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)

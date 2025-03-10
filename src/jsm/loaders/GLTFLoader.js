@@ -2623,7 +2623,6 @@ class GLTFParser {
 							resolve(texture)
 						}
 					}
-					console.log("xxxsourceURI", sourceURI)
 					loader.load(LoaderUtils.resolveURL(sourceURI, options.path), onLoad, undefined, reject)
 				})
 			})
@@ -2641,7 +2640,6 @@ class GLTFParser {
 				return texture
 			})
 			.catch(function (error) {
-				console.log("xxxxxtexture", error, error)
 
 				console.error("THREE.GLTFLoader: Couldn't load texture", sourceURI)
 				throw error
