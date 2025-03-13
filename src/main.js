@@ -20,6 +20,7 @@ import { OrbitControls } from "./jsm/controls/OrbitControls"
 import { KTX2Loader } from "./jsm/loaders/KTX2Loader.js"
 import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
 import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
+import { AxesHelper } from "./helpers/AxesHelper"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -115,7 +116,7 @@ class App {
 
 	createControls() {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-		this.controls.enableDamping = true
+		this.controls.enableDamping = false
 		this.controls.minDistance = 2.5
 		this.controls.maxDistance = 5
 		this.controls.minAzimuthAngle = -Math.PI / 2
@@ -252,10 +253,18 @@ class App {
 		loader.setKTX2Loader(ktx2Loader)
 		loader.setMeshoptDecoder(MeshoptDecoder)
 		console.log("MODEL_PATH", MODEL_PATH)
+		const axesHelper = new AxesHelper(10)
+		this.scene.add(axesHelper)
+
 		loader.load(MODEL_PATH, (gltf) => {
 			const mesh = gltf.scene.children[0]
+			console.log("mesh", mesh)
+			console.log("gltf.scene", gltf.scene)
+			console.log("gltf.scene.children", gltf.scene.children[0])
 			this.mixer = new AnimationMixer(mesh)
-			this.mixer.clipAction(gltf.animations[0]).play()
+			console.log("gltf.animations[0]", gltf.animations[0])
+			const animationAction = this.mixer.clipAction(gltf.animations[0])
+			animationAction.play()
 			const head = mesh.getObjectByName("mesh_2")
 			const influences = head.morphTargetInfluences
 			//   // Center the model
@@ -286,6 +295,13 @@ class App {
 			if (this.meshWithMorphTargets) {
 				this.updateMorphTargetGUI()
 			}
+
+			// function printHierarchy(object, depth = 0) {
+			// 	console.log(`${' '.repeat(depth * 2)}📦 ${object.type} (${object.name || 'Unnamed'})`);
+			// 	object.children.forEach(child => printHierarchy(child, depth + 1));
+			// }
+
+			// printHierarchy(this.scene);
 		})
 	}
 
