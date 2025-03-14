@@ -201,7 +201,6 @@ class AnimationMixer extends EventDispatcher {
 	}
 
 	// Memory management for AnimationAction objects
-
 	_isActiveAction(action) {
 		const index = action._cacheIndex
 		return index !== null && index < this._nActiveActions
@@ -322,7 +321,6 @@ class AnimationMixer extends EventDispatcher {
 	}
 
 	// Memory management for PropertyMixer objects
-
 	_addInactiveBinding(binding, rootUuid, trackName) {
 		const bindingsByRoot = this._bindingsByRootAndName,
 			bindings = this._bindings
@@ -388,7 +386,6 @@ class AnimationMixer extends EventDispatcher {
 	}
 
 	// Memory management of Interpolants for weight and time scale
-
 	_lendControlInterpolant() {
 		const interpolants = this._controlInterpolants,
 			lastActiveIndex = this._nActiveControlInterpolants++
@@ -534,7 +531,6 @@ class AnimationMixer extends EventDispatcher {
 			accuIndex = (this._accuIndex ^= 1)
 
 		// run active actions
-
 		for (let i = 0; i !== nActions; ++i) {
 			const action = actions[i]
 
@@ -542,7 +538,6 @@ class AnimationMixer extends EventDispatcher {
 		}
 
 		// update scene graph
-
 		const bindings = this._bindings,
 			nBindings = this._nActiveBindings
 
