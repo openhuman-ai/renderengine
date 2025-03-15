@@ -486,13 +486,10 @@ class AnimationAction {
 	}
 
 	// Interna
-
 	_update(time, deltaTime, timeDirection, accuIndex) {
 		// called by the mixer
-
 		if (!this.enabled) {
 			// call ._updateWeight() to update ._effectiveWeight
-
 			this._updateWeight(time)
 			return
 		}
@@ -501,7 +498,6 @@ class AnimationAction {
 
 		if (startTime !== null) {
 			// check for scheduled start of action
-
 			const timeRunning = (time - startTime) * timeDirection
 			if (timeRunning < 0 || timeDirection === 0) {
 				deltaTime = 0
@@ -512,13 +508,11 @@ class AnimationAction {
 		}
 
 		// apply time scale and advance time
-
 		deltaTime *= this._updateTimeScale(time)
 		const clipTime = this._updateTime(deltaTime)
 
 		// note: _updateTime may disable the action resulting in
 		// an effective weight of 0
-
 		const weight = this._updateWeight(time)
 
 		if (weight > 0) {
@@ -620,7 +614,6 @@ class AnimationAction {
 		if (loop === LoopOnce) {
 			if (loopCount === -1) {
 				// just started
-
 				this._loopCount = 0
 				this._setEndings(true, true, false)
 			}
@@ -649,10 +642,8 @@ class AnimationAction {
 			}
 		} else {
 			// repetitive Repeat or PingPong
-
 			if (loopCount === -1) {
 				// just started
-
 				if (deltaTime >= 0) {
 					loopCount = 0
 
@@ -661,14 +652,12 @@ class AnimationAction {
 					// when looping in reverse direction, the initial
 					// transition through zero counts as a repetition,
 					// so leave loopCount at -1
-
 					this._setEndings(this.repetitions === 0, true, pingPong)
 				}
 			}
 
 			if (time >= duration || time < 0) {
 				// wrap around
-
 				const loopDelta = Math.floor(time / duration) // signed
 				time -= duration * loopDelta
 
@@ -678,7 +667,6 @@ class AnimationAction {
 
 				if (pending <= 0) {
 					// have to stop (switch state, clamp time, fire event)
-
 					if (this.clampWhenFinished) this.paused = true
 					else this.enabled = false
 
@@ -693,10 +681,8 @@ class AnimationAction {
 					})
 				} else {
 					// keep running
-
 					if (pending === 1) {
 						// entering the last round
-
 						const atStart = deltaTime < 0
 						this._setEndings(atStart, !atStart, pingPong)
 					} else {
@@ -719,7 +705,6 @@ class AnimationAction {
 
 			if (pingPong && (loopCount & 1) === 1) {
 				// invert time for the "pong round"
-
 				return duration - time
 			}
 		}
@@ -735,7 +720,6 @@ class AnimationAction {
 			settings.endingEnd = ZeroSlopeEnding
 		} else {
 			// assuming for LoopOnce atStart == atEnd == true
-
 			if (atStart) {
 				settings.endingStart = this.zeroSlopeAtStart ? ZeroSlopeEnding : ZeroCurvatureEnding
 			} else {
