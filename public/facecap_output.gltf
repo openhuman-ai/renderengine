@@ -1966,14 +1966,11 @@
   "textures": [
     {
       "sampler": 0,
-      "extensions": {
-
-      }
+			"source": 0
     }
   ],
   "images": [
     {
-      "mimeType": "image/png",
       "uri": "baseColor.png"
     }
   ],
