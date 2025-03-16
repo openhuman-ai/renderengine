@@ -15,6 +15,10 @@ import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
 import { Scene } from "./scenes/Scene"
 import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
+import { AnimationClip } from "./animation/AnimationClip"
+import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
+import { NormalAnimationBlendMode } from "./constants"
+import { aniTime, aniValues } from "./data"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -240,10 +244,18 @@ class App {
 	}
 
 	async loadModel() {
+		const aniClipKF = new NumberKeyframeTrack("mesh_2.morphTargetInfluences", aniTime, aniValues)
+		const aniClip = new AnimationClip("Key|Take 001|BaseLayer", 11.18083381652832, [aniClipKF], NormalAnimationBlendMode)
+		// ~~~~~~~~~~~~~~~
+
 		const loader = new GLTFLoader(loadingManager)
 		console.log("MODEL_PATH", MODEL_PATH)
 		const axesHelper = new AxesHelper(10)
 		this.scene.add(axesHelper)
+
+		const animationKF = new NumberKeyframeTrack(".facialanimation", [0, 1, 2], [1, 0, 1])
+
+		const clip = new AnimationClip("Action", 3, [animationKF])
 
 		loader.load(MODEL_PATH, (gltf) => {
 			console.log("gltf", gltf)
@@ -252,11 +264,15 @@ class App {
 			console.log("gltf.scene", gltf.scene)
 			console.log("gltf.scene.children", gltf.scene.children[0])
 			this.mixer = new AnimationMixer(mesh)
-			console.log("gltf.animations[0]", gltf.animations[0])
-			const animationAction = this.mixer.clipAction(gltf.animations[0])
+			const facialAnimation = gltf.animations[0]
+			console.log("facialAnimation", facialAnimation)
+			console.log("aniClip", aniClip)
+
+			const animationAction = this.mixer.clipAction(aniClip)
+			console.log("animationAction", animationAction)
 			animationAction.play()
-			const head = mesh.getObjectByName("mesh_2")
-			const influences = head.morphTargetInfluences
+			// const head = mesh.getObjectByName("mesh_2")
+			// const influences = head.morphTargetInfluences
 			//   // Center the model
 			//   const box = new THREE.Box3().setFromObject(this.model)
 			//   const center = box.getCenter(new THREE.Vector3())
@@ -275,9 +291,9 @@ class App {
 			//     this.mixer.clipAction(clip).play()
 			//   })
 			// }
-			for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
-				this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
-			}
+			// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+			// 	this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+			// }
 			//   this.gui.close()
 			this.scene.add(mesh)
 			//   this.scene.add(this.model)
