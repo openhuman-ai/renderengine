@@ -1,33 +1,27 @@
-import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
-import { BoxGeometry } from "./geometries/BoxGeometry"
 import { AmbientLight } from "./lights/AmbientLight"
-import { PointLight } from "./lights/PointLight"
-import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
-import { Mesh } from "./objects/Mesh"
-import { WebGLRenderer } from "./renderers/WebGLRenderer"
-import { Scene } from "./scenes/Scene"
-import { LoadingManager } from "./loaders/LoadingManager"
-import PMREMGenerator from "./renderers/common/extras/PMREMGenerator"
-import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
-import { DirectionalLight } from "@/lights/DirectionalLight"
-
-import { MeshoptDecoder } from "./jsm/libs/meshopt_decoder.module"
 import { AnimationMixer } from "./animation/AnimationMixer"
-import { ACESFilmicToneMapping } from "./constants"
-import { Clock } from "./core/Clock"
-import GUI from "./gui/GUI"
-import { OrbitControls } from "./jsm/controls/OrbitControls"
-import { KTX2Loader } from "./jsm/loaders/KTX2Loader.js"
-import { DRACOLoader } from "./jsm/loaders/DRACOLoader"
-import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
 import { AxesHelper } from "./helpers/AxesHelper"
+import { BoxGeometry } from "./geometries/BoxGeometry"
+import { Clock } from "./core/Clock"
+import { DirectionalLight } from "@/lights/DirectionalLight"
+import { GLTFLoader } from "./jsm/loaders/GLTFLoader"
+import { LoadingManager } from "./loaders/LoadingManager"
+import { Mesh } from "./objects/Mesh"
+import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
+import { OrbitControls } from "./jsm/controls/OrbitControls"
+import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
+import { PointLight } from "./lights/PointLight"
+import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
+import { Scene } from "./scenes/Scene"
+import { WebGLRenderer } from "./renderers/WebGLRenderer"
+import GUI from "./gui/GUI"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)
 }
 
-const MODEL_PATH = new URL("/facecap.glb", import.meta.url).href
+const MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
 
 class App {
 	canvas
@@ -106,11 +100,9 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.toneMapping = ACESFilmicToneMapping
 		this.renderer.setClearColor(0xffffff, 1)
 
 		const room = new RoomEnvironment()
-		const pmremGenerator = new PMREMGenerator(this.renderer)
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
 	}
 
@@ -248,15 +240,13 @@ class App {
 	}
 
 	async loadModel() {
-		const ktx2Loader = new KTX2Loader(loadingManager).setTranscoderPath("/").detectSupport(this.renderer)
 		const loader = new GLTFLoader(loadingManager)
-		loader.setKTX2Loader(ktx2Loader)
-		loader.setMeshoptDecoder(MeshoptDecoder)
 		console.log("MODEL_PATH", MODEL_PATH)
 		const axesHelper = new AxesHelper(10)
 		this.scene.add(axesHelper)
 
 		loader.load(MODEL_PATH, (gltf) => {
+			console.log("gltf", gltf)
 			const mesh = gltf.scene.children[0]
 			console.log("mesh", mesh)
 			console.log("gltf.scene", gltf.scene)
@@ -291,10 +281,6 @@ class App {
 			//   this.gui.close()
 			this.scene.add(mesh)
 			//   this.scene.add(this.model)
-			// Update GUI after model is loaded
-			if (this.meshWithMorphTargets) {
-				this.updateMorphTargetGUI()
-			}
 
 			// function printHierarchy(object, depth = 0) {
 			// 	console.log(`${' '.repeat(depth * 2)}📦 ${object.type} (${object.name || 'Unnamed'})`);
