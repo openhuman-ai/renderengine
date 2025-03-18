@@ -1,7 +1,11 @@
-import { Clock, HalfFloatType, NoBlending, Vector2, WebGLRenderTarget } from "three"
+// import { Clock, HalfFloatType, NoBlending, Vector2, WebGLRenderTarget } from "three"
 import { CopyShader } from "../shaders/CopyShader.js"
 import { ShaderPass } from "./ShaderPass.js"
 import { ClearMaskPass, MaskPass } from "./MaskPass.js"
+import { Clock } from "@/core/Clock.js"
+import { HalfFloatType, NoBlending } from "@/constants.js"
+import { Vector2 } from "@/math/Vector2.js"
+import { WebGLRenderTarget } from "@/renderers/WebGLRenderTarget.js"
 
 class EffectComposer {
 	constructor(renderer, renderTarget) {

@@ -1,5 +1,7 @@
-import { ShaderMaterial, UniformsUtils } from "three"
+// import { ShaderMaterial, UniformsUtils } from "three"
+import { ShaderMaterial } from "@/materials/ShaderMaterial.js"
 import { Pass, FullScreenQuad } from "./Pass.js"
+import { UniformsUtils } from "@/renderers/shaders/UniformsUtils.js"
 
 class ShaderPass extends Pass {
 	constructor(shader, textureID) {

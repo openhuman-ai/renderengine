@@ -1,4 +1,9 @@
-import { BufferGeometry, Float32BufferAttribute, OrthographicCamera, Mesh } from "three"
+// import { BufferGeometry, Float32BufferAttribute, OrthographicCamera, Mesh } from "three"
+
+import { OrthographicCamera } from "@/cameras/OrthographicCamera"
+import { Float32BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { Mesh } from "@/objects/Mesh"
 
 class Pass {
 	constructor() {
@@ -27,11 +32,9 @@ class Pass {
 }
 
 // Helper for passes that need to fill the viewport with a single quad.
-
 const _camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
 // https://github.com/mrdoob/three.js/pull/21358
-
 class FullscreenTriangleGeometry extends BufferGeometry {
 	constructor() {
 		super()
