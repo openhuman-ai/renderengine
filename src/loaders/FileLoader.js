@@ -81,7 +81,6 @@ class FileLoader extends Loader {
 		}
 
 		// Check if request is duplicate
-
 		if (loading[url] !== undefined) {
 			loading[url].push({
 				onLoad: onLoad,
