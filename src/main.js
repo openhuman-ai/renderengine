@@ -17,12 +17,14 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { NormalAnimationBlendMode } from "./constants"
+import { EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
 import { aniTime, aniValues } from "./data"
+import { RGBELoader } from "./jsm/loaders/RGBELoader"
+import { EXRLoader } from "./jsm/loaders/EXRLoader"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
-	console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)
+	// console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)
 }
 
 const MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
@@ -72,9 +74,10 @@ class App {
 		this.setupCamera()
 		this.createClock()
 		this.createControls()
-		// this.setupCube()
 		this.setupLights()
-		this.loadModel()
+		this.createEnvironment()
+		this.setupCube()
+		// this.loadModel()
 		this.createGUI()
 
 		this.setupEventListeners()
@@ -84,6 +87,34 @@ class App {
 		})
 	}
 
+	createEnvironment() {
+		// const rgbeLoader = new RGBELoader()
+		// rgbeLoader.load("/studio_small_03_1k.hdr", function (texture) {
+		// 	texture.mapping = EquirectangularReflectionMapping
+		// 	scene.background = texture
+		// 	scene.environment = texture
+		// })
+		const scene = this.scene
+
+		// const hdrEquirect = new RGBELoader().load("/studio_small_03_1k.hdr", function (texture) {
+		// 	texture.mapping = EquirectangularReflectionMapping
+		// 	// Set the environment map
+		// 	scene.environment = texture
+		// 	// Optionally, set the background
+		// 	scene.background = texture
+		// })
+
+		const exrLoader = new EXRLoader()
+		exrLoader.load("/forest.exr", function (texture) {
+			texture.mapping = EquirectangularReflectionMapping
+
+			// Set the environment map
+			scene.environment = texture
+
+			// Optionally, set the background
+			scene.background = texture
+		})
+	}
 	createClock() {
 		this.clock = new Clock()
 	}
@@ -104,7 +135,7 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.setClearColor(0xffffff, 1)
+		// this.renderer.setClearColor(0xffffff, 1)
 
 		const room = new RoomEnvironment()
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
@@ -112,17 +143,17 @@ class App {
 
 	createControls() {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-		this.controls.enableDamping = false
-		this.controls.minDistance = 2.5
-		this.controls.maxDistance = 5
-		this.controls.minAzimuthAngle = -Math.PI / 2
-		this.controls.maxAzimuthAngle = Math.PI / 2
-		this.controls.maxPolarAngle = Math.PI / 1.8
-		this.controls.target.set(0, 0.15, -0.2)
+		// this.controls.enableDamping = false
+		// this.controls.minDistance = 2.5
+		// this.controls.maxDistance = 5
+		// this.controls.minAzimuthAngle = -Math.PI / 2
+		// this.controls.maxAzimuthAngle = Math.PI / 2
+		// this.controls.maxPolarAngle = Math.PI / 1.8
+		// this.controls.target.set(0, 0.15, -0.2)
 
-		this.controls.enableDamping = true
-		this.controls.dampingFactor = 0.05
-		this.controls.screenSpacePanning = true
+		// this.controls.enableDamping = true
+		// this.controls.dampingFactor = 0.05
+		// this.controls.screenSpacePanning = true
 	}
 
 	setupCube() {
@@ -243,69 +274,69 @@ class App {
 		// this.gui.close()
 	}
 
-	async loadModel() {
-		const aniClipKF = new NumberKeyframeTrack("mesh_2.morphTargetInfluences", aniTime, aniValues)
-		const aniClip = new AnimationClip("Key|Take 001|BaseLayer", 11.18083381652832, [aniClipKF], NormalAnimationBlendMode)
-		// ~~~~~~~~~~~~~~~
+	// async loadModel() {
+	// 	const aniClipKF = new NumberKeyframeTrack("mesh_2.morphTargetInfluences", aniTime, aniValues)
+	// 	const aniClip = new AnimationClip("Key|Take 001|BaseLayer", 11.18083381652832, [aniClipKF], NormalAnimationBlendMode)
+	// 	// ~~~~~~~~~~~~~~~
 
-		const loader = new GLTFLoader(loadingManager)
-		console.log("MODEL_PATH", MODEL_PATH)
-		const axesHelper = new AxesHelper(10)
-		this.scene.add(axesHelper)
+	// 	const loader = new GLTFLoader(loadingManager)
+	// 	console.log("MODEL_PATH", MODEL_PATH)
+	// 	const axesHelper = new AxesHelper(10)
+	// 	this.scene.add(axesHelper)
 
-		const animationKF = new NumberKeyframeTrack(".facialanimation", [0, 1, 2], [1, 0, 1])
+	// 	const animationKF = new NumberKeyframeTrack(".facialanimation", [0, 1, 2], [1, 0, 1])
 
-		const clip = new AnimationClip("Action", 3, [animationKF])
+	// 	const clip = new AnimationClip("Action", 3, [animationKF])
 
-		loader.load(MODEL_PATH, (gltf) => {
-			console.log("gltf", gltf)
-			const mesh = gltf.scene.children[0]
-			console.log("mesh", mesh)
-			console.log("gltf.scene", gltf.scene)
-			console.log("gltf.scene.children", gltf.scene.children[0])
-			this.mixer = new AnimationMixer(mesh)
-			const facialAnimation = gltf.animations[0]
-			console.log("facialAnimation", facialAnimation)
-			console.log("aniClip", aniClip)
+	// 	loader.load(MODEL_PATH, (gltf) => {
+	// 		// console.log("gltf", gltf)
+	// 		const mesh = gltf.scene.children[0]
+	// 		// console.log("mesh", mesh)
+	// 		// console.log("gltf.scene", gltf.scene)
+	// 		// console.log("gltf.scene.children", gltf.scene.children[0])
+	// 		this.mixer = new AnimationMixer(mesh)
+	// 		const facialAnimation = gltf.animations[0]
+	// 		// console.log("facialAnimation", facialAnimation)
+	// 		// console.log("aniClip", aniClip)
 
-			const animationAction = this.mixer.clipAction(aniClip)
-			console.log("animationAction", animationAction)
-			animationAction.play()
-			// const head = mesh.getObjectByName("mesh_2")
-			// const influences = head.morphTargetInfluences
-			//   // Center the model
-			//   const box = new THREE.Box3().setFromObject(this.model)
-			//   const center = box.getCenter(new THREE.Vector3())
-			//   this.model.position.sub(center)
-			//   // Setup morph targets
-			//   this.model.traverse((node) => {
-			//     if (node.isMesh && node.morphTargetDictionary) {
-			//       this.meshWithMorphTargets = node
-			//     }
-			//   })
-			// // Handle animations
-			// if (gltf.animations?.length) {
-			//   this.mixer = new THREE.AnimationMixer(this.model)
-			//   this.animations = gltf.animations
-			//   this.animations.forEach((clip) => {
-			//     this.mixer.clipAction(clip).play()
-			//   })
-			// }
-			// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
-			// 	this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
-			// }
-			//   this.gui.close()
-			this.scene.add(mesh)
-			//   this.scene.add(this.model)
+	// 		const animationAction = this.mixer.clipAction(aniClip)
+	// 		// console.log("animationAction", animationAction)
+	// 		// animationAction.play()
+	// 		// const head = mesh.getObjectByName("mesh_2")
+	// 		// const influences = head.morphTargetInfluences
+	// 		//   // Center the model
+	// 		//   const box = new THREE.Box3().setFromObject(this.model)
+	// 		//   const center = box.getCenter(new THREE.Vector3())
+	// 		//   this.model.position.sub(center)
+	// 		//   // Setup morph targets
+	// 		//   this.model.traverse((node) => {
+	// 		//     if (node.isMesh && node.morphTargetDictionary) {
+	// 		//       this.meshWithMorphTargets = node
+	// 		//     }
+	// 		//   })
+	// 		// // Handle animations
+	// 		// if (gltf.animations?.length) {
+	// 		//   this.mixer = new THREE.AnimationMixer(this.model)
+	// 		//   this.animations = gltf.animations
+	// 		//   this.animations.forEach((clip) => {
+	// 		//     this.mixer.clipAction(clip).play()
+	// 		//   })
+	// 		// }
+	// 		// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+	// 		// 	this.morphTargetFolder.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+	// 		// }
+	// 		//   this.gui.close()
+	// 		this.scene.add(mesh)
+	// 		//   this.scene.add(this.model)
 
-			// function printHierarchy(object, depth = 0) {
-			// 	console.log(`${' '.repeat(depth * 2)}📦 ${object.type} (${object.name || 'Unnamed'})`);
-			// 	object.children.forEach(child => printHierarchy(child, depth + 1));
-			// }
+	// 		// function printHierarchy(object, depth = 0) {
+	// 		// 	console.log(`${' '.repeat(depth * 2)}📦 ${object.type} (${object.name || 'Unnamed'})`);
+	// 		// 	object.children.forEach(child => printHierarchy(child, depth + 1));
+	// 		// }
 
-			// printHierarchy(this.scene);
-		})
-	}
+	// 		// printHierarchy(this.scene);
+	// 	})
+	// }
 
 	render() {
 		const delta = this.clock.getDelta()
@@ -314,9 +345,9 @@ class App {
 			this.mixer.update(delta)
 		}
 
-		// // Rotate the cube
-		// this.cube.rotation.x += 0.01
-		// this.cube.rotation.y += 0.01
+		// Rotate the cube
+		this.cube.rotation.x += 0.01
+		this.cube.rotation.y += 0.01
 
 		if (this.controls) {
 			this.controls.update()
