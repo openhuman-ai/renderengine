@@ -21,12 +21,19 @@ import { EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./co
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
+import { EffectComposer } from "./jsm/postprocessing/EffectComposer"
+import { RenderPass } from "./jsm/postprocessing/RenderPass"
+import { ShaderPass } from "./jsm/postprocessing/ShaderPass"
+import { HorizontalBlurShader } from "./jsm/shaders/HorizontalBlurShader"
+import { CopyShader } from "./jsm/shaders/CopyShader"
+import { VerticalBlurShader } from "./jsm/shaders/VerticalBlurShader"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
 	// console.log(`Loading file: ${url}.\nLoaded ${loaded} of ${total} files.`)
 }
 
+const ANIMATION_MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
 const MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
 
 class App {
@@ -75,10 +82,11 @@ class App {
 		this.createClock()
 		this.createControls()
 		this.setupLights()
-		this.createEnvironment()
 		this.setupCube()
 		// this.loadModel()
+		this.loadCustomModel()
 		this.createGUI()
+		this.createEnvironment()
 
 		this.setupEventListeners()
 
@@ -274,6 +282,14 @@ class App {
 		// this.gui.close()
 	}
 
+	async loadCustomModel() {
+		const loader = new GLTFLoader(loadingManager)
+
+		loader.load(ANIMATION_MODEL_PATH, (gltf) => {
+			const mesh = gltf.scene.children[0]
+			this.scene.add(mesh)
+		})
+	}
 	// async loadModel() {
 	// 	const aniClipKF = new NumberKeyframeTrack("mesh_2.morphTargetInfluences", aniTime, aniValues)
 	// 	const aniClip = new AnimationClip("Key|Take 001|BaseLayer", 11.18083381652832, [aniClipKF], NormalAnimationBlendMode)
@@ -355,6 +371,7 @@ class App {
 
 		this.renderer.render(this.scene, this.camera)
 	}
+
 }
 
 // Initialize the app

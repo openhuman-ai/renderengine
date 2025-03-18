@@ -1,4 +1,5 @@
-import { Color } from "three"
+// import { Color } from "three"
+import { Color } from "@/math/Color.js"
 import { Pass } from "./Pass.js"
 
 class RenderPass extends Pass {
