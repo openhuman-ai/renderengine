@@ -33,6 +33,7 @@ import { BufferAttribute } from "./core/BufferAttribute"
 import { SphereGeometry } from "./geometries/SphereGeometry"
 import { MeshPhysicalMaterial } from "./materials/MeshPhysicalMaterial"
 import { TextureLoader } from "./loaders/TextureLoader"
+import { Color } from "./math/Color"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -413,36 +414,59 @@ class App {
 		console.log("gltf", this.gltf)
 		// this.loadScene()
 		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
+
+		const faceNormal = textureLoader.load("/model/Face_Normal.jpg")
+		const facemap = textureLoader.load("/model/FaceBaked2.jpg")
+		const faceRoughness = textureLoader.load("/model/Face_Roughness.jpg")
 		const faceMaterial = new MeshPhysicalMaterial({
-			name: 'Material.001',
+			name: "Material.001",
 			side: DoubleSide,
 			clearcoat: 0.04848484694957733,
 			clearcoatRoughness: 0.12393935769796371,
 			ior: 1.4500000476837158,
-			normalMap: new TextureLoader().load('/model/Face_Normal.jpg'), // Replace with actual texture
-			map: new TextureLoader().load('/model/FaceBaked2.jpg'), // Replace with actual texture
-			metalnessMap: new TextureLoader().load('/model/Face_Roughness.jpg'), // Replace with actual texture
+			normalMap: faceNormal,
+			map: facemap,
+			metalnessMap: faceRoughness,
 			metalness: 0,
-		});
+		})
 		const face = new Mesh(geometry, faceMaterial)
-		face.position.set(-3, 0, 0);
+		face.position.set(-3, 0, 0)
 		this.scene.add(face)
 
-		const material2 = new MeshPhysicalMaterial({
-			name: 'Material.001',
-			side: DoubleSide,
-			clearcoat: 0.04848484694957733,
-			clearcoatRoughness: 0.12393935769796371,
-			ior: 1.4500000476837158,
-			normalMap: new TextureLoader().load('/model/Face_Normal.jpg'), // Replace with actual texture
-			map: new TextureLoader().load('/model/Face_Scatter.jpg'), // Replace with actual texture
-			metalnessMap: new TextureLoader().load('/model/Face_Roughness.jpg'), // Replace with actual texture
+		const teethBaseColorTexture = textureLoader.load("/model/Teeth_diffuse.jpg")
+		const teethNormalTexture = textureLoader.load("/model/Teeth_Normal.jpg")
+		const teethMaterial = new MeshPhysicalMaterial({
+			color: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
+			map: teethBaseColorTexture,
+			normalMap: teethNormalTexture,
 			metalness: 0,
+			roughness: 0.3227272927761078,
+			transparent: true,
+			side: DoubleSide,
+			ior: 1.45,
+			specularIntensity: 1.0,
+			specularColor: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
+		})
+		const teeth = new Mesh(geometry, teethMaterial)
+		this.scene.add(teeth)
+
+		const tongueBaseColorTexture = textureLoader.load("/model/Tongue_Diffuse.jpg")
+		const tongueNormalTexture = textureLoader.load("/model/Tongue_Normal.jpg")
+		const tongueMaterial = new MeshPhysicalMaterial({
+			color: new Color(1.0, 0.6, 0.6),
+			map: tongueBaseColorTexture,
+			normalMap: tongueNormalTexture,
+			metalness: 0,
+			roughness: 0.3,
+			transparent: true,
+			side: DoubleSide,
+			ior: 1.45,
+			specularIntensity: 0.6,
 		});
-
-		const mesh2 = new Mesh(geometry, material2)
-		// this.scene.add(mesh2)
-
+		const tongue = new Mesh(geometry, tongueMaterial)
+		tongue.position.set(3, 0, 0)
+		this.scene.add(tongue)
 
 		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
 		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
