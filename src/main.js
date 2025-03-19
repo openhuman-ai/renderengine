@@ -377,14 +377,13 @@ class App {
 	}
 
 	getBufferView(accessor, isIndex = false) {
+		console.log("accessor", accessor)
 		const bufferView = this.gltf.bufferViews[accessor.bufferView]
 		const buffer = this.binaryBuffer.slice(bufferView.byteOffset, bufferView.byteOffset + bufferView.byteLength)
 
-		if (isIndex) {
-			return new Uint16Array(buffer)
-		} else {
-			return new Float32Array(buffer)
-		}
+		const TypedArray = WEBGL_COMPONENT_TYPES[accessor.componentType] || Float32Array;
+
+		return new TypedArray(buffer);
 	}
 
 	getTypedArray(binaryBuffer, componentType, count, bufferView) {
@@ -412,11 +411,11 @@ class App {
 		this.binaryBuffer = await binResponse.arrayBuffer()
 
 		console.log("gltf", this.gltf)
-		// this.loadScene()
+		this.loadScene()
 
-		this.addFace()
-		this.addTeeth()
-		this.addTongue()
+		// this.addFace()
+		// this.addTeeth()
+		// this.addTongue()
 
 		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
 		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
