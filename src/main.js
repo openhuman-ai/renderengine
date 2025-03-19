@@ -102,6 +102,7 @@ class App {
 		axes: null,
 		box: null,
 		mainLight: null,
+		ambient: null,
 		frontLight: null,
 		backLight: null,
 		point1: null,
@@ -519,6 +520,7 @@ class App {
 		})
 		this.helperFolder.add({ showLightHelpers: true }, "showLightHelpers").onChange((visible) => {
 			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
+			if (this.helpers.ambient) this.helpers.ambient.visible = visible
 			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
 			if (this.helpers.backLight) this.helpers.backLight.visible = visible
 			if (this.helpers.point1) this.helpers.point1.visible = visible
@@ -598,28 +600,31 @@ class App {
 	}
 
 	addHelpers() {
-		this.scene.add(new PointLightHelper(this.lights.main, 15))
-		this.scene.add(new PointLightHelper(this.lights.ambient, 15))
+		this.helpers.mainLight = new PointLightHelper(this.lights.main, 15)
+		this.scene.add(this.helpers.mainLight)
+		this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
+		this.scene.add(this.helpers.ambient)
 
 		const gridHelper = new GridHelper(400, 40, 0x0000ff, 0x808080)
 		gridHelper.position.y = -150
 		gridHelper.position.x = -150
 		this.scene.add(gridHelper)
 
-		const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
-		polarGridHelper.position.y = -150
-		polarGridHelper.position.x = 200
-		this.scene.add(polarGridHelper)
+		// const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
+		// polarGridHelper.position.y = -150
+		// polarGridHelper.position.x = 200
+		// this.scene.add(polarGridHelper)
 	}
 
 	addMeshHelpers(target) {
-		target.geometry.computeTangents()
-		this.scene.add(new BoxHelper(target))
+		this.helpers.box = new BoxHelper(target)
+		this.scene.add(this.helpers.box)
 
-		// this.helpers.axes = new AxesHelper(10)
-		// this.scene.add(this.helpers.axes)
+		this.helpers.axes = new AxesHelper(10)
+		this.scene.add(this.helpers.axes)
 
 		const mesh = target.clone()
+		mesh.geometry.computeTangents()
 		this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
 		this.scene.add(this.helpers.vnh)
 
