@@ -27,6 +27,9 @@ import { ShaderPass } from "./jsm/postprocessing/ShaderPass"
 import { HorizontalBlurShader } from "./jsm/shaders/HorizontalBlurShader"
 import { CopyShader } from "./jsm/shaders/CopyShader"
 import { VerticalBlurShader } from "./jsm/shaders/VerticalBlurShader"
+import { BufferGeometry } from "./core/BufferGeometry"
+import { MeshStandardMaterial } from "./materials/MeshStandardMaterial"
+import { BufferAttribute } from "./core/BufferAttribute"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -298,13 +301,28 @@ class App {
 		// cameraFolder.add(this.camera.rotation, "x", -10, 10, 0.1).name("Rotation X")
 		// cameraFolder.add(this.camera.rotation, "y", -10, 10, 0.1).name("Rotation Y")
 		// cameraFolder.add(this.camera.rotation, "z", -10, 10, 0.1).name("Rotation Z")
-		console.log("this.camera", this.camera)
 		// cameraFolder.close()
 
 		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
 		this.morphTargetFolder.close()
 
 		// this.gui.close()
+	}
+	getTypedArray(binaryBuffer, componentType, count, bufferView) {
+		const byteOffset = bufferView.byteOffset || 0
+		const byteLength = bufferView.byteLength
+		const data = new DataView(binaryBuffer, byteOffset, byteLength)
+
+		switch (componentType) {
+			case 5126:
+				return new Float32Array(data.buffer, byteOffset, count * 3) // FLOAT
+			case 5123:
+				return new Uint16Array(data.buffer, byteOffset, count) // UNSIGNED_SHORT
+			case 5125:
+				return new Uint32Array(data.buffer, byteOffset, count) // UNSIGNED_INT
+			default:
+				throw new Error(`Unsupported componentType: ${componentType}`)
+		}
 	}
 
 	async loadJSON() {
@@ -315,13 +333,61 @@ class App {
 		const binResponse = await fetch("/model/Facial.bin")
 		const binaryBuffer = await binResponse.arrayBuffer()
 
-		const loader = new GLTFLoader(loadingManager)
+		const geometry = new BufferGeometry()
+		const bufferViews = data.bufferViews
+		const accessors = data.accessors
 
-		loader.load(MODEL_PATH, (gltf) => {
-			// const mesh = gltf.scene.children[0]
-			console.log("gltf", gltf)
-			// this.scene.add(mesh)
-		})
+		for (const accessor of accessors) {
+			const bufferView = bufferViews[accessor.bufferView]
+			const typedArray = this.getTypedArray(binaryBuffer, accessor.componentType, accessor.count, bufferView)
+			let itemSize
+
+			switch (accessor.type) {
+				case "SCALAR":
+					itemSize = 1
+					break
+				case "VEC2":
+					itemSize = 2
+					break
+				case "VEC3":
+					itemSize = 3
+					break
+				case "VEC4":
+					itemSize = 4
+					break
+				default:
+					throw new Error(`Unsupported accessor type: ${accessor.type}`)
+			}
+
+			const bufferAttribute = new BufferAttribute(typedArray, itemSize)
+
+			if (accessor.type === "SCALAR" && accessor.componentType === 5123) {
+				geometry.setIndex(bufferAttribute)
+			} else if (accessor.type === "VEC3" && !geometry.getAttribute("position")) {
+				geometry.setAttribute("position", bufferAttribute)
+			} else if (accessor.type === "VEC3" && !geometry.getAttribute("normal")) {
+				geometry.setAttribute("normal", bufferAttribute)
+			} else if (accessor.type === "VEC2" && !geometry.getAttribute("uv")) {
+				geometry.setAttribute("uv", bufferAttribute)
+			}
+		}
+
+		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
+		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+
+		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
+		// geometry.setIndex(new BufferAttribute(indices, 1))
+
+		const material = new MeshStandardMaterial({ color: 0xffffff })
+		const mesh = new Mesh(geometry, material)
+
+		this.scene.add(mesh)
+		// const loader = new GLTFLoader(loadingManager)
+		// loader.load(MODEL_PATH, (gltf) => {
+		// 	// const mesh = gltf.scene.children[0]
+		// 	console.log("gltf", gltf)
+		// 	// this.scene.add(mesh)
+		// })
 	}
 
 	async loadCustomModel() {
