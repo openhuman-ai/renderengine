@@ -17,7 +17,7 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
+import { DoubleSide, EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
@@ -30,6 +30,9 @@ import { VerticalBlurShader } from "./jsm/shaders/VerticalBlurShader"
 import { BufferGeometry } from "./core/BufferGeometry"
 import { MeshStandardMaterial } from "./materials/MeshStandardMaterial"
 import { BufferAttribute } from "./core/BufferAttribute"
+import { SphereGeometry } from "./geometries/SphereGeometry"
+import { MeshPhysicalMaterial } from "./materials/MeshPhysicalMaterial"
+import { TextureLoader } from "./loaders/TextureLoader"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -38,6 +41,19 @@ loadingManager.onProgress = (url, loaded, total) => {
 
 const ANIMATION_MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
 const MODEL_PATH = new URL("/model/SceneApp.gltf", import.meta.url).href
+
+const ATTRIBUTES = {
+	POSITION: "position",
+	NORMAL: "normal",
+	TANGENT: "tangent",
+	TEXCOORD_0: "uv",
+	TEXCOORD_1: "uv1",
+	TEXCOORD_2: "uv2",
+	TEXCOORD_3: "uv3",
+	COLOR_0: "color",
+	WEIGHTS_0: "skinWeight",
+	JOINTS_0: "skinIndex",
+}
 
 const WEBGL_COMPONENT_TYPES = {
 	5120: Int8Array,
@@ -98,6 +114,9 @@ class App {
 	windowHalfX = window.innerWidth / 2
 	windowHalfY = window.innerHeight / 2
 
+	gltf
+	binaryBuffer
+
 	constructor() {
 		this.createRenderer()
 		this.setupCamera()
@@ -152,8 +171,11 @@ class App {
 
 	setupCamera() {
 		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-		this.camera.position.z = 100
-		this.camera.position.y = 20
+		// this.camera.position.z = 100
+		// this.camera.position.y = 20
+
+		this.camera.position.z = 9
+		this.camera.position.y = 2
 		// this.camera.position.set(-1, 0.8, 5)
 	}
 
@@ -309,16 +331,18 @@ class App {
 		// this.gui.close()
 	}
 
-	loadScene(json) {
-		json.nodes.forEach((node, index) => {
+	loadScene() {
+		this.gltf.nodes.forEach((node, index) => {
 			if (node.mesh !== undefined) {
-				const mesh = this.createMesh(this.json.meshes[node.mesh])
+				const mesh = this.createMesh(this.gltf.meshes[node.mesh])
+				// console.log("mesh", mesh)
 				this.scene.add(mesh)
 			}
 		})
 	}
 
-	createMesh() {
+	createMesh(meshDef) {
+		// console.log('meshDef', meshDef)
 		const geometry = this.createGeometry(meshDef.primitives[0])
 		const material = new MeshStandardMaterial({ color: 0xffffff })
 		return new Mesh(geometry, material)
@@ -326,21 +350,24 @@ class App {
 
 	createGeometry(primitive) {
 		const geometry = new BufferGeometry()
+		// console.log("primitive", primitive)
 
 		if (primitive.attributes.POSITION !== undefined) {
-			const positionAccessor = this.json.accessors[primitive.attributes.POSITION]
+			const positionAccessor = this.gltf.accessors[primitive.attributes.POSITION]
 			const positionBuffer = this.getBufferView(positionAccessor)
+			// console.log("position", positionBuffer, primitive)
 			geometry.setAttribute("position", new BufferAttribute(positionBuffer, 3))
 		}
 
 		if (primitive.attributes.NORMAL !== undefined) {
-			const normalAccessor = this.json.accessors[primitive.attributes.NORMAL]
+			const normalAccessor = this.gltf.accessors[primitive.attributes.NORMAL]
 			const normalBuffer = this.getBufferView(normalAccessor)
+			// console.log("normal", normalBuffer, primitive)
 			geometry.setAttribute("normal", new BufferAttribute(normalBuffer, 3))
 		}
 
 		if (primitive.indices !== undefined) {
-			const indexAccessor = this.json.accessors[primitive.indices]
+			const indexAccessor = this.gltf.accessors[primitive.indices]
 			const indexBuffer = this.getBufferView(indexAccessor, true)
 			geometry.setIndex(new BufferAttribute(indexBuffer, 1))
 		}
@@ -349,7 +376,7 @@ class App {
 	}
 
 	getBufferView(accessor, isIndex = false) {
-		const bufferView = this.json.bufferViews[accessor.bufferView]
+		const bufferView = this.gltf.bufferViews[accessor.bufferView]
 		const buffer = this.binaryBuffer.slice(bufferView.byteOffset, bufferView.byteOffset + bufferView.byteLength)
 
 		if (isIndex) {
@@ -378,25 +405,57 @@ class App {
 
 	async loadJSON() {
 		const response = await fetch("/model/Facial.gltf")
-		const data = await response.json()
+		this.gltf = await response.json()
 
 		const binResponse = await fetch("/model/Facial.bin")
-		const binaryBuffer = await binResponse.arrayBuffer()
+		this.binaryBuffer = await binResponse.arrayBuffer()
 
-		console.log("data", data)
-		// loadScene(data, binaryBuffer)
+		console.log("gltf", this.gltf)
+		// this.loadScene()
+		const geometry = new SphereGeometry(1, 320, 320)
+		const faceMaterial = new MeshPhysicalMaterial({
+			name: 'Material.001',
+			side: DoubleSide,
+			clearcoat: 0.04848484694957733,
+			clearcoatRoughness: 0.12393935769796371,
+			ior: 1.4500000476837158,
+			normalMap: new TextureLoader().load('/model/Face_Normal.jpg'), // Replace with actual texture
+			map: new TextureLoader().load('/model/FaceBaked2.jpg'), // Replace with actual texture
+			metalnessMap: new TextureLoader().load('/model/Face_Roughness.jpg'), // Replace with actual texture
+			metalness: 0,
+		});
+		const face = new Mesh(geometry, faceMaterial)
+		face.position.set(-3, 0, 0);
+		this.scene.add(face)
 
-		const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
-		const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+		const material2 = new MeshPhysicalMaterial({
+			name: 'Material.001',
+			side: DoubleSide,
+			clearcoat: 0.04848484694957733,
+			clearcoatRoughness: 0.12393935769796371,
+			ior: 1.4500000476837158,
+			normalMap: new TextureLoader().load('/model/Face_Normal.jpg'), // Replace with actual texture
+			map: new TextureLoader().load('/model/Face_Scatter.jpg'), // Replace with actual texture
+			metalnessMap: new TextureLoader().load('/model/Face_Roughness.jpg'), // Replace with actual texture
+			metalness: 0,
+		});
 
-		const geometry = new BufferGeometry()
-		geometry.setAttribute("position", new BufferAttribute(vertices, 3))
-		geometry.setIndex(new BufferAttribute(indices, 1))
+		const mesh2 = new Mesh(geometry, material2)
+		// this.scene.add(mesh2)
 
-		const material = new MeshStandardMaterial({ color: 0xffffff })
-		const mesh = new Mesh(geometry, material)
 
-		this.scene.add(mesh)
+		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
+		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+
+		// const geometry = new BufferGeometry()
+		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
+		// geometry.setIndex(new BufferAttribute(indices, 1))
+
+		// const material = new MeshStandardMaterial({ color: 0xffffff })
+		// const mesh = new Mesh(geometry, material)
+
+		// this.scene.add(mesh)
+
 		// const loader = new GLTFLoader(loadingManager)
 		// loader.load(MODEL_PATH, (gltf) => {
 		// 	// const mesh = gltf.scene.children[0]
