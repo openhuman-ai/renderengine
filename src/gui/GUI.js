@@ -139,7 +139,7 @@ export default class GUI {
 
 		// // Inject stylesheet if we haven't done that yet
 		if (!stylesInjected && injectStyles) {
-		// 	_injectStyles(stylesheet)
+			// 	_injectStyles(stylesheet)
 			stylesInjected = true
 		}
 

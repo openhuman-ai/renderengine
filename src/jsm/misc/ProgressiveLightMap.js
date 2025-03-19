@@ -217,7 +217,13 @@ class ProgressiveLightMap {
 	 */
 	_initializeBlurPlane(res, lightMap = null) {
 		const blurMaterial = new MeshBasicMaterial()
-		blurMaterial.uniforms = { previousShadowMap: { value: null }, pixelOffset: { value: 1.0 / res }, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: 3.0 }
+		blurMaterial.uniforms = {
+			previousShadowMap: { value: null },
+			pixelOffset: { value: 1.0 / res },
+			polygonOffset: true,
+			polygonOffsetFactor: -1,
+			polygonOffsetUnits: 3.0,
+		}
 		blurMaterial.onBeforeCompile = (shader) => {
 			// Vertex Shader: Set Vertex Positions to the Unwrapped UV Positions
 			shader.vertexShader = "#define USE_UV\n" + shader.vertexShader.slice(0, -1) + "	gl_Position = vec4((uv - 0.5) * 2.0, 1.0, 1.0); }"

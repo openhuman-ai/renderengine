@@ -1876,7 +1876,16 @@ var rhino3dm = (() => {
 					FS.truncate(node, 0)
 				}
 				flags &= ~(128 | 512 | 131072)
-				var stream = FS.createStream({ node: node, path: FS.getPath(node), flags: flags, seekable: true, position: 0, stream_ops: node.stream_ops, ungotten: [], error: false })
+				var stream = FS.createStream({
+					node: node,
+					path: FS.getPath(node),
+					flags: flags,
+					seekable: true,
+					position: 0,
+					stream_ops: node.stream_ops,
+					ungotten: [],
+					error: false,
+				})
 				if (stream.stream_ops.open) {
 					stream.stream_ops.open(stream)
 				}
@@ -2611,7 +2620,17 @@ var rhino3dm = (() => {
 				if (streaming && protocol && protocol != 6) {
 					throw new FS.ErrnoError(66)
 				}
-				var sock = { family: family, type: type, protocol: protocol, server: null, error: null, peers: {}, pending: [], recv_queue: [], sock_ops: SOCKFS.websocket_sock_ops }
+				var sock = {
+					family: family,
+					type: type,
+					protocol: protocol,
+					server: null,
+					error: null,
+					peers: {},
+					pending: [],
+					recv_queue: [],
+					sock_ops: SOCKFS.websocket_sock_ops,
+				}
 				var name = SOCKFS.nextname()
 				var node = FS.createNode(SOCKFS.root, name, 49152, 0)
 				node.sock = sock

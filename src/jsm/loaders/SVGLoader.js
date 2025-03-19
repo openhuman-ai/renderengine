@@ -1773,7 +1773,13 @@ class SVGLoader extends Loader {
 				scanlineMinX = minX - 1
 			}
 
-			return { curves: p.curves, points: points, isCW: ShapeUtils.isClockWise(points), identifier: -1, boundingBox: new Box2(new Vector2(minX, minY), new Vector2(maxX, maxY)) }
+			return {
+				curves: p.curves,
+				points: points,
+				isCW: ShapeUtils.isClockWise(points),
+				identifier: -1,
+				boundingBox: new Box2(new Vector2(minX, minY), new Vector2(maxX, maxY)),
+			}
 		})
 
 		simplePaths = simplePaths.filter((sp) => sp.points.length > 1)
