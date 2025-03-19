@@ -34,7 +34,26 @@ loadingManager.onProgress = (url, loaded, total) => {
 }
 
 const ANIMATION_MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
-const MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
+const MODEL_PATH = new URL("/model/SceneApp.gltf", import.meta.url).href
+
+const WEBGL_COMPONENT_TYPES = {
+	5120: Int8Array,
+	5121: Uint8Array,
+	5122: Int16Array,
+	5123: Uint16Array,
+	5125: Uint32Array,
+	5126: Float32Array,
+}
+
+const WEBGL_TYPE_SIZES = {
+	SCALAR: 1,
+	VEC2: 2,
+	VEC3: 3,
+	VEC4: 4,
+	MAT2: 4,
+	MAT3: 9,
+	MAT4: 16,
+}
 
 class App {
 	canvas
@@ -82,9 +101,10 @@ class App {
 		this.createClock()
 		this.createControls()
 		this.setupLights()
-		this.setupCube()
+		// this.setupCube()
 		// this.loadModel()
-		this.loadCustomModel()
+		this.loadJSON()
+		// this.loadCustomModel()
 		this.createGUI()
 		this.createEnvironment()
 
@@ -129,7 +149,8 @@ class App {
 
 	setupCamera() {
 		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-		this.camera.position.z = 5
+		this.camera.position.z = 100
+		this.camera.position.y = 20
 		// this.camera.position.set(-1, 0.8, 5)
 	}
 
@@ -269,11 +290,15 @@ class App {
 		// // point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
 		// // point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
 
-		// // Add camera controls
-		// const cameraFolder = this.gui.addFolder("Camera")
-		// cameraFolder.add(this.camera.position, "x", -5, 5, 0.1).name("Position X")
-		// cameraFolder.add(this.camera.position, "y", -5, 5, 0.1).name("Position Y")
-		// cameraFolder.add(this.camera.position, "z", -5, 5, 0.1).name("Position Z")
+		// Add camera controls
+		const cameraFolder = this.gui.addFolder("Camera")
+		cameraFolder.add(this.camera.position, "x", -100, 100, 0.1).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -100, 100, 0.1).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -100, 100, 0.1).name("Position Z")
+		// cameraFolder.add(this.camera.rotation, "x", -10, 10, 0.1).name("Rotation X")
+		// cameraFolder.add(this.camera.rotation, "y", -10, 10, 0.1).name("Rotation Y")
+		// cameraFolder.add(this.camera.rotation, "z", -10, 10, 0.1).name("Rotation Z")
+		console.log("this.camera", this.camera)
 		// cameraFolder.close()
 
 		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
@@ -282,14 +307,33 @@ class App {
 		// this.gui.close()
 	}
 
+	async loadJSON() {
+		const response = await fetch("/model/Facial.gltf")
+		const data = await response.json()
+		console.log("data", data)
+
+		const binResponse = await fetch("/model/Facial.bin")
+		const binaryBuffer = await binResponse.arrayBuffer()
+
+		const loader = new GLTFLoader(loadingManager)
+
+		loader.load(MODEL_PATH, (gltf) => {
+			// const mesh = gltf.scene.children[0]
+			console.log("gltf", gltf)
+			// this.scene.add(mesh)
+		})
+	}
+
 	async loadCustomModel() {
 		const loader = new GLTFLoader(loadingManager)
 
-		loader.load(ANIMATION_MODEL_PATH, (gltf) => {
+		loader.load(MODEL_PATH, (gltf) => {
 			const mesh = gltf.scene.children[0]
+			console.log(mesh)
 			this.scene.add(mesh)
 		})
 	}
+
 	// async loadModel() {
 	// 	const aniClipKF = new NumberKeyframeTrack("mesh_2.morphTargetInfluences", aniTime, aniValues)
 	// 	const aniClip = new AnimationClip("Key|Take 001|BaseLayer", 11.18083381652832, [aniClipKF], NormalAnimationBlendMode)
@@ -361,9 +405,9 @@ class App {
 			this.mixer.update(delta)
 		}
 
-		// Rotate the cube
-		this.cube.rotation.x += 0.01
-		this.cube.rotation.y += 0.01
+		// // Rotate the cube
+		// this.cube.rotation.x += 0.01
+		// this.cube.rotation.y += 0.01
 
 		if (this.controls) {
 			this.controls.update()
@@ -371,7 +415,6 @@ class App {
 
 		this.renderer.render(this.scene, this.camera)
 	}
-
 }
 
 // Initialize the app
