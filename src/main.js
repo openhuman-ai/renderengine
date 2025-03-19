@@ -308,6 +308,57 @@ class App {
 
 		// this.gui.close()
 	}
+
+	loadScene(json) {
+		json.nodes.forEach((node, index) => {
+			if (node.mesh !== undefined) {
+				const mesh = this.createMesh(this.json.meshes[node.mesh])
+				this.scene.add(mesh)
+			}
+		})
+	}
+
+	createMesh() {
+		const geometry = this.createGeometry(meshDef.primitives[0])
+		const material = new MeshStandardMaterial({ color: 0xffffff })
+		return new Mesh(geometry, material)
+	}
+
+	createGeometry(primitive) {
+		const geometry = new BufferGeometry()
+
+		if (primitive.attributes.POSITION !== undefined) {
+			const positionAccessor = this.json.accessors[primitive.attributes.POSITION]
+			const positionBuffer = this.getBufferView(positionAccessor)
+			geometry.setAttribute("position", new BufferAttribute(positionBuffer, 3))
+		}
+
+		if (primitive.attributes.NORMAL !== undefined) {
+			const normalAccessor = this.json.accessors[primitive.attributes.NORMAL]
+			const normalBuffer = this.getBufferView(normalAccessor)
+			geometry.setAttribute("normal", new BufferAttribute(normalBuffer, 3))
+		}
+
+		if (primitive.indices !== undefined) {
+			const indexAccessor = this.json.accessors[primitive.indices]
+			const indexBuffer = this.getBufferView(indexAccessor, true)
+			geometry.setIndex(new BufferAttribute(indexBuffer, 1))
+		}
+
+		return geometry
+	}
+
+	getBufferView(accessor, isIndex = false) {
+		const bufferView = this.json.bufferViews[accessor.bufferView]
+		const buffer = this.binaryBuffer.slice(bufferView.byteOffset, bufferView.byteOffset + bufferView.byteLength)
+
+		if (isIndex) {
+			return new Uint16Array(buffer)
+		} else {
+			return new Float32Array(buffer)
+		}
+	}
+
 	getTypedArray(binaryBuffer, componentType, count, bufferView) {
 		const byteOffset = bufferView.byteOffset || 0
 		const byteLength = bufferView.byteLength
@@ -328,55 +379,19 @@ class App {
 	async loadJSON() {
 		const response = await fetch("/model/Facial.gltf")
 		const data = await response.json()
-		console.log("data", data)
 
 		const binResponse = await fetch("/model/Facial.bin")
 		const binaryBuffer = await binResponse.arrayBuffer()
 
+		console.log("data", data)
+		// loadScene(data, binaryBuffer)
+
+		const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
+		const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+
 		const geometry = new BufferGeometry()
-		const bufferViews = data.bufferViews
-		const accessors = data.accessors
-
-		for (const accessor of accessors) {
-			const bufferView = bufferViews[accessor.bufferView]
-			const typedArray = this.getTypedArray(binaryBuffer, accessor.componentType, accessor.count, bufferView)
-			let itemSize
-
-			switch (accessor.type) {
-				case "SCALAR":
-					itemSize = 1
-					break
-				case "VEC2":
-					itemSize = 2
-					break
-				case "VEC3":
-					itemSize = 3
-					break
-				case "VEC4":
-					itemSize = 4
-					break
-				default:
-					throw new Error(`Unsupported accessor type: ${accessor.type}`)
-			}
-
-			const bufferAttribute = new BufferAttribute(typedArray, itemSize)
-
-			if (accessor.type === "SCALAR" && accessor.componentType === 5123) {
-				geometry.setIndex(bufferAttribute)
-			} else if (accessor.type === "VEC3" && !geometry.getAttribute("position")) {
-				geometry.setAttribute("position", bufferAttribute)
-			} else if (accessor.type === "VEC3" && !geometry.getAttribute("normal")) {
-				geometry.setAttribute("normal", bufferAttribute)
-			} else if (accessor.type === "VEC2" && !geometry.getAttribute("uv")) {
-				geometry.setAttribute("uv", bufferAttribute)
-			}
-		}
-
-		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
-		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
-
-		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
-		// geometry.setIndex(new BufferAttribute(indices, 1))
+		geometry.setAttribute("position", new BufferAttribute(vertices, 3))
+		geometry.setIndex(new BufferAttribute(indices, 1))
 
 		const material = new MeshStandardMaterial({ color: 0xffffff })
 		const mesh = new Mesh(geometry, material)
@@ -431,8 +446,8 @@ class App {
 	// 		// const head = mesh.getObjectByName("mesh_2")
 	// 		// const influences = head.morphTargetInfluences
 	// 		//   // Center the model
-	// 		//   const box = new THREE.Box3().setFromObject(this.model)
-	// 		//   const center = box.getCenter(new THREE.Vector3())
+	// 		//   const box = new Box3().setFromObject(this.model)
+	// 		//   const center = box.getCenter(new Vector3())
 	// 		//   this.model.position.sub(center)
 	// 		//   // Setup morph targets
 	// 		//   this.model.traverse((node) => {
@@ -442,7 +457,7 @@ class App {
 	// 		//   })
 	// 		// // Handle animations
 	// 		// if (gltf.animations?.length) {
-	// 		//   this.mixer = new THREE.AnimationMixer(this.model)
+	// 		//   this.mixer = new AnimationMixer(this.model)
 	// 		//   this.animations = gltf.animations
 	// 		//   this.animations.forEach((clip) => {
 	// 		//     this.mixer.clipAction(clip).play()
