@@ -98,9 +98,18 @@ class App {
 	meshWithMorphTargets
 	morphTargetFolder
 	gui
+	guiParams = {
+		showAxes: false,
+		showBox: false,
+		showGrid: false,
+		showLightHelpers: false,
+		vnh: false,
+		vth: false,
+	}
 	helpers = {
 		axes: null,
 		box: null,
+		grid: null,
 		mainLight: null,
 		ambient: null,
 		frontLight: null,
@@ -512,13 +521,13 @@ class App {
 		// Add helper visibility controls
 		this.helperFolder = this.gui.addFolder("Helpers")
 		this.helperFolder.close() // Close by default
-		this.helperFolder.add({ showAxes: true }, "showAxes").onChange((visible) => {
+		this.helperFolder.add(this.guiParams, "showAxes").onChange((visible) => {
 			if (this.helpers.axes) this.helpers.axes.visible = visible
 		})
-		this.helperFolder.add({ showBox: true }, "showBox").onChange((visible) => {
+		this.helperFolder.add(this.guiParams, "showBox").onChange((visible) => {
 			if (this.helpers.box) this.helpers.box.visible = visible
 		})
-		this.helperFolder.add({ showLightHelpers: true }, "showLightHelpers").onChange((visible) => {
+		this.helperFolder.add(this.guiParams, "showLightHelpers").onChange((visible) => {
 			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
 			if (this.helpers.ambient) this.helpers.ambient.visible = visible
 			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
@@ -602,13 +611,19 @@ class App {
 	addHelpers() {
 		this.helpers.mainLight = new PointLightHelper(this.lights.main, 15)
 		this.scene.add(this.helpers.mainLight)
+		this.helpers.mainLight.visible = false
 		this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
 		this.scene.add(this.helpers.ambient)
+		this.helpers.ambient.visible = false
 
-		const gridHelper = new GridHelper(400, 40, 0x0000ff, 0x808080)
-		gridHelper.position.y = -150
-		gridHelper.position.x = -150
-		this.scene.add(gridHelper)
+		this.helpers.grid = new GridHelper(400, 40, 0x0000ff, 0x808080)
+		this.helpers.grid.position.y = -150
+		this.helpers.grid.position.x = -150
+		this.helpers.grid.visible = false
+		this.scene.add(this.helpers.grid)
+		// this.helperFolder.add(this.guiParams, "showGrid").onChange((visible) => {
+		// 	if (this.helpers.grid) this.helpers.grid.visible = visible
+		// })
 
 		// const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
 		// polarGridHelper.position.y = -150
@@ -617,33 +632,43 @@ class App {
 	}
 
 	addMeshHelpers(target) {
-		this.helpers.box = new BoxHelper(target)
+		const mesh = target.clone()
+		this.helpers.box = new BoxHelper(mesh)
 		this.scene.add(this.helpers.box)
+		this.helpers.box.visible = false
 
 		this.helpers.axes = new AxesHelper(10)
 		this.scene.add(this.helpers.axes)
+		this.helpers.axes.visible = false
 
-		const mesh = target.clone()
 		mesh.geometry.computeTangents()
 		this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
 		this.scene.add(this.helpers.vnh)
+		this.helpers.vnh.visible = false
 
 		this.helpers.vth = new VertexTangentsHelper(mesh, 0.09)
 		this.scene.add(this.helpers.vth)
-		console.log("this.helperFolder", this.helperFolder)
-		// this.helperFolder.add({ vnh: true }, "Vertex Normals Helper").onChange((visible) => {
-		// 	// if (this.helpers.vnh) this.helpers.vnh.visible = visible
-		// })
-		// this.helperFolder.add({ vth: true }, "Vertex Tangents Helper").onChange((visible) => {
-		// 	// if (this.helpers.vth) this.helpers.vth.visible = visible
-		// })
+		this.helpers.vth.visible = false
 
-		// target.geometry.computeVertexNormals()
-		// target.geometry.computeFaceNormals()
-		// target.geometry.computeBoundingSphere()
-		// target.geometry.computeBoundingBox()
+		this.guiParams = {
+			vnh: false,
+			vth: false,
+		}
 
-		// const newMesh = target.geometry.clone()
+		this.helperFolder
+			.add(this.guiParams, "vnh")
+			.name("Vertex Normals Helper")
+			.onChange((visible) => {
+				if (this.helpers.vnh) this.helpers.vnh.visible = visible
+			})
+		this.helperFolder
+			.add(this.guiParams, "vth")
+			.name("Vertex Normals Helper")
+			.onChange((visible) => {
+				if (this.helpers.vth) this.helpers.vth.visible = visible
+			})
+
+		// const newMesh = mesh.geometry.clone()
 		// const wireframe = new WireframeGeometry(newMesh)
 		// let line = new LineSegments(wireframe)
 		// line.material.depthTest = false
