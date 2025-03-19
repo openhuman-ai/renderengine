@@ -7,7 +7,7 @@ import { Loader } from "./Loader.js"
  * loaded via {@link FileLoader}.
  *
  * ```js
- * const loader = new THREE.AnimationLoader();
+ * const loader = new AnimationLoader();
  * const animations = await loader.loadAsync( 'animations/animation.js' );
  * ```
  *

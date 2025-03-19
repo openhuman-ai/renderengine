@@ -264,7 +264,7 @@ class Plane {
 	 *
 	 * The optional normal matrix can be pre-computed like so:
 	 * ```js
-	 * const optionalNormalMatrix = new THREE.Matrix3().getNormalMatrix( matrix );
+	 * const optionalNormalMatrix = new Matrix3().getNormalMatrix( matrix );
 	 * ```
 	 *
 	 * @param {Matrix4} matrix - The transformation matrix.

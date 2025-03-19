@@ -11,11 +11,11 @@ const _vector = /*@__PURE__*/ new Vector3()
  * This displays a cone shaped helper object for a {@link SpotLight}.
  *
  * ```js
- * const spotLight = new THREE.SpotLight( 0xffffff );
+ * const spotLight = new SpotLight( 0xffffff );
  * spotLight.position.set( 10, 10, 10 );
  * scene.add( spotLight );
  *
- * const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+ * const spotLightHelper = new SpotLightHelper( spotLight );
  * scene.add( spotLightHelper );
  * ```
  *

@@ -12,7 +12,7 @@ let _rendererState
 /**
  * Post processing node for creating a bloom effect.
  * ```js
- * const postProcessing = new THREE.PostProcessing( renderer );
+ * const postProcessing = new PostProcessing( renderer );
  *
  * const scenePass = pass( scene, camera );
  * const scenePassColor = scenePass.getTextureNode( 'output' );
@@ -25,7 +25,7 @@ let _rendererState
  * use the `emissive` material property to control which objects should
  * contribute to bloom or not. This can be achieved via MRT.
  * ```js
- * const postProcessing = new THREE.PostProcessing( renderer );
+ * const postProcessing = new PostProcessing( renderer );
  *
  * const scenePass = pass( scene, camera );
  * scenePass.setMRT( mrt( {

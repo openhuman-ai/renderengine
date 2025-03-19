@@ -9,7 +9,7 @@ import { Object3D } from "../core/Object3D.js"
  * This light cannot be used to cast shadows.
  *
  * ```js
- * const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+ * const light = new HemisphereLight( 0xffffbb, 0x080820, 1 );
  * scene.add( light );
  * ```
  *

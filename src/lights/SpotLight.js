@@ -10,9 +10,9 @@ import { Object3D } from "../core/Object3D.js"
  *
  * ```js
  * // white spotlight shining from the side, modulated by a texture
- * const spotLight = new THREE.SpotLight( 0xffffff );
+ * const spotLight = new SpotLight( 0xffffff );
  * spotLight.position.set( 100, 1000, 100 );
- * spotLight.map = new THREE.TextureLoader().load( url );
+ * spotLight.map = new TextureLoader().load( url );
  *
  * spotLight.castShadow = true;
  * spotLight.shadow.mapSize.width = 1024;

@@ -14,7 +14,7 @@ const _maxTarget = /*@__PURE__*/ new Vector2()
  * is the most common projection mode used for rendering a 3D scene.
  *
  * ```js
- * const camera = new THREE.PerspectiveCamera( 45, width / height, 1, 1000 );
+ * const camera = new PerspectiveCamera( 45, width / height, 1, 1000 );
  * scene.add( camera );
  * ```
  *

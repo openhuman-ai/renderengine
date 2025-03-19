@@ -169,13 +169,13 @@ class SceneOptimizer {
 				batchedMaterial.color.set(1, 1, 1)
 			}
 
-			const batchedMesh = new THREE.BatchedMesh(maxGeometries, maxVertices, maxIndices, batchedMaterial)
+			const batchedMesh = new BatchedMesh(maxGeometries, maxVertices, maxIndices, batchedMaterial)
 
 			const referenceMesh = group.meshes[0]
 			batchedMesh.name = `${referenceMesh.name}_batch`
 
 			const geometryIds = new Map()
-			const inverseParentMatrix = new THREE.Matrix4()
+			const inverseParentMatrix = new Matrix4()
 
 			if (referenceMesh.parent) {
 				referenceMesh.parent.updateWorldMatrix(true, false)
@@ -192,7 +192,7 @@ class SceneOptimizer {
 				const geometryId = geometryIds.get(geometryHash)
 				const instanceId = batchedMesh.addInstance(geometryId)
 
-				const localMatrix = new THREE.Matrix4()
+				const localMatrix = new Matrix4()
 				mesh.updateWorldMatrix(true, false)
 				localMatrix.copy(mesh.matrixWorld)
 				if (referenceMesh.parent) {

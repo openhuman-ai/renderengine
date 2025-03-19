@@ -13,7 +13,7 @@ const _viewport = new Vector4()
  * import the class from `lines/webgpu/Wireframe.js`.
  *
  * ```js
- * const geometry = new THREE.IcosahedronGeometry();
+ * const geometry = new IcosahedronGeometry();
  * const wireframeGeometry = new WireframeGeometry2( geo );
  *
  * const wireframe = new Wireframe( wireframeGeometry, material );

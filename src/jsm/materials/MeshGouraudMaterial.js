@@ -321,7 +321,7 @@ class MeshGouraudMaterial extends ShaderMaterial {
 
 		this.type = "MeshGouraudMaterial"
 
-		//this.color = new THREE.Color( 0xffffff ); // diffuse
+		//this.color = new Color( 0xffffff ); // diffuse
 
 		//this.map = null;
 
@@ -331,7 +331,7 @@ class MeshGouraudMaterial extends ShaderMaterial {
 		//this.aoMap = null;
 		//this.aoMapIntensity = 1.0;
 
-		//this.emissive = new THREE.Color( 0x000000 );
+		//this.emissive = new Color( 0x000000 );
 		//this.emissiveIntensity = 1.0;
 		//this.emissiveMap = null;
 

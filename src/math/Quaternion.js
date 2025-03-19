@@ -8,10 +8,10 @@ import { clamp } from "./MathUtils.js"
  *
  * Note that three.js expects Quaternions to be normalized.
  * ```js
- * const quaternion = new THREE.Quaternion();
- * quaternion.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 );
+ * const quaternion = new Quaternion();
+ * quaternion.setFromAxisAngle( new Vector3( 0, 1, 0 ), Math.PI / 2 );
  *
- * const vector = new THREE.Vector3( 1, 0, 0 );
+ * const vector = new Vector3( 1, 0, 0 );
  * vector.applyQuaternion( quaternion );
  * ```
  */

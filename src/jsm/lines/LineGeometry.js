@@ -7,9 +7,9 @@ import { LineSegmentsGeometry } from "../lines/LineSegmentsGeometry.js"
  *
  * ```js
  * const points = [
- * 	new THREE.Vector3( - 10, 0, 0 ),
- * 	new THREE.Vector3( 0, 5, 0 ),
- * 	new THREE.Vector3( 10, 0, 0 ),
+ * 	new Vector3( - 10, 0, 0 ),
+ * 	new Vector3( 0, 5, 0 ),
+ * 	new Vector3( 10, 0, 0 ),
  * ];
  *
  * const geometry = new LineGeometry();

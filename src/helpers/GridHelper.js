@@ -12,7 +12,7 @@ import { Color } from "../math/Color.js"
  * const size = 10;
  * const divisions = 10;
  *
- * const gridHelper = new THREE.GridHelper( size, divisions );
+ * const gridHelper = new GridHelper( size, divisions );
  * scene.add( gridHelper );
  * ```
  *

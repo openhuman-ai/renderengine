@@ -7,7 +7,7 @@ import { Color, Matrix4, Mesh, PerspectiveCamera, Plane, ShaderMaterial, Uniform
  * When using {@link WebGPURenderer}, use {@link ReflectorNode}.
  *
  * ```js
- * const geometry = new THREE.PlaneGeometry( 100, 100 );
+ * const geometry = new PlaneGeometry( 100, 100 );
  *
  * const reflector = new Reflector( geometry, {
  * 	clipBias: 0.003,

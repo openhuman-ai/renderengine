@@ -33,9 +33,9 @@ function getUv(faceDirVector, normal, uvAxis, projectionAxis, radius, sideLength
  * A special type of box geometry with rounded corners and edges.
  *
  * ```js
- * const geometry = new THREE.RoundedBoxGeometry();
- * const material = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
- * const cube = new THREE.Mesh( geometry, material );
+ * const geometry = new RoundedBoxGeometry();
+ * const material = new MeshStandardMaterial( { color: 0x00ff00 } );
+ * const cube = new Mesh( geometry, material );
  * scene.add( cube );
  * ```
  *

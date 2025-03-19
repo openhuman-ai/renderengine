@@ -7,7 +7,7 @@ import { NodeAccess } from "../core/constants.js"
  * write data into a storage texture with a compute shader.
  *
  * ```js
- * const storageTexture = new THREE.StorageTexture( width, height );
+ * const storageTexture = new StorageTexture( width, height );
  *
  * const computeTexture = Fn( ( { storageTexture } ) => {
  *

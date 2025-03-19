@@ -15,21 +15,21 @@ import { BufferAttribute, BufferGeometry, Color, FileLoader, Float32BufferAttrib
  * Usage:
  *  const loader = new STLLoader();
  *  loader.load( './models/stl/slotted_disk.stl', function ( geometry ) {
- *    scene.add( new THREE.Mesh( geometry ) );
+ *    scene.add( new Mesh( geometry ) );
  *  });
  *
  * For binary STLs geometry might contain colors for vertices. To use it:
  *  // use the same code to load STL as above
  *  if (geometry.hasColors) {
- *    material = new THREE.MeshPhongMaterial({ opacity: geometry.alpha, vertexColors: true });
+ *    material = new MeshPhongMaterial({ opacity: geometry.alpha, vertexColors: true });
  *  } else { .... }
- *  const mesh = new THREE.Mesh( geometry, material );
+ *  const mesh = new Mesh( geometry, material );
  *
  * For ASCII STLs containing multiple solids, each solid is assigned to a different group.
  * Groups can be used to assign a different color by defining an array of materials with the same length of
  * geometry.groups and passing it to the Mesh constructor:
  *
- * const mesh = new THREE.Mesh( geometry, material );
+ * const mesh = new Mesh( geometry, material );
  *
  * For example:
  *
@@ -40,7 +40,7 @@ import { BufferAttribute, BufferGeometry, Color, FileLoader, Float32BufferAttrib
  *
  *  for (let i = 0; i < nGeometryGroups; i++) {
  *
- *		const material = new THREE.MeshPhongMaterial({
+ *		const material = new MeshPhongMaterial({
  *			color: colorMap[i],
  *			wireframe: false
  *		});
@@ -48,7 +48,7 @@ import { BufferAttribute, BufferGeometry, Color, FileLoader, Float32BufferAttrib
  *  }
  *
  *  materials.push(material);
- *  const mesh = new THREE.Mesh(geometry, materials);
+ *  const mesh = new Mesh(geometry, materials);
  */
 
 class STLLoader extends Loader {

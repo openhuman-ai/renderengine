@@ -17,7 +17,7 @@ import { Light } from "./Light.js"
  * THREE.RectAreaLightNode.setLTC( RectAreaLightTexturesLib.init() ); //  only relevant for WebGPURenderer
  *
  * const intensity = 1; const width = 10; const height = 10;
- * const rectLight = new THREE.RectAreaLight( 0xffffff, intensity, width, height );
+ * const rectLight = new RectAreaLight( 0xffffff, intensity, width, height );
  * rectLight.position.set( 5, 5, 0 );
  * rectLight.lookAt( 0, 0, 0 );
  * scene.add( rectLight )

@@ -66,7 +66,7 @@ import { Sphere } from "../math/Sphere.js"
  * The files are internally loaded via {@link FileLoader}.
  *
  * ```js
- * const loader = new THREE.ObjectLoader();
+ * const loader = new ObjectLoader();
  * const obj = await loader.loadAsync( 'models/json/example.json' );
  * scene.add( obj );
  *

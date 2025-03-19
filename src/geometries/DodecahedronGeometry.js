@@ -4,9 +4,9 @@ import { PolyhedronGeometry } from "./PolyhedronGeometry.js"
  * A geometry class for representing a dodecahedron.
  *
  * ```js
- * const geometry = new THREE.DodecahedronGeometry();
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const dodecahedron = new THREE.Mesh( geometry, material );
+ * const geometry = new DodecahedronGeometry();
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const dodecahedron = new Mesh( geometry, material );
  * scene.add( dodecahedron );
  * ```
  *

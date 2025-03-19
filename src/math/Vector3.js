@@ -18,10 +18,10 @@ import { Quaternion } from "./Quaternion.js"
  * Iterating through a vector instance will yield its components `(x, y, z)` in
  * the corresponding order.
  * ```js
- * const a = new THREE.Vector3( 0, 1, 0 );
+ * const a = new Vector3( 0, 1, 0 );
  *
  * //no arguments; will be initialised to (0, 0, 0)
- * const b = new THREE.Vector3( );
+ * const b = new Vector3( );
  *
  * const d = a.distanceTo( b );
  * ```

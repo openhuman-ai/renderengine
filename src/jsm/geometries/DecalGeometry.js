@@ -11,8 +11,8 @@ import { BufferGeometry, Euler, Float32BufferAttribute, Matrix3, Matrix4, Mesh, 
  *
  * ```js
  * const geometry = new DecalGeometry( mesh, position, orientation, size );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const mesh = new THREE.Mesh( geometry, material );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const mesh = new Mesh( geometry, material );
  * scene.add( mesh );
  * ```
  *

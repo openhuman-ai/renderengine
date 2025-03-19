@@ -11,7 +11,7 @@ import { StaticDrawUsage, DynamicDrawUsage } from "../../constants.js"
  * on geometry level. With `BufferAttributeNode`, it is also possible to do this
  * on the node level.
  * ```js
- * const geometry = new THREE.PlaneGeometry();
+ * const geometry = new PlaneGeometry();
  * const positionAttribute = geometry.getAttribute( 'position' );
  *
  * const colors = [];
@@ -19,7 +19,7 @@ import { StaticDrawUsage, DynamicDrawUsage } from "../../constants.js"
  * 	colors.push( 1, 0, 0 );
  * }
  *
- * material.colorNode = bufferAttribute( new THREE.Float32BufferAttribute( colors, 3 ) );
+ * material.colorNode = bufferAttribute( new Float32BufferAttribute( colors, 3 ) );
  * ```
  * This new approach is especially interesting when geometry data are generated via
  * compute shaders. The below line converts a storage buffer into an attribute node.

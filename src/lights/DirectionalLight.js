@@ -23,7 +23,7 @@ import { Object3D } from "../core/Object3D.js"
  *
  * ```js
  * // White directional light at half intensity shining from the top.
- * const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+ * const directionalLight = new DirectionalLight( 0xffffff, 0.5 );
  * scene.add( directionalLight );
  * ```
  *

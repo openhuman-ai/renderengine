@@ -24,10 +24,10 @@ import default_fragment from "../renderers/shaders/ShaderChunk/default_fragment.
  * statements.
  *
  * ```js
- * const material = new THREE.ShaderMaterial( {
+ * const material = new ShaderMaterial( {
  * 	uniforms: {
  * 		time: { value: 1.0 },
- * 		resolution: { value: new THREE.Vector2() }
+ * 		resolution: { value: new Vector2() }
  * 	},
  * 	vertexShader: document.getElementById( 'vertexShader' ).textContent,
  * 	fragmentShader: document.getElementById( 'fragmentShader' ).textContent

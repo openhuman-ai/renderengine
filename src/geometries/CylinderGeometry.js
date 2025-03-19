@@ -7,9 +7,9 @@ import { Vector2 } from "../math/Vector2.js"
  * A geometry class for representing a cylinder.
  *
  * ```js
- * const geometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const cylinder = new THREE.Mesh( geometry, material );
+ * const geometry = new CylinderGeometry( 5, 5, 20, 32 );
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const cylinder = new Mesh( geometry, material );
  * scene.add( cylinder );
  * ```
  *

@@ -4,9 +4,9 @@ import { PolyhedronGeometry } from "./PolyhedronGeometry.js"
  * A geometry class for representing an octahedron.
  *
  * ```js
- * const geometry = new THREE.OctahedronGeometry();
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const octahedron = new THREE.Mesh( geometry, material );
+ * const geometry = new OctahedronGeometry();
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const octahedron = new Mesh( geometry, material );
  * scene.add( octahedron );
  * ```
  *

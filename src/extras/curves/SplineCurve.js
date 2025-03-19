@@ -7,21 +7,21 @@ import { Vector2 } from "../../math/Vector2.js"
  *
  * ```js
  * // Create a sine-like wave
- * const curve = new THREE.SplineCurve( [
- * 	new THREE.Vector2( -10, 0 ),
- * 	new THREE.Vector2( -5, 5 ),
- * 	new THREE.Vector2( 0, 0 ),
- * 	new THREE.Vector2( 5, -5 ),
- * 	new THREE.Vector2( 10, 0 )
+ * const curve = new SplineCurve( [
+ * 	new Vector2( -10, 0 ),
+ * 	new Vector2( -5, 5 ),
+ * 	new Vector2( 0, 0 ),
+ * 	new Vector2( 5, -5 ),
+ * 	new Vector2( 10, 0 )
  * ] );
  *
  * const points = curve.getPoints( 50 );
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
+ * const geometry = new BufferGeometry().setFromPoints( points );
  *
- * const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+ * const material = new LineBasicMaterial( { color: 0xff0000 } );
  *
  * // Create the final object to add to the scene
- * const splineObject = new THREE.Line( geometry, material );
+ * const splineObject = new Line( geometry, material );
  * ```
  *
  * @augments Curve

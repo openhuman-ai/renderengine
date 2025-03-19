@@ -12,16 +12,16 @@ import { ShapeUtils } from "../extras/ShapeUtils.js"
  * ```js
  * const length = 12, width = 8;
  *
- * const shape = new THREE.Shape();
+ * const shape = new Shape();
  * shape.moveTo( 0,0 );
  * shape.lineTo( 0, width );
  * shape.lineTo( length, width );
  * shape.lineTo( length, 0 );
  * shape.lineTo( 0, 0 );
  *
- * const geometry = new THREE.ExtrudeGeometry( shape );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const mesh = new THREE.Mesh( geometry, material ) ;
+ * const geometry = new ExtrudeGeometry( shape );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const mesh = new Mesh( geometry, material ) ;
  * scene.add( mesh );
  * ```
  *

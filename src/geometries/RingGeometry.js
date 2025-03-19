@@ -7,9 +7,9 @@ import { Vector3 } from "../math/Vector3.js"
  * A class for generating a two-dimensional ring geometry.
  *
  * ```js
- * const geometry = new THREE.RingGeometry( 1, 5, 32 );
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
- * const mesh = new THREE.Mesh( geometry, material );
+ * const geometry = new RingGeometry( 1, 5, 32 );
+ * const material = new MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+ * const mesh = new Mesh( geometry, material );
  * scene.add( mesh );
  * ```
  *

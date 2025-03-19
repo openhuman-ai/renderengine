@@ -5,9 +5,9 @@ import { Float32BufferAttribute } from "../core/BufferAttribute.js"
  * A geometry class for representing a plane.
  *
  * ```js
- * const geometry = new THREE.PlaneGeometry( 1, 1 );
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
- * const plane = new THREE.Mesh( geometry, material );
+ * const geometry = new PlaneGeometry( 1, 1 );
+ * const material = new MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+ * const plane = new Mesh( geometry, material );
  * scene.add( plane );
  * ```
  *

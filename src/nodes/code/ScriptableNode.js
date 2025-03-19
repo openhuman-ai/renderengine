@@ -82,7 +82,7 @@ export const ScriptableNodeResources = new Resources()
  *
  * scriptableNode.setParameter( 'source', color( 1, 0, 0 ) );
  *
- * const material = new THREE.MeshBasicNodeMaterial();
+ * const material = new MeshBasicNodeMaterial();
  * material.colorNode = scriptableNode;
  * ```
  *

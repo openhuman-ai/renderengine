@@ -12,9 +12,9 @@ import { Vector2 } from "../math/Vector2.js"
  * sides.
  *
  * ```js
- * const geometry = new THREE.CircleGeometry( 5, 32 );
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const circle = new THREE.Mesh( geometry, material );
+ * const geometry = new CircleGeometry( 5, 32 );
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const circle = new Mesh( geometry, material );
  * scene.add( circle )
  * ```
  *

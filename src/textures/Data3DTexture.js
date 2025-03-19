@@ -20,7 +20,7 @@ class Data3DTexture extends Texture {
 		// We're going to add .setXXX() methods for setting properties later.
 		// Users can still set in Data3DTexture directly.
 		//
-		//	const texture = new THREE.Data3DTexture( data, width, height, depth );
+		//	const texture = new Data3DTexture( data, width, height, depth );
 		// 	texture.anisotropy = 16;
 		//
 		// See #14839

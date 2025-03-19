@@ -9,7 +9,7 @@ import { Color } from "../math/Color.js"
  * The X axis is red. The Y axis is green. The Z axis is blue.
  *
  * ```js
- * const axesHelper = new THREE.AxesHelper( 5 );
+ * const axesHelper = new AxesHelper( 5 );
  * scene.add( axesHelper );
  * ```
  *

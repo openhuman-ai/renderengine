@@ -6,9 +6,9 @@ import { BufferGeometry, Float32BufferAttribute, Vector3 } from "three"
  * Reference: [Mesh Generation with Python]{@link https://prideout.net/blog/old/blog/index.html@p=44.html}
  *
  * ```js
- * const geometry = new THREE.ParametricGeometry( klein, 25, 25 );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const klein = new THREE.Mesh( geometry, material );
+ * const geometry = new ParametricGeometry( klein, 25, 25 );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const klein = new Mesh( geometry, material );
  * scene.add( klein );
  * ```
  *

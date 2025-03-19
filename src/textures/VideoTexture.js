@@ -7,7 +7,7 @@ import { Texture } from "./Texture.js"
  * ```js
  * // assuming you have created a HTML video element with id="video"
  * const video = document.getElementById( 'video' );
- * const texture = new THREE.VideoTexture( video );
+ * const texture = new VideoTexture( video );
  * ```
  *
  * Note: After the initial use of a texture, its dimensions, format, and type

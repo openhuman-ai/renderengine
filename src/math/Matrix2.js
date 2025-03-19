@@ -8,7 +8,7 @@
  * order, while internally they are stored in the {@link Matrix2#elements} array in column-major order.
  * This means that calling:
  * ```js
- * const m = new THREE.Matrix2();
+ * const m = new Matrix2();
  * m.set( 11, 12,
  *        21, 22 );
  * ```

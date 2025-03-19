@@ -14,11 +14,11 @@ import { Loader } from "./Loader.js"
  * Also note that unlike {@link FileLoader}, this loader does not avoid multiple concurrent requests to the same URL.
  *
  * ```js
- * const loader = new THREE.ImageBitmapLoader();
+ * const loader = new ImageBitmapLoader();
  * loader.setOptions( { imageOrientation: 'flipY' } ); // set options if needed
  * const imageBitmap = await loader.loadAsync( 'image.png' );
  *
- * const texture = new THREE.Texture( imageBitmap );
+ * const texture = new Texture( imageBitmap );
  * texture.needsUpdate = true;
  * ```
  *

@@ -8,13 +8,13 @@ import { Vector2 } from "../math/Vector2.js"
  * Creates an one-sided polygonal geometry from one or more path shapes.
  *
  * ```js
- * const arcShape = new THREE.Shape()
+ * const arcShape = new Shape()
  *	.moveTo( 5, 1 )
  *	.absarc( 1, 1, 4, 0, Math.PI * 2, false );
  *
- * const geometry = new THREE.ShapeGeometry( arcShape );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
- * const mesh = new THREE.Mesh( geometry, material ) ;
+ * const geometry = new ShapeGeometry( arcShape );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
+ * const mesh = new Mesh( geometry, material ) ;
  * scene.add( mesh );
  * ```
  *

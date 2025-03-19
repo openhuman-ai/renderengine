@@ -49,7 +49,7 @@ let _rendererState
 /**
  * Post processing node for applying Ground Truth Ambient Occlusion (GTAO) to a scene.
  * ```js
- * const postProcessing = new THREE.PostProcessing( renderer );
+ * const postProcessing = new PostProcessing( renderer );
  *
  * const scenePass = pass( scene, camera );
  * scenePass.setMRT( mrt( {

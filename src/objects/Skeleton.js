@@ -14,9 +14,9 @@ const _identityMatrix = /*@__PURE__*/ new Matrix4()
  * ```js
  * const bones = [];
  *
- * const shoulder = new THREE.Bone();
- * const elbow = new THREE.Bone();
- * const hand = new THREE.Bone();
+ * const shoulder = new Bone();
+ * const elbow = new Bone();
+ * const hand = new Bone();
  *
  * shoulder.add( elbow );
  * elbow.add( hand );
@@ -27,7 +27,7 @@ const _identityMatrix = /*@__PURE__*/ new Matrix4()
  * elbow.position.y = 0;
  * hand.position.y = 5;
  *
- * const armSkeleton = new THREE.Skeleton( bones );
+ * const armSkeleton = new Skeleton( bones );
  * ```
  */
 class Skeleton {

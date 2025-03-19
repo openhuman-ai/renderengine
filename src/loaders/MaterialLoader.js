@@ -32,7 +32,7 @@ import {
  * loaded via {@link FileLoader}.
  *
  * ```js
- * const loader = new THREE.MaterialLoader();
+ * const loader = new MaterialLoader();
  * const material = await loader.loadAsync( 'material.json' );
  * ```
  * This loader does not support node materials. Use {@link NodeMaterialLoader} instead.

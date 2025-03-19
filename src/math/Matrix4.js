@@ -19,7 +19,7 @@ import { Vector3 } from "./Vector3.js"
  * order, while internally they are stored in the {@link Matrix3#elements} array in column-major order.
  * This means that calling:
  * ```js
- * const m = new THREE.Matrix4();
+ * const m = new Matrix4();
  * m.set( 11, 12, 13, 14,
  *        21, 22, 23, 24,
  *        31, 32, 33, 34,

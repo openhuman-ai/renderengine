@@ -15,10 +15,10 @@ const _v3 = /*@__PURE__*/ new Vector3()
  * light's position and direction.
  *
  * ```js
- * const light = new THREE.DirectionalLight( 0xFFFFFF );
+ * const light = new DirectionalLight( 0xFFFFFF );
  * scene.add( light );
  *
- * const helper = new THREE.DirectionalLightHelper( light, 5 );
+ * const helper = new DirectionalLightHelper( light, 5 );
  * scene.add( helper );
  * ```
  *

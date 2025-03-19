@@ -17,10 +17,10 @@ import { clamp } from "./MathUtils.js"
  * Iterating through a vector instance will yield its components `(x, y)` in
  * the corresponding order.
  * ```js
- * const a = new THREE.Vector2( 0, 1 );
+ * const a = new Vector2( 0, 1 );
  *
  * //no arguments; will be initialised to (0, 0)
- * const b = new THREE.Vector2( );
+ * const b = new Vector2( );
  *
  * const d = a.distanceTo( b );
  * ```

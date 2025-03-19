@@ -78,21 +78,21 @@ const pz = /*@__PURE__*/ new CubicPoly()
  *
  * ```js
  * //Create a closed wavey loop
- * const curve = new THREE.CatmullRomCurve3( [
- * 	new THREE.Vector3( -10, 0, 10 ),
- * 	new THREE.Vector3( -5, 5, 5 ),
- * 	new THREE.Vector3( 0, 0, 0 ),
- * 	new THREE.Vector3( 5, -5, 5 ),
- * 	new THREE.Vector3( 10, 0, 10 )
+ * const curve = new CatmullRomCurve3( [
+ * 	new Vector3( -10, 0, 10 ),
+ * 	new Vector3( -5, 5, 5 ),
+ * 	new Vector3( 0, 0, 0 ),
+ * 	new Vector3( 5, -5, 5 ),
+ * 	new Vector3( 10, 0, 10 )
  * ] );
  *
  * const points = curve.getPoints( 50 );
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
+ * const geometry = new BufferGeometry().setFromPoints( points );
  *
- * const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+ * const material = new LineBasicMaterial( { color: 0xff0000 } );
  *
  * // Create the final object to add to the scene
- * const curveObject = new THREE.Line( geometry, material );
+ * const curveObject = new Line( geometry, material );
  * ```
  *
  * @augments Curve

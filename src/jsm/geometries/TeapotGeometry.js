@@ -14,8 +14,8 @@ import { BufferAttribute, BufferGeometry, Matrix4, Vector3, Vector4 } from "thre
  *
  * ```js
  * const geometry = new TeapotGeometry( 50, 18 );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const teapot = new THREE.Mesh( geometry, material );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const teapot = new Mesh( geometry, material );
  * scene.add( teapot );
  * ```
  *
