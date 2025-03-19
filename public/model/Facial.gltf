@@ -577,8 +577,8 @@
 		},
 		{
 			"mimeType":"image/jpeg",
-			"name":"Face_Scatter map",
-			"uri":"Face_Scatter%20map.jpg"
+			"name":"Face_Albedo",
+			"uri":"Face_Albedo.jpg"
 		},
 		{
 			"mimeType":"image/png",

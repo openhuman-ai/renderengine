@@ -377,13 +377,12 @@ class App {
 	}
 
 	getBufferView(accessor, isIndex = false) {
-		console.log("accessor", accessor)
 		const bufferView = this.gltf.bufferViews[accessor.bufferView]
 		const buffer = this.binaryBuffer.slice(bufferView.byteOffset, bufferView.byteOffset + bufferView.byteLength)
 
-		const TypedArray = WEBGL_COMPONENT_TYPES[accessor.componentType] || Float32Array;
+		const TypedArray = WEBGL_COMPONENT_TYPES[accessor.componentType]
 
-		return new TypedArray(buffer);
+		return new TypedArray(buffer)
 	}
 
 	getTypedArray(binaryBuffer, componentType, count, bufferView) {
@@ -404,14 +403,14 @@ class App {
 	}
 
 	async loadJSON() {
-		const response = await fetch("/model/Facial.gltf")
-		this.gltf = await response.json()
+		// const response = await fetch("/model/Facial.gltf")
+		// this.gltf = await response.json()
 
-		const binResponse = await fetch("/model/Facial.bin")
-		this.binaryBuffer = await binResponse.arrayBuffer()
+		// const binResponse = await fetch("/model/Facial.bin")
+		// this.binaryBuffer = await binResponse.arrayBuffer()
 
-		console.log("gltf", this.gltf)
-		this.loadScene()
+		// console.log("gltf", this.gltf)
+		// this.loadScene()
 
 		// this.addFace()
 		// this.addTeeth()
@@ -429,12 +428,12 @@ class App {
 
 		// this.scene.add(mesh)
 
-		// const loader = new GLTFLoader(loadingManager)
-		// loader.load(MODEL_PATH, (gltf) => {
-		// 	// const mesh = gltf.scene.children[0]
-		// 	console.log("gltf", gltf)
-		// 	// this.scene.add(mesh)
-		// })
+		const loader = new GLTFLoader(loadingManager)
+		loader.load("/model/Facial.gltf", (gltf) => {
+			const mesh = gltf.scene.children[0]
+			console.log("gltf", gltf)
+			this.scene.add(mesh)
+		})
 	}
 
 	addFace() {
