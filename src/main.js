@@ -413,6 +413,32 @@ class App {
 
 		console.log("gltf", this.gltf)
 		// this.loadScene()
+
+		this.addFace()
+		this.addTeeth()
+		this.addTongue()
+
+		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
+		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+
+		// const geometry = new BufferGeometry()
+		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
+		// geometry.setIndex(new BufferAttribute(indices, 1))
+
+		// const material = new MeshStandardMaterial({ color: 0xffffff })
+		// const mesh = new Mesh(geometry, material)
+
+		// this.scene.add(mesh)
+
+		// const loader = new GLTFLoader(loadingManager)
+		// loader.load(MODEL_PATH, (gltf) => {
+		// 	// const mesh = gltf.scene.children[0]
+		// 	console.log("gltf", gltf)
+		// 	// this.scene.add(mesh)
+		// })
+	}
+
+	addFace() {
 		const geometry = new SphereGeometry(1, 320, 320)
 		const textureLoader = new TextureLoader()
 
@@ -433,6 +459,11 @@ class App {
 		const face = new Mesh(geometry, faceMaterial)
 		face.position.set(-3, 0, 0)
 		this.scene.add(face)
+	}
+
+	addTeeth() {
+		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
 
 		const teethBaseColorTexture = textureLoader.load("/model/Teeth_diffuse.jpg")
 		const teethNormalTexture = textureLoader.load("/model/Teeth_Normal.jpg")
@@ -450,6 +481,11 @@ class App {
 		})
 		const teeth = new Mesh(geometry, teethMaterial)
 		this.scene.add(teeth)
+	}
+
+	addTongue() {
+		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
 
 		const tongueBaseColorTexture = textureLoader.load("/model/Tongue_Diffuse.jpg")
 		const tongueNormalTexture = textureLoader.load("/model/Tongue_Normal.jpg")
@@ -463,29 +499,10 @@ class App {
 			side: DoubleSide,
 			ior: 1.45,
 			specularIntensity: 0.6,
-		});
+		})
 		const tongue = new Mesh(geometry, tongueMaterial)
 		tongue.position.set(3, 0, 0)
 		this.scene.add(tongue)
-
-		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
-		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
-
-		// const geometry = new BufferGeometry()
-		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
-		// geometry.setIndex(new BufferAttribute(indices, 1))
-
-		// const material = new MeshStandardMaterial({ color: 0xffffff })
-		// const mesh = new Mesh(geometry, material)
-
-		// this.scene.add(mesh)
-
-		// const loader = new GLTFLoader(loadingManager)
-		// loader.load(MODEL_PATH, (gltf) => {
-		// 	// const mesh = gltf.scene.children[0]
-		// 	console.log("gltf", gltf)
-		// 	// this.scene.add(mesh)
-		// })
 	}
 
 	async loadCustomModel() {
