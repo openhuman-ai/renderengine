@@ -5,7 +5,7 @@ import { Vector2 } from "../../math/Vector2.js"
  * A curve representing an ellipse.
  *
  * ```js
- * const curve = new THREE.EllipseCurve(
+ * const curve = new EllipseCurve(
  * 	0, 0,
  * 	10, 10,
  * 	0, 2 * Math.PI,
@@ -14,12 +14,12 @@ import { Vector2 } from "../../math/Vector2.js"
  * );
  *
  * const points = curve.getPoints( 50 );
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
+ * const geometry = new BufferGeometry().setFromPoints( points );
  *
- * const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+ * const material = new LineBasicMaterial( { color: 0xff0000 } );
  *
  * // Create the final object to add to the scene
- * const ellipse = new THREE.Line( geometry, material );
+ * const ellipse = new Line( geometry, material );
  * ```
  *
  * @augments Curve

@@ -11,7 +11,7 @@ import { BackSide, BoxGeometry, Mesh, MeshLambertMaterial, MeshStandardMaterial,
  *
  * ```js
  * const environment = new DebugEnvironment();
- * const pmremGenerator = new THREE.PMREMGenerator( renderer );
+ * const pmremGenerator = new PMREMGenerator( renderer );
  *
  * const envMap = pmremGenerator.fromScene( environment ).texture;
  * scene.environment = envMap;

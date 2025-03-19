@@ -11,7 +11,7 @@ import { LineCurve } from "../curves/LineCurve.js"
  * and contours of 2D shapes similar to the 2D Canvas API.
  *
  * ```js
- * const path = new THREE.Path();
+ * const path = new Path();
  *
  * path.lineTo( 0, 0.8 );
  * path.quadraticCurveTo( 0, 1, 0.2, 1 );
@@ -19,10 +19,10 @@ import { LineCurve } from "../curves/LineCurve.js"
  *
  * const points = path.getPoints();
  *
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
- * const material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+ * const geometry = new BufferGeometry().setFromPoints( points );
+ * const material = new LineBasicMaterial( { color: 0xffffff } );
  *
- * const line = new THREE.Line( geometry, material );
+ * const line = new Line( geometry, material );
  * scene.add( line );
  * ```
  *

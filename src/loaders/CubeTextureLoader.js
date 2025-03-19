@@ -20,7 +20,7 @@ import { SRGBColorSpace } from "../constants.js"
  * is set to `SRGBColorSpace` by default.
  *
  * ```js
- * const loader = new THREE.CubeTextureLoader().setPath( 'textures/cubeMaps/' );
+ * const loader = new CubeTextureLoader().setPath( 'textures/cubeMaps/' );
  * const cubeTexture = await loader.loadAsync( [
  * 	'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'
  * ] );

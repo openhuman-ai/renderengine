@@ -10,7 +10,7 @@ import { BufferGeometry, FileLoader, Float32BufferAttribute, Loader, Color, SRGB
  *	const loader = new PLYLoader();
  *	loader.load('./models/ply/ascii/dolphins.ply', function (geometry) {
  *
- *		scene.add( new THREE.Mesh( geometry ) );
+ *		scene.add( new Mesh( geometry ) );
  *
  *	} );
  *

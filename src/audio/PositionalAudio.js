@@ -12,14 +12,14 @@ const _orientation = /*@__PURE__*/ new Vector3()
  *
  * ```js
  * // create an AudioListener and add it to the camera
- * const listener = new THREE.AudioListener();
+ * const listener = new AudioListener();
  * camera.add( listener );
  *
  * // create the PositionalAudio object (passing in the listener)
- * const sound = new THREE.PositionalAudio( listener );
+ * const sound = new PositionalAudio( listener );
  *
  * // load a sound and set it as the PositionalAudio object's buffer
- * const audioLoader = new THREE.AudioLoader();
+ * const audioLoader = new AudioLoader();
  * audioLoader.load( 'sounds/song.ogg', function( buffer ) {
  * 	sound.setBuffer( buffer );
  * 	sound.setRefDistance( 20 );
@@ -27,9 +27,9 @@ const _orientation = /*@__PURE__*/ new Vector3()
  * });
  *
  * // create an object for the sound to play from
- * const sphere = new THREE.SphereGeometry( 20, 32, 16 );
- * const material = new THREE.MeshPhongMaterial( { color: 0xff2200 } );
- * const mesh = new THREE.Mesh( sphere, material );
+ * const sphere = new SphereGeometry( 20, 32, 16 );
+ * const material = new MeshPhongMaterial( { color: 0xff2200 } );
+ * const mesh = new Mesh( sphere, material );
  * scene.add( mesh );
  *
  * // finally add the sound to the mesh

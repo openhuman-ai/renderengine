@@ -7,7 +7,7 @@ import { nodeObject } from "../tsl/TSLBase.js"
  * ```js
  * sprite.userData.rotation = 1; // stores individual rotation per sprite
  *
- * const material = new THREE.SpriteNodeMaterial();
+ * const material = new SpriteNodeMaterial();
  * material.rotationNode = userData( 'rotation', 'float' );
  * ```
  * Since `UserDataNode` is extended from {@link ReferenceNode}, the node value

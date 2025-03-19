@@ -19,7 +19,7 @@ import { Scene } from "@/scenes/Scene"
  *
  * ```js
  * const environment = new RoomEnvironment();
- * const pmremGenerator = new THREE.PMREMGenerator( renderer );
+ * const pmremGenerator = new PMREMGenerator( renderer );
  *
  * const envMap = pmremGenerator.fromScene( environment ).texture;
  * scene.environment = envMap;

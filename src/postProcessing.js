@@ -313,8 +313,8 @@ class App {
 	// 		// const head = mesh.getObjectByName("mesh_2")
 	// 		// const influences = head.morphTargetInfluences
 	// 		//   // Center the model
-	// 		//   const box = new THREE.Box3().setFromObject(this.model)
-	// 		//   const center = box.getCenter(new THREE.Vector3())
+	// 		//   const box = new Box3().setFromObject(this.model)
+	// 		//   const center = box.getCenter(new Vector3())
 	// 		//   this.model.position.sub(center)
 	// 		//   // Setup morph targets
 	// 		//   this.model.traverse((node) => {
@@ -324,7 +324,7 @@ class App {
 	// 		//   })
 	// 		// // Handle animations
 	// 		// if (gltf.animations?.length) {
-	// 		//   this.mixer = new THREE.AnimationMixer(this.model)
+	// 		//   this.mixer = new AnimationMixer(this.model)
 	// 		//   this.animations = gltf.animations
 	// 		//   this.animations.forEach((clip) => {
 	// 		//     this.mixer.clipAction(clip).play()

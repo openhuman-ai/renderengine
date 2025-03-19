@@ -27,7 +27,7 @@ import { getTypeFromLength } from "../core/NodeUtils.js"
  *
  * } )().compute( particleCount );
  *
- * const particleMaterial = new THREE.SpriteNodeMaterial();
+ * const particleMaterial = new SpriteNodeMaterial();
  * particleMaterial.positionNode = positionBuffer.toAttribute();
  *
  * renderer.computeAsync( computeInit );

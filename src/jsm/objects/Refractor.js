@@ -8,7 +8,7 @@ import { Color, Matrix4, Mesh, PerspectiveCamera, Plane, Quaternion, ShaderMater
  * When using {@link WebGPURenderer}, use {@link viewportSharedTexture}.
  *
  * ```js
- * const geometry = new THREE.PlaneGeometry( 100, 100 );
+ * const geometry = new PlaneGeometry( 100, 100 );
  *
  * const refractor = new Refractor( refractorGeometry, {
  * 	color: 0xcbcbcb,

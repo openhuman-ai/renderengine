@@ -34,10 +34,10 @@ const _uvC = /*@__PURE__*/ new Vector2()
  * have no effect.
  *
  * ```js
- * const map = new THREE.TextureLoader().load( 'sprite.png' );
- * const material = new THREE.SpriteMaterial( { map: map } );
+ * const map = new TextureLoader().load( 'sprite.png' );
+ * const material = new SpriteMaterial( { map: map } );
  *
- * const sprite = new THREE.Sprite( material );
+ * const sprite = new Sprite( material );
  * scene.add( sprite );
  * ```
  *

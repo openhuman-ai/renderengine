@@ -7,7 +7,7 @@ import { LineSegmentsGeometry } from "../lines/LineSegmentsGeometry.js"
  * This is used in {@link Wireframe} to describe the shape.
  *
  * ```js
- * const geometry = new THREE.IcosahedronGeometry();
+ * const geometry = new IcosahedronGeometry();
  * const wireframeGeometry = new WireframeGeometry2( geo );
  * ```
  *

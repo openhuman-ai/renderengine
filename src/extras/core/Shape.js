@@ -7,7 +7,7 @@ import { generateUUID } from "../../math/MathUtils.js"
  * points, or to get triangulated faces.
  *
  * ```js
- * const heartShape = new THREE.Shape();
+ * const heartShape = new Shape();
  *
  * heartShape.moveTo( 25, 25 );
  * heartShape.bezierCurveTo( 25, 25, 20, 0, 0, 0 );
@@ -26,8 +26,8 @@ import { generateUUID } from "../../math/MathUtils.js"
  * 	bevelThickness: 1
  * };
  *
- * const geometry = new THREE.ExtrudeGeometry( heartShape, extrudeSettings );
- * const mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial() );
+ * const geometry = new ExtrudeGeometry( heartShape, extrudeSettings );
+ * const mesh = new Mesh( geometry, new MeshBasicMaterial() );
  * ```
  *
  * @augments Path

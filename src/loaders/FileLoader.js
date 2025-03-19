@@ -19,7 +19,7 @@ class HttpError extends Error {
  * once to your application.
  *
  * ```js
- * const loader = new THREE.FileLoader();
+ * const loader = new FileLoader();
  * const data = await loader.loadAsync( 'example.txt' );
  * ```
  *

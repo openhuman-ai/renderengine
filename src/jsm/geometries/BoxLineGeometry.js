@@ -4,9 +4,9 @@ import { BufferGeometry, Float32BufferAttribute } from "three"
  * A special type of box geometry intended for {@link LineSegments}.
  *
  * ```js
- * const geometry = new THREE.BoxLineGeometry();
- * const material = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
- * const lines = new THREE.LineSegments( geometry, material );
+ * const geometry = new BoxLineGeometry();
+ * const material = new LineBasicMaterial( { color: 0x00ff00 } );
+ * const lines = new LineSegments( geometry, material );
  * scene.add( lines );
  * ```
  *

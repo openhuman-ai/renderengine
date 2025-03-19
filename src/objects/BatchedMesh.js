@@ -113,9 +113,9 @@ function copyArrayContents(src, target) {
  * rendering performance in your application.
  *
  * ```js
- * const box = new THREE.BoxGeometry( 1, 1, 1 );
- * const sphere = new THREE.SphereGeometry( 1, 12, 12 );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+ * const box = new BoxGeometry( 1, 1, 1 );
+ * const sphere = new SphereGeometry( 1, 12, 12 );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
  *
  * // initialize and add geometries into the batched mesh
  * const batchedMesh = new BatchedMesh( 10, 5000, 10000, material );

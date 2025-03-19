@@ -14,7 +14,7 @@ import { Color } from "../math/Color.js"
  * const rings = 8;
  * const divisions = 64;
  *
- * const helper = new THREE.PolarGridHelper( radius, sectors, rings, divisions );
+ * const helper = new PolarGridHelper( radius, sectors, rings, divisions );
  * scene.add( helper );
  * ```
  *

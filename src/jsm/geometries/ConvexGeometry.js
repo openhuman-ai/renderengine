@@ -7,8 +7,8 @@ import { ConvexHull } from "../math/ConvexHull.js"
  *
  * ```js
  * const geometry = new ConvexGeometry( points );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const mesh = new THREE.Mesh( geometry, material );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const mesh = new Mesh( geometry, material );
  * scene.add( mesh );
  * ```
  *

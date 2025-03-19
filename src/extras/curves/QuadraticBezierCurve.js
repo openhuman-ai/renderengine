@@ -6,19 +6,19 @@ import { Vector2 } from "../../math/Vector2.js"
  * A curve representing a 2D Quadratic Bezier curve.
  *
  * ```js
- * const curve = new THREE.QuadraticBezierCurve(
- * 	new THREE.Vector2( - 10, 0 ),
- * 	new THREE.Vector2( 20, 15 ),
- * 	new THREE.Vector2( 10, 0 )
+ * const curve = new QuadraticBezierCurve(
+ * 	new Vector2( - 10, 0 ),
+ * 	new Vector2( 20, 15 ),
+ * 	new Vector2( 10, 0 )
  * )
  *
  * const points = curve.getPoints( 50 );
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
+ * const geometry = new BufferGeometry().setFromPoints( points );
  *
- * const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+ * const material = new LineBasicMaterial( { color: 0xff0000 } );
  *
  * // Create the final object to add to the scene
- * const curveObject = new THREE.Line( geometry, material );
+ * const curveObject = new Line( geometry, material );
  * ```
  *
  * @augments Curve

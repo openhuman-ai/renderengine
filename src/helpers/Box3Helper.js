@@ -7,10 +7,10 @@ import { BufferGeometry } from "../core/BufferGeometry.js"
  * A helper object to visualize an instance of {@link Box3}.
  *
  * ```js
- * const box = new THREE.Box3();
- * box.setFromCenterAndSize( new THREE.Vector3( 1, 1, 1 ), new THREE.Vector3( 2, 1, 3 ) );
+ * const box = new Box3();
+ * box.setFromCenterAndSize( new Vector3( 1, 1, 1 ), new Vector3( 2, 1, 3 ) );
  *
- * const helper = new THREE.Box3Helper( box, 0xffff00 );
+ * const helper = new Box3Helper( box, 0xffff00 );
  * scene.add( helper )
  * ```
  *

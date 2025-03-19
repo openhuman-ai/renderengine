@@ -21,10 +21,10 @@ const _uva = new Vector2(),
  * 	.setWeightAttribute( 'color' )
  * 	.build();
  *
- * const mesh = new THREE.InstancedMesh( sampleGeometry, sampleMaterial, 100 );
+ * const mesh = new InstancedMesh( sampleGeometry, sampleMaterial, 100 );
  *
- * const position = new THREE.Vector3();
- * const matrix = new THREE.Matrix4();
+ * const position = new Vector3();
+ * const matrix = new Matrix4();
  *
  * // Sample randomly from the surface, creating an instance of the sample geometry at each sample point.
  *

@@ -15,11 +15,11 @@ import { getTypedArray } from "../utils.js"
  * loaded via {@link FileLoader}.
  *
  * ```js
- * const loader = new THREE.BufferGeometryLoader();
+ * const loader = new BufferGeometryLoader();
  * const geometry = await loader.loadAsync( 'models/json/pressure.json' );
  *
- * const material = new THREE.MeshBasicMaterial( { color: 0xF5F5F5 } );
- * const object = new THREE.Mesh( geometry, material );
+ * const material = new MeshBasicMaterial( { color: 0xF5F5F5 } );
+ * const object = new Mesh( geometry, material );
  * scene.add( object );
  * ```
  *

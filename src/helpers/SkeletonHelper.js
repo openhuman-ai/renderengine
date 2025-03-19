@@ -14,7 +14,7 @@ const _matrixWorldInv = /*@__PURE__*/ new Matrix4()
  * A helper object to assist with visualizing a {@link Skeleton}.
  *
  * ```js
- * const helper = new THREE.SkeletonHelper( skinnedMesh );
+ * const helper = new SkeletonHelper( skinnedMesh );
  * scene.add( helper );
  * ```
  *

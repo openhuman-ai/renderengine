@@ -16,10 +16,10 @@ import { clamp } from "./MathUtils.js"
  * Iterating through a vector instance will yield its components `(x, y, z, w)` in
  * the corresponding order.
  * ```js
- * const a = new THREE.Vector4( 0, 1, 0, 0 );
+ * const a = new Vector4( 0, 1, 0, 0 );
  *
  * //no arguments; will be initialised to (0, 0, 0, 1)
- * const b = new THREE.Vector4( );
+ * const b = new Vector4( );
  *
  * const d = a.dot( b );
  * ```

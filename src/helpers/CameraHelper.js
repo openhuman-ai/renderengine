@@ -19,8 +19,8 @@ const _camera = /*@__PURE__*/ new Camera()
  * `CameraHelper` must be a child of the scene.
  *
  * ```js
- * const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
- * const helper = new THREE.CameraHelper( camera );
+ * const camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+ * const helper = new CameraHelper( camera );
  * scene.add( helper );
  * ```
  *

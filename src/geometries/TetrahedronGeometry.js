@@ -4,9 +4,9 @@ import { PolyhedronGeometry } from "./PolyhedronGeometry.js"
  * A geometry class for representing an tetrahedron.
  *
  * ```js
- * const geometry = new THREE.TetrahedronGeometry();
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const tetrahedron = new THREE.Mesh( geometry, material );
+ * const geometry = new TetrahedronGeometry();
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const tetrahedron = new Mesh( geometry, material );
  * scene.add( tetrahedron );
  * ```
  *

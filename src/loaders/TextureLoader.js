@@ -7,10 +7,10 @@ import { Loader } from "./Loader.js"
  * loaded via {@link ImageLoader}.
  *
  * ```js
- * const loader = new THREE.TextureLoader();
+ * const loader = new TextureLoader();
  * const texture = await loader.loadAsync( 'textures/land_ocean_ice_cloud_2048.jpg' );
  *
- * const material = new THREE.MeshBasicMaterial( { map:texture } );
+ * const material = new MeshBasicMaterial( { map:texture } );
  * ```
  * Please note that `TextureLoader` has dropped support for progress
  * events in `r84`. For a `TextureLoader` that supports progress events, see

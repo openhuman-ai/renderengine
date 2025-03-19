@@ -6,7 +6,7 @@ import { LineBasicMaterial } from "./LineBasicMaterial.js"
  * Materials define the appearance of renderable 3D objects.
  *
  * ```js
- * const material = new THREE.LineDashedMaterial( {
+ * const material = new LineDashedMaterial( {
  * 	color: 0xffffff,
  * 	scale: 1,
  * 	dashSize: 3,

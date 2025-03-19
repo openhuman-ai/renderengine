@@ -4,9 +4,9 @@ import { PolyhedronGeometry } from "./PolyhedronGeometry.js"
  * A geometry class for representing an icosahedron.
  *
  * ```js
- * const geometry = new THREE.IcosahedronGeometry();
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const icosahedron = new THREE.Mesh( geometry, material );
+ * const geometry = new IcosahedronGeometry();
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const icosahedron = new Mesh( geometry, material );
  * scene.add( icosahedron );
  * ```
  *

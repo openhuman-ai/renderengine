@@ -22,16 +22,16 @@ const _intersectPointOnSegment = /*@__PURE__*/ new Vector3()
  * vertices with straight lines.
  *
  * ```js
- * const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+ * const material = new LineBasicMaterial( { color: 0x0000ff } );
  *
  * const points = [];
- * points.push( new THREE.Vector3( - 10, 0, 0 ) );
- * points.push( new THREE.Vector3( 0, 10, 0 ) );
- * points.push( new THREE.Vector3( 10, 0, 0 ) );
+ * points.push( new Vector3( - 10, 0, 0 ) );
+ * points.push( new Vector3( 0, 10, 0 ) );
+ * points.push( new Vector3( 10, 0, 0 ) );
  *
- * const geometry = new THREE.BufferGeometry().setFromPoints( points );
+ * const geometry = new BufferGeometry().setFromPoints( points );
  *
- * const line = new THREE.Line( geometry, material );
+ * const line = new Line( geometry, material );
  * scene.add( line );
  * ```
  *

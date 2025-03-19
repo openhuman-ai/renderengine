@@ -5,13 +5,13 @@ import { Color } from "../math/Color.js"
  * This material can receive shadows, but otherwise is completely transparent.
  *
  * ```js
- * const geometry = new THREE.PlaneGeometry( 2000, 2000 );
+ * const geometry = new PlaneGeometry( 2000, 2000 );
  * geometry.rotateX( - Math.PI / 2 );
  *
- * const material = new THREE.ShadowMaterial();
+ * const material = new ShadowMaterial();
  * material.opacity = 0.2;
  *
- * const plane = new THREE.Mesh( geometry, material );
+ * const plane = new Mesh( geometry, material );
  * plane.position.y = -200;
  * plane.receiveShadow = true;
  * scene.add( plane );

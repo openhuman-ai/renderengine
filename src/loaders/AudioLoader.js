@@ -7,10 +7,10 @@ import { Loader } from "./Loader.js"
  * loaded via {@link FileLoader}.
  *
  * ```js
- * const audioListener = new THREE.AudioListener();
- * const ambientSound = new THREE.Audio( audioListener );
+ * const audioListener = new AudioListener();
+ * const ambientSound = new Audio( audioListener );
  *
- * const loader = new THREE.AudioLoader();
+ * const loader = new AudioLoader();
  * const audioBuffer = await loader.loadAsync( 'audio/ambient_ocean.ogg' );
  *
  * ambientSound.setBuffer( audioBuffer );

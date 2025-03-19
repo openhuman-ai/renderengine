@@ -15,8 +15,8 @@ const _color2 = /*@__PURE__*/ new Color()
  * given {@link HemisphereLight}.
  *
  * ```js
- * const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
- * const helper = new THREE.HemisphereLightHelper( light, 5 );
+ * const light = new HemisphereLight( 0xffffbb, 0x080820, 1 );
+ * const helper = new HemisphereLightHelper( light, 5 );
  * scene.add( helper );
  * ```
  *

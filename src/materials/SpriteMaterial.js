@@ -5,10 +5,10 @@ import { Color } from "../math/Color.js"
  * A material for rendering instances of {@link Sprite}.
  *
  * ```js
- * const map = new THREE.TextureLoader().load( 'textures/sprite.png' );
- * const material = new THREE.SpriteMaterial( { map: map, color: 0xffffff } );
+ * const map = new TextureLoader().load( 'textures/sprite.png' );
+ * const material = new SpriteMaterial( { map: map, color: 0xffffff } );
  *
- * const sprite = new THREE.Sprite( material );
+ * const sprite = new Sprite( material );
  * sprite.scale.set(200, 200, 1)
  * scene.add( sprite );
  * ```

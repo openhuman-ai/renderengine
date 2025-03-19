@@ -6,9 +6,9 @@ import { Vector3 } from "../math/Vector3.js"
  * A class for generating a sphere geometry.
  *
  * ```js
- * const geometry = new THREE.SphereGeometry( 15, 32, 16 );
- * const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
- * const sphere = new THREE.Mesh( geometry, material );
+ * const geometry = new SphereGeometry( 15, 32, 16 );
+ * const material = new MeshBasicMaterial( { color: 0xffff00 } );
+ * const sphere = new Mesh( geometry, material );
  * scene.add( sphere );
  * ```
  *

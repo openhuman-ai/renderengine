@@ -9,8 +9,8 @@ import { BufferGeometry } from "../core/BufferGeometry.js"
  * A helper object to visualize an instance of {@link Plane}.
  *
  * ```js
- * const plane = new THREE.Plane( new THREE.Vector3( 1, 1, 0.2 ), 3 );
- * const helper = new THREE.PlaneHelper( plane, 1, 0xffff00 );
+ * const plane = new Plane( new Vector3( 1, 1, 0.2 ), 3 );
+ * const helper = new PlaneHelper( plane, 1, 0xffff00 );
  * scene.add( helper );
  * ```
  *

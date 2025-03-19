@@ -6,7 +6,7 @@ import { BackSide, BufferGeometry, Float32BufferAttribute, Line, LineBasicMateri
  * `RectAreaLightHelper` must be added as a child of the light.
  *
  * ```js
- * const light = new THREE.RectAreaLight( 0xffffbb, 1.0, 5, 5 );
+ * const light = new RectAreaLight( 0xffffbb, 1.0, 5, 5 );
  * const helper = new RectAreaLightHelper( light );
  * light.add( helper );
  * ```

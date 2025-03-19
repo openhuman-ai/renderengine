@@ -5,9 +5,9 @@ import { LatheGeometry } from "./LatheGeometry.js"
  * A geometry class for a capsule with given radii and height. It is constructed using a lathe.
  *
  * ```js
- * const geometry = new THREE.CapsuleGeometry( 1, 1, 4, 8 );
- * const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
- * const capsule = new THREE.Mesh( geometry, material );
+ * const geometry = new CapsuleGeometry( 1, 1, 4, 8 );
+ * const material = new MeshBasicMaterial( { color: 0x00ff00 } );
+ * const capsule = new Mesh( geometry, material );
  * scene.add( capsule );
  * ```
  *

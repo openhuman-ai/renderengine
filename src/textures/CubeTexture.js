@@ -5,14 +5,14 @@ import { CubeReflectionMapping } from "../constants.js"
  * Creates a cube texture made up of six images.
  *
  * ```js
- * const loader = new THREE.CubeTextureLoader();
+ * const loader = new CubeTextureLoader();
  * loader.setPath( 'textures/cube/pisa/' );
  *
  * const textureCube = loader.load( [
  * 	'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'
  * ] );
  *
- * const material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
+ * const material = new MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
  * ```
  *
  * @augments Texture

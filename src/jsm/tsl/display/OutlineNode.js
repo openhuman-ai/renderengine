@@ -35,7 +35,7 @@ let _rendererState
  * gives you great flexibility in composing the final outline look depending on
  * your requirements.
  * ```js
- * const postProcessing = new THREE.PostProcessing( renderer );
+ * const postProcessing = new PostProcessing( renderer );
  *
  * const scenePass = pass( scene, camera );
  *
@@ -44,8 +44,8 @@ let _rendererState
  * const edgeStrength = uniform( 3.0 );
  * const edgeGlow = uniform( 0.0 );
  * const edgeThickness = uniform( 1.0 );
- * const visibleEdgeColor = uniform( new THREE.Color( 0xffffff ) );
- * const hiddenEdgeColor = uniform( new THREE.Color( 0x4e3636 ) );
+ * const visibleEdgeColor = uniform( new Color( 0xffffff ) );
+ * const hiddenEdgeColor = uniform( new Color( 0x4e3636 ) );
  *
  * outlinePass = outline( scene, camera, {
  * 	selectedObjects,

@@ -10,9 +10,9 @@ const _normalMatrix = new Matrix3()
  * Requires that normals have been specified in the geometry as a buffer attribute or
  * have been calculated using {@link BufferGeometry#computeVertexNormals}.
  * ```js
- * const geometry = new THREE.BoxGeometry( 10, 10, 10, 2, 2, 2 );
- * const material = new THREE.MeshStandardMaterial();
- * const mesh = new THREE.Mesh( geometry, material );
+ * const geometry = new BoxGeometry( 10, 10, 10, 2, 2, 2 );
+ * const material = new MeshStandardMaterial();
+ * const mesh = new Mesh( geometry, material );
  * scene.add( mesh );
  *
  * const helper = new VertexNormalsHelper( mesh, 1, 0xff0000 );

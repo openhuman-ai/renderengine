@@ -9,7 +9,7 @@ import { PointLightShadow } from "./PointLightShadow.js"
  * This light can cast shadows - see the {@link PointLightShadow} for details.
  *
  * ```js
- * const light = new THREE.PointLight( 0xff0000, 1, 100 );
+ * const light = new PointLight( 0xff0000, 1, 100 );
  * light.position.set( 50, 50, 50 );
  * scene.add( light );
  * ```
