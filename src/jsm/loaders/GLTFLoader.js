@@ -105,6 +105,8 @@ import { PointsMaterial } from "@/materials/PointsMaterial.js"
 import { LineBasicMaterial } from "@/materials/LineBasicMaterial.js"
 import { Material } from "@/materials/Material.js"
 import { Texture } from "@/textures/Texture.js"
+import { MeshPhysicalMaterial } from "@/materials/MeshPhysicalMaterial.js"
+import { Vector2 } from "@/math/Vector2.js"
 
 class GLTFLoader extends Loader {
 	constructor(manager) {
