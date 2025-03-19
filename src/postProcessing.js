@@ -362,7 +362,7 @@ class App {
 		}
 
 		// this.renderer.render(this.scene, this.camera)
-		this.composer.render();
+		this.composer.render()
 	}
 
 	postProcessing() {

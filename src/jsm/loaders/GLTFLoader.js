@@ -84,7 +84,22 @@ import { Quaternion } from "@/math/Quaternion.js"
 import { InstancedMesh } from "@/objects/InstancedMesh.js"
 import { MeshStandardMaterial } from "@/materials/MeshStandardMaterial.js"
 import { Interpolant } from "@/math/Interpolant.js"
-import { ClampToEdgeWrapping, DoubleSide, InterpolateDiscrete, InterpolateLinear, LinearFilter, LinearMipmapLinearFilter, LinearMipmapNearestFilter, LinearSRGBColorSpace, MirroredRepeatWrapping, NearestFilter, NearestMipmapLinearFilter, NearestMipmapNearestFilter, RepeatWrapping, SRGBColorSpace } from "@/constants.js"
+import {
+	ClampToEdgeWrapping,
+	DoubleSide,
+	InterpolateDiscrete,
+	InterpolateLinear,
+	LinearFilter,
+	LinearMipmapLinearFilter,
+	LinearMipmapNearestFilter,
+	LinearSRGBColorSpace,
+	MirroredRepeatWrapping,
+	NearestFilter,
+	NearestMipmapLinearFilter,
+	NearestMipmapNearestFilter,
+	RepeatWrapping,
+	SRGBColorSpace,
+} from "@/constants.js"
 import { LoaderUtils } from "@/loaders/LoaderUtils.js"
 import { FileLoader } from "@/loaders/FileLoader.js"
 import { ImageBitmapLoader } from "@/loaders/ImageBitmapLoader.js"
@@ -2642,7 +2657,6 @@ class GLTFParser {
 				return texture
 			})
 			.catch(function (error) {
-
 				console.error("THREE.GLTFLoader: Couldn't load texture", sourceURI)
 				throw error
 			})
