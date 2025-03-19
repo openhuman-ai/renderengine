@@ -139,10 +139,12 @@ class App {
 		this.setupLights()
 		// this.setupCube()
 		// this.loadModel()
+		this.loadGLTF()
 		this.loadJSON()
 		// this.loadCustomModel()
-		this.createGUI()
 		this.createEnvironment()
+		this.addHelpers()
+		this.createGUI()
 
 		this.setupEventListeners()
 
@@ -207,16 +209,6 @@ class App {
 
 		const room = new RoomEnvironment()
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
-
-		const gridHelper = new GridHelper(400, 40, 0x0000ff, 0x808080)
-		gridHelper.position.y = -150
-		gridHelper.position.x = -150
-		this.scene.add(gridHelper)
-
-		const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
-		polarGridHelper.position.y = -150
-		polarGridHelper.position.x = 200
-		this.scene.add(polarGridHelper)
 	}
 
 	createControls() {
@@ -254,9 +246,6 @@ class App {
 
 		this.lights.ambient = new AmbientLight("white", 2)
 		this.scene.add(this.lights.ambient)
-
-		this.scene.add(new PointLightHelper(this.lights.main, 15))
-		this.scene.add(new PointLightHelper(this.lights.ambient, 15))
 	}
 
 	setupEventListeners() {
@@ -294,15 +283,18 @@ class App {
 		ambientFolder.close() // Close by default
 		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
 		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
+		ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
+		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
+		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
 
 		// Main Light controls
 		const mainFolder = this.gui.addFolder("Main Light")
 		mainFolder.close() // Close by default
 		mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
 		mainFolder.addColor(this.lights.main, "color").name("Color")
-		mainFolder.add(this.lights.main.position, "x", -10, 10).name("Position X")
-		mainFolder.add(this.lights.main.position, "y", -10, 10).name("Position Y")
-		mainFolder.add(this.lights.main.position, "z", -10, 10).name("Position Z")
+		mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
+		mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
+		mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
 
 		// // Front Light controls
 		// const frontFolder = this.gui.addFolder("Front Light")
@@ -347,15 +339,21 @@ class App {
 		cameraFolder.add(this.camera.position, "x", -100, 100, 0.1).name("Position X")
 		cameraFolder.add(this.camera.position, "y", -100, 100, 0.1).name("Position Y")
 		cameraFolder.add(this.camera.position, "z", -100, 100, 0.1).name("Position Z")
-		// cameraFolder.add(this.camera.rotation, "x", -10, 10, 0.1).name("Rotation X")
-		// cameraFolder.add(this.camera.rotation, "y", -10, 10, 0.1).name("Rotation Y")
-		// cameraFolder.add(this.camera.rotation, "z", -10, 10, 0.1).name("Rotation Z")
-		// cameraFolder.close()
+		cameraFolder.close()
 
-		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
-		this.morphTargetFolder.close()
+		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
+		// this.morphTargetFolder.close()
 
-		this.meshFolder = this.gui.addFolder("Mesh")
+		// this.meshFolder = this.gui.addFolder("Mesh")
+		// this.meshFolder.close()
+
+		// this.meshFolder.add(this.mesh.position, "x", -20, 20, 0.01).name("Position X")
+		// this.meshFolder.add(this.mesh.position, "y", -50, 50, 0.1).name("Position Y")
+		// this.meshFolder.add(this.mesh.position, "z", -50, 50, 0.1).name("Position Z")
+
+		// this.meshFolder.add(this.mesh.scale, "x", -20, 20, 0.01).name("Scale X")
+		// this.meshFolder.add(this.mesh.scale, "y", -50, 50, 0.1).name("Scale Y")
+		// this.meshFolder.add(this.mesh.scale, "z", -50, 50, 0.1).name("Scale Z")
 
 		// this.gui.close()
 	}
@@ -430,59 +428,16 @@ class App {
 		}
 	}
 
-	async loadJSON() {
-		// const response = await fetch("/model/Facial.gltf")
-		// this.gltf = await response.json()
-
-		// const binResponse = await fetch("/model/Facial.bin")
-		// this.binaryBuffer = await binResponse.arrayBuffer()
-
-		// console.log("gltf", this.gltf)
-		// this.loadScene()
-
-		// this.addFace()
-		// this.addTeeth()
-		// this.addTongue()
-
-		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
-		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
-
-		// const geometry = new BufferGeometry()
-		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
-		// geometry.setIndex(new BufferAttribute(indices, 1))
-
-		// const material = new MeshStandardMaterial({ color: 0xffffff })
-		// const mesh = new Mesh(geometry, material)
-
-		// this.scene.add(mesh)
-
+	async loadGLTF() {
+		let mesh = {}
 		const loader = new GLTFLoader(loadingManager)
 		loader.load("/model/Facial.gltf", (gltf) => {
-			this.mesh = gltf.scene.children[0]
-			this.mesh.geometry.computeTangents()
-			this.mesh.position.set(0, -4, 0)
-			this.mesh.scale.set(20, 20, 20)
+			mesh = gltf.scene.children[0]
+
+			mesh.position.set(0, -4, 0)
+			mesh.scale.set(20, 20, 20)
+
 			// console.log("mesh", this.mesh)
-
-			this.meshFolder.add(this.mesh.position, "x", -20, 20, 0.01).name("Position X")
-			this.meshFolder.add(this.mesh.position, "y", -50, 50, 0.1).name("Position Y")
-			this.meshFolder.add(this.mesh.position, "z", -50, 50, 0.1).name("Position Z")
-
-			this.meshFolder.add(this.mesh.scale, "x", -20, 20, 0.01).name("Scale X")
-			this.meshFolder.add(this.mesh.scale, "y", -50, 50, 0.1).name("Scale Y")
-			this.meshFolder.add(this.mesh.scale, "z", -50, 50, 0.1).name("Scale Z")
-
-			const bufferGeometry = this.mesh.geometry
-			// console.log("bufferGeometry", bufferGeometry)
-			const positionAttribute = bufferGeometry.attributes.position
-
-			this.vnh = new VertexNormalsHelper(this.mesh, 0.2)
-			this.scene.add(this.vnh)
-
-			this.vth = new VertexTangentsHelper(this.mesh, 0.09)
-			this.scene.add(this.vth)
-
-			this.scene.add(new BoxHelper(this.mesh))
 
 			// const wireframe = new WireframeGeometry(this.mesh.geometry)
 			// let line = new LineSegments(wireframe)
@@ -493,11 +448,29 @@ class App {
 			// this.scene.add(line)
 			// this.scene.add(new BoxHelper(line))
 
-			this.scene.add(this.mesh)
-
-			// this.gui.add(params, "showMesh").onChange((value) => (this.mesh.visible = value))
-			// gui.add(params, "showPoints").onChange((value) => (points.visible = value))
+			this.scene.add(mesh)
+			console.log("mesh", mesh)
+			this.mesh = mesh
 		})
+	}
+	async loadJSON() {
+		// const response = await fetch("/model/Facial.gltf")
+		// this.gltf = await response.json()
+		// const binResponse = await fetch("/model/Facial.bin")
+		// this.binaryBuffer = await binResponse.arrayBuffer()
+		// console.log("gltf", this.gltf)
+		// this.loadScene()
+		// this.addFace()
+		// this.addTeeth()
+		// this.addTongue()
+		// const vertices = new Float32Array([-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5])
+		// const indices = new Uint16Array([0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4])
+		// const geometry = new BufferGeometry()
+		// geometry.setAttribute("position", new BufferAttribute(vertices, 3))
+		// geometry.setIndex(new BufferAttribute(indices, 1))
+		// const material = new MeshStandardMaterial({ color: 0xffffff })
+		// const mesh = new Mesh(geometry, material)
+		// this.scene.add(mesh)
 	}
 
 	addFace() {
@@ -584,8 +557,6 @@ class App {
 
 	// 	const loader = new GLTFLoader(loadingManager)
 	// 	console.log("MODEL_PATH", MODEL_PATH)
-	// 	const axesHelper = new AxesHelper(10)
-	// 	this.scene.add(axesHelper)
 
 	// 	const animationKF = new NumberKeyframeTrack(".facialanimation", [0, 1, 2], [1, 0, 1])
 
@@ -641,6 +612,42 @@ class App {
 	// 	})
 	// }
 
+	addHelpers() {
+		this.scene.add(new PointLightHelper(this.lights.main, 15))
+		this.scene.add(new PointLightHelper(this.lights.ambient, 15))
+
+		const gridHelper = new GridHelper(400, 40, 0x0000ff, 0x808080)
+		gridHelper.position.y = -150
+		gridHelper.position.x = -150
+		this.scene.add(gridHelper)
+
+		const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
+		polarGridHelper.position.y = -150
+		polarGridHelper.position.x = 200
+		this.scene.add(polarGridHelper)
+
+		// this.helpers.axes = new AxesHelper(10)
+		// this.scene.add(this.helpers.axes)
+		this.scene.traverse((child) => {
+			if (child.type === "Mesh") {
+				console.log("Found a Mesh:", child)
+				this.mesh = child
+
+				// this.scene.add(new BoxHelper(child))
+			}
+		})
+
+		// this.mesh.geometry.computeTangents()
+
+		// this.vnh = new VertexNormalsHelper(this.mesh, 0.2)
+		// this.scene.add(this.vnh)
+
+		// this.vth = new VertexTangentsHelper(this.mesh, 0.09)
+		// this.scene.add(this.vth)
+
+
+	}
+
 	render() {
 		const delta = this.clock.getDelta()
 
@@ -649,14 +656,6 @@ class App {
 		}
 
 		const time = -this.clock.getElapsedTime() * 0.0003
-
-		// this.camera.position.x = 400 * Math.cos(time)
-		// this.camera.position.z = 400 * Math.sin(time)
-		// this.camera.lookAt(this.scene.position)
-
-		this.lights.main.position.x = Math.sin(time * 1.7) * 300
-		this.lights.main.position.y = Math.cos(time * 1.5) * 400
-		this.lights.main.position.z = Math.cos(time * 1.3) * 30
 
 		// if (this.vnh) this.vnh.update()
 		// if (this.vth) this.vth.update()
