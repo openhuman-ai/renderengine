@@ -106,7 +106,10 @@ class App {
 		backLight: null,
 		point1: null,
 		point2: null,
+		vnh: null,
+		vth: null,
 	}
+	helperFolder
 	lights = {
 		ambient: undefined,
 		main: undefined,
@@ -258,106 +261,6 @@ class App {
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 	}
 
-	createGUI() {
-		this.gui = new GUI()
-
-		// Add helper visibility controls
-		const helperFolder = this.gui.addFolder("Helpers")
-		helperFolder.close() // Close by default
-		helperFolder.add({ showAxes: true }, "showAxes").onChange((visible) => {
-			if (this.helpers.axes) this.helpers.axes.visible = visible
-		})
-		helperFolder.add({ showBox: true }, "showBox").onChange((visible) => {
-			if (this.helpers.box) this.helpers.box.visible = visible
-		})
-		helperFolder.add({ showLightHelpers: true }, "showLightHelpers").onChange((visible) => {
-			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
-			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
-			if (this.helpers.backLight) this.helpers.backLight.visible = visible
-			if (this.helpers.point1) this.helpers.point1.visible = visible
-			if (this.helpers.point2) this.helpers.point2.visible = visible
-		})
-
-		// Ambient Light controls
-		const ambientFolder = this.gui.addFolder("Ambient Light")
-		ambientFolder.close() // Close by default
-		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
-		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
-		ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
-		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
-		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
-
-		// Main Light controls
-		const mainFolder = this.gui.addFolder("Main Light")
-		mainFolder.close() // Close by default
-		mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
-		mainFolder.addColor(this.lights.main, "color").name("Color")
-		mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
-		mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
-		mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
-
-		// // Front Light controls
-		// const frontFolder = this.gui.addFolder("Front Light")
-		// frontFolder.close() // Close by default
-		// frontFolder.add(this.lights.front, "intensity", 0, 2).name("Intensity")
-		// frontFolder.addColor(this.lights.front, "color").name("Color")
-		// frontFolder.add(this.lights.front.position, "x", -10, 10).name("Position X")
-		// frontFolder.add(this.lights.front.position, "y", -10, 10).name("Position Y")
-		// frontFolder.add(this.lights.front.position, "z", -10, 10).name("Position Z")
-
-		// // Back Light controls
-		// const backFolder = this.gui.addFolder("Back Light")
-		// backFolder.close() // Close by default
-		// backFolder.add(this.lights.back, "intensity", 0, 2).name("Intensity")
-		// backFolder.addColor(this.lights.back, "color").name("Color")
-		// backFolder.add(this.lights.back.position, "x", -10, 10).name("Position X")
-		// backFolder.add(this.lights.back.position, "y", -10, 10).name("Position Y")
-		// backFolder.add(this.lights.back.position, "z", -10, 10).name("Position Z")
-
-		// // // Point Light 1 controls
-		// // const point1Folder = this.gui.addFolder('Point Light 1')
-		// // point1Folder.close() // Close by default
-		// // point1Folder.add(this.lights.point1, 'intensity', 0, 2).name('Intensity')
-		// // point1Folder.addColor(this.lights.point1, 'color').name('Color')
-		// // point1Folder.add(this.lights.point1.position, 'x', -10, 10).name('Position X')
-		// // point1Folder.add(this.lights.point1.position, 'y', -10, 10).name('Position Y')
-		// // point1Folder.add(this.lights.point1.position, 'z', -10, 10).name('Position Z')
-		// // point1Folder.add(this.lights.point1, 'distance', 0, 2000).name('Distance')
-
-		// // // Point Light 2 controls
-		// // const point2Folder = this.gui.addFolder('Point Light 2')
-		// // point2Folder.close() // Close by default
-		// // point2Folder.add(this.lights.point2, 'intensity', 0, 2).name('Intensity')
-		// // point2Folder.addColor(this.lights.point2, 'color').name('Color')
-		// // point2Folder.add(this.lights.point2.position, 'x', -10, 10).name('Position X')
-		// // point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
-		// // point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
-		// // point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
-
-		// Add camera controls
-		const cameraFolder = this.gui.addFolder("Camera")
-		cameraFolder.add(this.camera.position, "x", -100, 100, 0.1).name("Position X")
-		cameraFolder.add(this.camera.position, "y", -100, 100, 0.1).name("Position Y")
-		cameraFolder.add(this.camera.position, "z", -100, 100, 0.1).name("Position Z")
-		cameraFolder.close()
-
-		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
-		// this.morphTargetFolder.close()
-
-		// this.meshFolder = this.gui.addFolder("Mesh")
-		// this.meshFolder.close()
-
-		// this.meshFolder.add(this.mesh.position, "x", -20, 20, 0.01).name("Position X")
-		// this.meshFolder.add(this.mesh.position, "y", -50, 50, 0.1).name("Position Y")
-		// this.meshFolder.add(this.mesh.position, "z", -50, 50, 0.1).name("Position Z")
-
-		// this.meshFolder.add(this.mesh.scale, "x", -20, 20, 0.01).name("Scale X")
-		// this.meshFolder.add(this.mesh.scale, "y", -50, 50, 0.1).name("Scale Y")
-		// this.meshFolder.add(this.mesh.scale, "z", -50, 50, 0.1).name("Scale Z")
-
-		// this.gui.close()
-	}
-
 	loadScene() {
 		this.gltf.nodes.forEach((node, index) => {
 			if (node.mesh !== undefined) {
@@ -439,18 +342,8 @@ class App {
 
 			// console.log("mesh", this.mesh)
 
-			// const wireframe = new WireframeGeometry(this.mesh.geometry)
-			// let line = new LineSegments(wireframe)
-			// line.material.depthTest = false
-			// line.material.opacity = 0.25
-			// line.material.transparent = true
-			// line.position.x = 4
-			// this.scene.add(line)
-			// this.scene.add(new BoxHelper(line))
-
 			this.scene.add(mesh)
-			console.log("mesh", mesh)
-			this.mesh = mesh
+			this.addMeshHelpers(mesh)
 		})
 	}
 	async loadJSON() {
@@ -612,6 +505,98 @@ class App {
 	// 	})
 	// }
 
+	createGUI() {
+		this.gui = new GUI()
+
+		// Add helper visibility controls
+		this.helperFolder = this.gui.addFolder("Helpers")
+		this.helperFolder.close() // Close by default
+		this.helperFolder.add({ showAxes: true }, "showAxes").onChange((visible) => {
+			if (this.helpers.axes) this.helpers.axes.visible = visible
+		})
+		this.helperFolder.add({ showBox: true }, "showBox").onChange((visible) => {
+			if (this.helpers.box) this.helpers.box.visible = visible
+		})
+		this.helperFolder.add({ showLightHelpers: true }, "showLightHelpers").onChange((visible) => {
+			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
+			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
+			if (this.helpers.backLight) this.helpers.backLight.visible = visible
+			if (this.helpers.point1) this.helpers.point1.visible = visible
+			if (this.helpers.point2) this.helpers.point2.visible = visible
+		})
+
+		// Ambient Light controls
+		const ambientFolder = this.gui.addFolder("Ambient Light")
+		ambientFolder.close() // Close by default
+		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
+		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
+		ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
+		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
+		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
+
+		// Main Light controls
+		const mainFolder = this.gui.addFolder("Main Light")
+		mainFolder.close() // Close by default
+		mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
+		mainFolder.addColor(this.lights.main, "color").name("Color")
+		mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
+		mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
+		mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
+
+		// // Front Light controls
+		// const frontFolder = this.gui.addFolder("Front Light")
+		// frontFolder.close() // Close by default
+		// frontFolder.add(this.lights.front, "intensity", 0, 2).name("Intensity")
+		// frontFolder.addColor(this.lights.front, "color").name("Color")
+		// frontFolder.add(this.lights.front.position, "x", -10, 10).name("Position X")
+		// frontFolder.add(this.lights.front.position, "y", -10, 10).name("Position Y")
+		// frontFolder.add(this.lights.front.position, "z", -10, 10).name("Position Z")
+
+		// // Back Light controls
+		// const backFolder = this.gui.addFolder("Back Light")
+		// backFolder.close() // Close by default
+		// backFolder.add(this.lights.back, "intensity", 0, 2).name("Intensity")
+		// backFolder.addColor(this.lights.back, "color").name("Color")
+		// backFolder.add(this.lights.back.position, "x", -10, 10).name("Position X")
+		// backFolder.add(this.lights.back.position, "y", -10, 10).name("Position Y")
+		// backFolder.add(this.lights.back.position, "z", -10, 10).name("Position Z")
+
+		// // // Point Light 1 controls
+		// // const point1Folder = this.gui.addFolder('Point Light 1')
+		// // point1Folder.close() // Close by default
+		// // point1Folder.add(this.lights.point1, 'intensity', 0, 2).name('Intensity')
+		// // point1Folder.addColor(this.lights.point1, 'color').name('Color')
+		// // point1Folder.add(this.lights.point1.position, 'x', -10, 10).name('Position X')
+		// // point1Folder.add(this.lights.point1.position, 'y', -10, 10).name('Position Y')
+		// // point1Folder.add(this.lights.point1.position, 'z', -10, 10).name('Position Z')
+		// // point1Folder.add(this.lights.point1, 'distance', 0, 2000).name('Distance')
+
+		// // // Point Light 2 controls
+		// // const point2Folder = this.gui.addFolder('Point Light 2')
+		// // point2Folder.close() // Close by default
+		// // point2Folder.add(this.lights.point2, 'intensity', 0, 2).name('Intensity')
+		// // point2Folder.addColor(this.lights.point2, 'color').name('Color')
+		// // point2Folder.add(this.lights.point2.position, 'x', -10, 10).name('Position X')
+		// // point2Folder.add(this.lights.point2.position, 'y', -10, 10).name('Position Y')
+		// // point2Folder.add(this.lights.point2.position, 'z', -10, 10).name('Position Z')
+		// // point2Folder.add(this.lights.point2, 'distance', 0, 2000).name('Distance')
+
+		// Add camera controls
+		const cameraFolder = this.gui.addFolder("Camera")
+		cameraFolder.add(this.camera.position, "x", -100, 100, 0.1).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -100, 100, 0.1).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -100, 100, 0.1).name("Position Z")
+		cameraFolder.close()
+
+		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
+		// this.morphTargetFolder.close()
+
+		this.meshFolder = this.gui.addFolder("Mesh")
+		this.meshFolder.close()
+
+		// this.gui.close()
+	}
+
 	addHelpers() {
 		this.scene.add(new PointLightHelper(this.lights.main, 15))
 		this.scene.add(new PointLightHelper(this.lights.ambient, 15))
@@ -625,27 +610,51 @@ class App {
 		polarGridHelper.position.y = -150
 		polarGridHelper.position.x = 200
 		this.scene.add(polarGridHelper)
+	}
+
+	addMeshHelpers(target) {
+		target.geometry.computeTangents()
+		this.scene.add(new BoxHelper(target))
 
 		// this.helpers.axes = new AxesHelper(10)
 		// this.scene.add(this.helpers.axes)
-		this.scene.traverse((child) => {
-			if (child.type === "Mesh") {
-				console.log("Found a Mesh:", child)
-				this.mesh = child
 
-				// this.scene.add(new BoxHelper(child))
-			}
-		})
+		const mesh = target.clone()
+		this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
+		this.scene.add(this.helpers.vnh)
 
-		// this.mesh.geometry.computeTangents()
+		this.helpers.vth = new VertexTangentsHelper(mesh, 0.09)
+		this.scene.add(this.helpers.vth)
+		console.log("this.helperFolder", this.helperFolder)
+		// this.helperFolder.add({ vnh: true }, "Vertex Normals Helper").onChange((visible) => {
+		// 	// if (this.helpers.vnh) this.helpers.vnh.visible = visible
+		// })
+		// this.helperFolder.add({ vth: true }, "Vertex Tangents Helper").onChange((visible) => {
+		// 	// if (this.helpers.vth) this.helpers.vth.visible = visible
+		// })
 
-		// this.vnh = new VertexNormalsHelper(this.mesh, 0.2)
-		// this.scene.add(this.vnh)
+		// target.geometry.computeVertexNormals()
+		// target.geometry.computeFaceNormals()
+		// target.geometry.computeBoundingSphere()
+		// target.geometry.computeBoundingBox()
 
-		// this.vth = new VertexTangentsHelper(this.mesh, 0.09)
-		// this.scene.add(this.vth)
+		// const newMesh = target.geometry.clone()
+		// const wireframe = new WireframeGeometry(newMesh)
+		// let line = new LineSegments(wireframe)
+		// line.material.depthTest = false
+		// line.material.opacity = 0.25
+		// line.material.transparent = true
+		// line.position.x = 4
+		// this.scene.add(line)
+		// this.scene.add(new BoxHelper(line))
 
+		this.meshFolder.add(target.position, "x", -20, 20, 0.01).name("Position X")
+		this.meshFolder.add(target.position, "y", -50, 50, 0.1).name("Position Y")
+		this.meshFolder.add(target.position, "z", -50, 50, 0.1).name("Position Z")
 
+		this.meshFolder.add(target.scale, "x", -20, 20, 0.01).name("Scale X")
+		this.meshFolder.add(target.scale, "y", -50, 50, 0.1).name("Scale Y")
+		this.meshFolder.add(target.scale, "z", -50, 50, 0.1).name("Scale Z")
 	}
 
 	render() {
