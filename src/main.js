@@ -34,6 +34,14 @@ import { SphereGeometry } from "./geometries/SphereGeometry"
 import { MeshPhysicalMaterial } from "./materials/MeshPhysicalMaterial"
 import { TextureLoader } from "./loaders/TextureLoader"
 import { Color } from "./math/Color"
+import { VertexNormalsHelper } from "./jsm/helpers/VertexNormalsHelper"
+import { VertexTangentsHelper } from "./jsm/helpers/VertexTangentsHelper"
+import { BoxHelper } from "./helpers/BoxHelper"
+import { WireframeGeometry } from "./geometries/WireframeGeometry"
+import { LineSegments } from "./objects/LineSegments"
+import { GridHelper } from "./helpers/GridHelper"
+import { PolarGridHelper } from "./helpers/PolarGridHelper"
+import { PointLightHelper } from "./helpers/PointLightHelper"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -117,6 +125,11 @@ class App {
 
 	gltf
 	binaryBuffer
+	mesh
+	meshFolder
+
+	vnh
+	vth
 
 	constructor() {
 		this.createRenderer()
@@ -194,6 +207,16 @@ class App {
 
 		const room = new RoomEnvironment()
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
+
+		const gridHelper = new GridHelper(400, 40, 0x0000ff, 0x808080)
+		gridHelper.position.y = -150
+		gridHelper.position.x = -150
+		this.scene.add(gridHelper)
+
+		const polarGridHelper = new PolarGridHelper(200, 16, 8, 64, 0x0000ff, 0x808080)
+		polarGridHelper.position.y = -150
+		polarGridHelper.position.x = 200
+		this.scene.add(polarGridHelper)
 	}
 
 	createControls() {
@@ -204,7 +227,7 @@ class App {
 		// this.controls.minAzimuthAngle = -Math.PI / 2
 		// this.controls.maxAzimuthAngle = Math.PI / 2
 		// this.controls.maxPolarAngle = Math.PI / 1.8
-		// this.controls.target.set(0, 0.15, -0.2)
+		this.controls.target.set(0, 0.15, -0.2)
 
 		// this.controls.enableDamping = true
 		// this.controls.dampingFactor = 0.05
@@ -231,6 +254,9 @@ class App {
 
 		this.lights.ambient = new AmbientLight("white", 2)
 		this.scene.add(this.lights.ambient)
+
+		this.scene.add(new PointLightHelper(this.lights.main, 15))
+		this.scene.add(new PointLightHelper(this.lights.ambient, 15))
 	}
 
 	setupEventListeners() {
@@ -328,6 +354,8 @@ class App {
 
 		this.morphTargetFolder = this.gui.addFolder("Morph Targets")
 		this.morphTargetFolder.close()
+
+		this.meshFolder = this.gui.addFolder("Mesh")
 
 		// this.gui.close()
 	}
@@ -430,9 +458,45 @@ class App {
 
 		const loader = new GLTFLoader(loadingManager)
 		loader.load("/model/Facial.gltf", (gltf) => {
-			const mesh = gltf.scene.children[0]
-			console.log("gltf", gltf)
-			this.scene.add(mesh)
+			this.mesh = gltf.scene.children[0]
+			this.mesh.geometry.computeTangents()
+			this.mesh.position.set(0, -4, 0)
+			this.mesh.scale.set(20, 20, 20)
+			// console.log("mesh", this.mesh)
+
+			this.meshFolder.add(this.mesh.position, "x", -20, 20, 0.01).name("Position X")
+			this.meshFolder.add(this.mesh.position, "y", -50, 50, 0.1).name("Position Y")
+			this.meshFolder.add(this.mesh.position, "z", -50, 50, 0.1).name("Position Z")
+
+			this.meshFolder.add(this.mesh.scale, "x", -20, 20, 0.01).name("Scale X")
+			this.meshFolder.add(this.mesh.scale, "y", -50, 50, 0.1).name("Scale Y")
+			this.meshFolder.add(this.mesh.scale, "z", -50, 50, 0.1).name("Scale Z")
+
+			const bufferGeometry = this.mesh.geometry
+			// console.log("bufferGeometry", bufferGeometry)
+			const positionAttribute = bufferGeometry.attributes.position
+
+			this.vnh = new VertexNormalsHelper(this.mesh, 0.2)
+			this.scene.add(this.vnh)
+
+			this.vth = new VertexTangentsHelper(this.mesh, 0.09)
+			this.scene.add(this.vth)
+
+			this.scene.add(new BoxHelper(this.mesh))
+
+			// const wireframe = new WireframeGeometry(this.mesh.geometry)
+			// let line = new LineSegments(wireframe)
+			// line.material.depthTest = false
+			// line.material.opacity = 0.25
+			// line.material.transparent = true
+			// line.position.x = 4
+			// this.scene.add(line)
+			// this.scene.add(new BoxHelper(line))
+
+			this.scene.add(this.mesh)
+
+			// this.gui.add(params, "showMesh").onChange((value) => (this.mesh.visible = value))
+			// gui.add(params, "showPoints").onChange((value) => (points.visible = value))
 		})
 	}
 
@@ -583,6 +647,19 @@ class App {
 		if (this.mixer) {
 			this.mixer.update(delta)
 		}
+
+		const time = -this.clock.getElapsedTime() * 0.0003
+
+		// this.camera.position.x = 400 * Math.cos(time)
+		// this.camera.position.z = 400 * Math.sin(time)
+		// this.camera.lookAt(this.scene.position)
+
+		this.lights.main.position.x = Math.sin(time * 1.7) * 300
+		this.lights.main.position.y = Math.cos(time * 1.5) * 400
+		this.lights.main.position.z = Math.cos(time * 1.3) * 30
+
+		// if (this.vnh) this.vnh.update()
+		// if (this.vth) this.vth.update()
 
 		// // Rotate the cube
 		// this.cube.rotation.x += 0.01
