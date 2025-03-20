@@ -42,6 +42,7 @@ import { LineSegments } from "./objects/LineSegments"
 import { GridHelper } from "./helpers/GridHelper"
 import { PolarGridHelper } from "./helpers/PolarGridHelper"
 import { PointLightHelper } from "./helpers/PointLightHelper"
+import { SkeletonHelper } from "./helpers/SkeletonHelper"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -118,6 +119,7 @@ class App {
 		point2: null,
 		vnh: null,
 		vth: null,
+		skeleton: null,
 	}
 	helperFolder
 	lights = {
@@ -667,6 +669,9 @@ class App {
 			.onChange((visible) => {
 				if (this.helpers.vth) this.helpers.vth.visible = visible
 			})
+
+		this.helpers.skeleton = new SkeletonHelper(mesh)
+		this.scene.add(this.helpers.skeleton)
 
 		// const newMesh = mesh.geometry.clone()
 		// const wireframe = new WireframeGeometry(newMesh)
