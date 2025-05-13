@@ -17,7 +17,7 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { DoubleSide, EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
+import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
@@ -43,6 +43,7 @@ import { GridHelper } from "./helpers/GridHelper"
 import { PolarGridHelper } from "./helpers/PolarGridHelper"
 import { PointLightHelper } from "./helpers/PointLightHelper"
 import { SkeletonHelper } from "./helpers/SkeletonHelper"
+import { MathUtils } from "./math/MathUtils"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -50,7 +51,7 @@ loadingManager.onProgress = (url, loaded, total) => {
 }
 
 const ANIMATION_MODEL_PATH = new URL("/facecap_output.gltf", import.meta.url).href
-const MODEL_PATH = new URL("/model/SceneApp.gltf", import.meta.url).href
+const MODEL_PATH = new URL("/model/FullRender.glb", import.meta.url).href
 
 const ATTRIBUTES = {
 	POSITION: "position",
@@ -155,7 +156,7 @@ class App {
 		// this.setupCube()
 		// this.loadModel()
 		this.loadGLTF()
-		this.loadJSON()
+		// this.loadJSON()
 		// this.loadCustomModel()
 		this.createEnvironment()
 		this.addHelpers()
@@ -186,7 +187,7 @@ class App {
 		// })
 
 		const exrLoader = new EXRLoader()
-		exrLoader.load("/forest.exr", function (texture) {
+		exrLoader.load("/venice_sunset_1k.exr", function (texture) {
 			texture.mapping = EquirectangularReflectionMapping
 
 			// Set the environment map
@@ -201,13 +202,23 @@ class App {
 	}
 
 	setupCamera() {
-		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-		// this.camera.position.z = 100
-		// this.camera.position.y = 20
+		const sensorWidth = 36
+		const sensorHeight = 24
+		const focalLength = 80
+		const aspect = window.innerWidth / window.innerHeight
+		const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * focalLength))
+		const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
-		this.camera.position.z = 9
-		this.camera.position.y = 2
-		// this.camera.position.set(-1, 0.8, 5)
+		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+		this.camera.fov = MathUtils.radToDeg(fovVertical)
+		this.camera.setFocalLength(focalLength)
+
+		this.camera.updateProjectionMatrix()
+		this.camera.position.set(24.1159, 28.9351, 295.2)
+		this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
+
+		this.camera.rotation.x = 88.9339
+		this.camera.rotation.y = 12.2002
 	}
 
 	createRenderer() {
@@ -220,6 +231,11 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+		this.renderer.toneMapping = ACESFilmicToneMapping;
+		this.renderer.exposure = 1.0;
+
+		this.renderer.gammaFactor = 2.2;
+		this.renderer.gammaOutput = true;
 		// this.renderer.setClearColor(0xffffff, 1)
 
 		const room = new RoomEnvironment()
@@ -234,7 +250,7 @@ class App {
 		// this.controls.minAzimuthAngle = -Math.PI / 2
 		// this.controls.maxAzimuthAngle = Math.PI / 2
 		// this.controls.maxPolarAngle = Math.PI / 1.8
-		this.controls.target.set(0, 0.15, -0.2)
+		// this.controls.target.set(0, 0.15, -0.2)
 
 		// this.controls.enableDamping = true
 		// this.controls.dampingFactor = 0.05
@@ -346,16 +362,16 @@ class App {
 	async loadGLTF() {
 		let mesh = {}
 		const loader = new GLTFLoader(loadingManager)
-		loader.load("/model/Facial.gltf", (gltf) => {
-			mesh = gltf.scene.children[0]
+		loader.load("/facetoy/facetoy.gltf", (gltf) => {
+			mesh = gltf.scene
 
-			mesh.position.set(0, -4, 0)
-			mesh.scale.set(20, 20, 20)
+			mesh.position.set(0, -20, 0)
+			// mesh.scale.set(20, 20, 20)
 
-			// console.log("mesh", this.mesh)
+			console.log("mesh", mesh)
 
 			this.scene.add(mesh)
-			this.addMeshHelpers(mesh)
+			// this.addMeshHelpers(mesh)
 		})
 	}
 	async loadJSON() {
@@ -596,9 +612,10 @@ class App {
 
 		// Add camera controls
 		const cameraFolder = this.gui.addFolder("Camera")
-		cameraFolder.add(this.camera.position, "x", -100, 100, 0.1).name("Position X")
-		cameraFolder.add(this.camera.position, "y", -100, 100, 0.1).name("Position Y")
-		cameraFolder.add(this.camera.position, "z", -100, 100, 0.1).name("Position Z")
+		cameraFolder.add(this.camera.position, "x", -300, 300, 0.1).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -300, 300, 0.1).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -300, 900, 0.1).name("Position Z")
+		// cameraFolder.add(this.camera.focalLength, "focalLenght", -100, 100, 0.1).name("focalLenght")
 		cameraFolder.close()
 
 		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
