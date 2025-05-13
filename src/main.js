@@ -204,7 +204,7 @@ class App {
 	setupCamera() {
 		const sensorWidth = 36
 		const sensorHeight = 24
-		const focalLength = 80
+		const focalLength = 70
 		const aspect = window.innerWidth / window.innerHeight
 		const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * focalLength))
 		const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
@@ -271,7 +271,7 @@ class App {
 		// const pointLight = new PointLight(0xffffff, 1)
 		// pointLight.position.set(5, 5, 5)
 		// this.scene.add(pointLight)
-		this.lights.main = new DirectionalLight("white", 8)
+		this.lights.main = new DirectionalLight("white", 1.484)
 		this.lights.main.position.set(10, 10, 10)
 		this.scene.add(this.lights.main)
 
@@ -615,7 +615,6 @@ class App {
 		cameraFolder.add(this.camera.position, "x", -300, 300, 0.1).name("Position X")
 		cameraFolder.add(this.camera.position, "y", -300, 300, 0.1).name("Position Y")
 		cameraFolder.add(this.camera.position, "z", -300, 900, 0.1).name("Position Z")
-		// cameraFolder.add(this.camera.focalLength, "focalLenght", -100, 100, 0.1).name("focalLenght")
 		cameraFolder.close()
 
 		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
