@@ -209,7 +209,7 @@ class App {
 		const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * focalLength))
 		const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
-		this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+		this.camera = new PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 10000)
 		this.camera.fov = MathUtils.radToDeg(fovVertical)
 		this.camera.setFocalLength(focalLength)
 
