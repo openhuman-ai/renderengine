@@ -46,6 +46,7 @@ import { SkeletonHelper } from "./helpers/SkeletonHelper"
 import { MathUtils } from "./math/MathUtils"
 import { OBJLoader } from "./jsm/loaders/OBJLoader"
 import { mergeVertices } from "./jsm/utils/BufferGeometryUtils"
+import { PMREMGenerator } from "./extras/PMREMGenerator"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -144,6 +145,8 @@ class App {
 		roughness: null,
 		specular: null,
 	}
+
+	pmremGenerator
 
 	mouseX = 0
 	mouseY = 0
@@ -251,7 +254,9 @@ class App {
 		this.renderer.gammaOutput = true
 		// this.renderer.setClearColor(0xffffff, 1)
 
-		const room = new RoomEnvironment()
+		// const room = new RoomEnvironment()
+		this.pmremGenerator = new PMREMGenerator(this.renderer)
+		this.pmremGenerator.compileEquirectangularShader()
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
 	}
 
