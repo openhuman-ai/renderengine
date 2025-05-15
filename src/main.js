@@ -408,7 +408,6 @@ class App {
 			const material = new MeshPhysicalMaterial({
 				map: this.face.albedo,
 				// metalness: 0.1,
-				// flatShading: true,
 				roughnessMap: this.face.roughness,
 				normalMap: this.face.normal,
 				envMap: this.scene.environment,
