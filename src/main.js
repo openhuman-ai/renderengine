@@ -45,6 +45,7 @@ import { PointLightHelper } from "./helpers/PointLightHelper"
 import { SkeletonHelper } from "./helpers/SkeletonHelper"
 import { MathUtils } from "./math/MathUtils"
 import { OBJLoader } from "./jsm/loaders/OBJLoader"
+import { mergeVertices } from "./jsm/utils/BufferGeometryUtils"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -137,6 +138,13 @@ class App {
 		point2: undefined,
 	}
 
+	face = {
+		albedo: null,
+		normal: null,
+		roughness: null,
+		specular: null,
+	}
+
 	mouseX = 0
 	mouseY = 0
 	targetX = 0
@@ -159,7 +167,8 @@ class App {
 		this.createControls()
 		this.setupLights()
 		// this.setupCube()
-		// this.loadModel()
+		this.loadTexure()
+		this.loadModel()
 		this.loadGLTF()
 		// this.loadJSON()
 		// this.loadCustomModel()
@@ -218,7 +227,7 @@ class App {
 		// this.camera.fov = MathUtils.radToDeg(fovVertical)
 		// this.camera.setFocalLength(this.cameraParams.focalLength)
 
-		this.camera.position.set(0, 0.689351, 0.952)
+		this.camera.position.set(0, 0.389351, 1)
 		// this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
 
 		// this.camera.rotation.y = MathUtils.degToRad(45)
@@ -363,28 +372,96 @@ class App {
 		}
 	}
 
+	async loadTexure() {
+		// const textureLoader = new TextureLoader(loadingManager)
+		// this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
+	}
+
+	async loadModel() {
+		const loaderBrows = new OBJLoader(loadingManager)
+		loaderBrows.load("/facetoy/Brows.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+
+		const loaderHead = new OBJLoader(loadingManager)
+		const textureLoader = new TextureLoader(loadingManager)
+		this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
+		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
+		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
+		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
+		loaderHead.load("/facetoy/Head.obj", (obj) => {
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			const originalGeometry = mesh.geometry
+			const geometry = mergeVertices(originalGeometry.clone())
+
+			geometry.computeVertexNormals()
+
+			const material = new MeshPhysicalMaterial({
+				map: this.face.albedo,
+				// metalness: 0.1,
+				// flatShading: true,
+				roughnessMap: this.face.roughness,
+				normalMap: this.face.normal,
+				envMap: this.scene.environment,
+				// wireframe:true,
+				// transmission: 0.9, // for glass-like transparency
+				// thickness: 1.0,
+				// clearcoat: 1.0,
+				// clearcoatRoughness: 0.1,
+			})
+
+			const smoothMesh = new Mesh(geometry, material)
+			smoothMesh.scale.set(1.5, 1.5, 1.5)
+			smoothMesh.position.set(0, -0.25, 0)
+			this.scene.add(smoothMesh)
+			// mesh.material = material
+			// this.scene.add(mesh)
+
+			// obj.traverse((child) => {
+			// 	if (child.isMesh) {
+			// 		// const geometry = child.geometry
+			// 		const geometry = child.geometry.toNonIndexed()
+			// 		geometry.computeVertexNormals()
+			// 		console.log("geometry", geometry)
+
+			// 		child.material = material
+			// 		child.castShadow = true
+			// 		child.receiveShadow = true
+			// 		obj.material.flatShading = true
+			// 	}
+			// })
+
+			// this.scene.add(obj)
+		})
+	}
+
 	async loadGLTF() {
 		let mesh = {}
 		const loader = new OBJLoader()
 		const scene = this.scene
 
-		const objectsToLoad = [
-			{ path: "/obj/Brows.obj" },
-			{ path: "/obj/EyeWet.obj" },
-			{ path: "/obj/Head.obj" },
-			{ path: "/obj/Lashes.obj" },
-			{ path: "/obj/LensLeft.obj" },
-			{ path: "/obj/LensRight.obj" },
-			{ path: "/obj/RealtimeEyeballLeft.obj" },
-			{ path: "/obj/RealtimeEyeballRight.obj" },
-		]
+		// const objectsToLoad = [
+		// 	{ path: "/obj/Brows.obj" },
+		// 	{ path: "/obj/EyeWet.obj" },
+		// 	{ path: "/obj/Head.obj" },
+		// 	{ path: "/obj/Lashes.obj" },
+		// 	{ path: "/obj/LensLeft.obj" },
+		// 	{ path: "/obj/LensRight.obj" },
+		// 	{ path: "/obj/RealtimeEyeballLeft.obj" },
+		// 	{ path: "/obj/RealtimeEyeballRight.obj" },
+		// ]
 
-		for (const obj of objectsToLoad) {
-			loader.load(obj.path, (loadedObject) => {
-				loadedObject.scale.set(1, 1, 1)
-				scene.add(loadedObject)
-			})
-		}
+		// for (const obj of objectsToLoad) {
+		// 	loader.load(obj.path, (loadedObject) => {
+		// 		loadedObject.scale.set(1, 1, 1)
+		// 		// loadedObject
+		// 		scene.add(loadedObject)
+		// 	})
+		// }
 
 		// loader.load(
 		// 	"/obj/Head.obj",
