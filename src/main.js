@@ -382,37 +382,51 @@ class App {
 	}
 
 	async loadModel() {
-		const loaderBrows = new OBJLoader(loadingManager)
-		loaderBrows.load("/facetoy/Brows.obj", (obj) => {
+		const objloader = new OBJLoader(loadingManager)
+		const textureLoader = new TextureLoader(loadingManager)
+
+		// Brows
+		objloader.load("/facetoy/Brows.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
+			this.scene.add(obj)
+		})
+		objloader.load("/facetoy/EyeWet.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
 			this.scene.add(obj)
 		})
 
-		const loaderHead = new OBJLoader(loadingManager)
-		const textureLoader = new TextureLoader(loadingManager)
+		// Face
 		this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
 		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
 		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
 		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
-		loaderHead.load("/facetoy/Head.obj", (obj) => {
+		objloader.load("/facetoy/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			const material = new MeshPhysicalMaterial({
 				map: this.face.albedo,
-				// metalness: 0.1,
-				// flatShading: true,
+				metalness: 0,
+				ior: 1.45,
+				reflectivity: 0.5,
 				roughnessMap: this.face.roughness,
 				normalMap: this.face.normal,
-				envMap: this.scene.environment,
-				// wireframe:true,
-				// transmission: 0.9, // for glass-like transparency
-				// thickness: 1.0,
-				// clearcoat: 1.0,
-				// clearcoatRoughness: 0.1,
+				clearcoatMap: this.face.specular,
+				// envMap: this.scene.environment,
+				transmission: 0,
+				thickness: 10.0,
+				clearcoat: 1.0,
+				clearcoatRoughness: 1.0,
 			})
 
+			mesh.geometry.computeVertexNormals()
 			const smoothMesh = new Mesh(mesh.geometry, material)
 			smoothMesh.scale.set(1.5, 1.5, 1.5)
 			smoothMesh.position.set(0, -0.25, 0)
@@ -436,6 +450,48 @@ class App {
 
 			// this.scene.add(obj)
 		})
+
+		objloader.load("/facetoy/Lashes.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+
+		objloader.load("/facetoy/LensLeft.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+		objloader.load("/facetoy/LensRight.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+		objloader.load("/facetoy/RealtimeEyeballLeft.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+		objloader.load("/facetoy/RealtimeEyeballRight.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
+		// objloader.load("/facetoy/Teeth.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
+		// objloader.load("/facetoy/Tongue.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
+		// objloader.load("/facetoy/Head.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
 	}
 
 	async loadGLTF() {
