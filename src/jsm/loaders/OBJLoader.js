@@ -1,20 +1,20 @@
-import {
-	BufferGeometry,
-	FileLoader,
-	Float32BufferAttribute,
-	Group,
-	LineBasicMaterial,
-	LineSegments,
-	Loader,
-	Material,
-	Mesh,
-	MeshPhongMaterial,
-	Points,
-	PointsMaterial,
-	Vector3,
-	Color,
-	SRGBColorSpace,
-} from "three"
+// import { BufferGeometry, FileLoader, Float32BufferAttribute, Group, LineBasicMaterial, LineSegments, Loader, Material, Mesh, MeshPhongMaterial, Points, PointsMaterial, Vector3, Color, SRGBColorSpace } from "three"
+
+import { SRGBColorSpace } from "@/constants"
+import { Float32BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { FileLoader } from "@/loaders/FileLoader"
+import { Loader } from "@/loaders/Loader"
+import { LineBasicMaterial } from "@/materials/LineBasicMaterial"
+import { Material } from "@/materials/Material"
+import { MeshPhongMaterial } from "@/materials/MeshPhongMaterial"
+import { PointsMaterial } from "@/materials/PointsMaterial"
+import { Color } from "@/math/Color"
+import { Vector3 } from "@/math/Vector3"
+import { Group } from "@/objects/Group"
+import { LineSegments } from "@/objects/LineSegments"
+import { Mesh } from "@/objects/Mesh"
+import { Points } from "@/objects/Points"
 
 // o object_name | g group_name
 const _object_pattern = /^[og]\s*(.+)?/

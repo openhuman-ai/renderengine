@@ -44,6 +44,7 @@ import { PolarGridHelper } from "./helpers/PolarGridHelper"
 import { PointLightHelper } from "./helpers/PointLightHelper"
 import { SkeletonHelper } from "./helpers/SkeletonHelper"
 import { MathUtils } from "./math/MathUtils"
+import { OBJLoader } from "./jsm/loaders/OBJLoader"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -89,6 +90,10 @@ class App {
 	canvas
 	renderer
 	camera
+	cameraParams = {
+		focalLength: 20,
+		fov: 50,
+	}
 	scene
 	mixer
 	controls
@@ -204,21 +209,20 @@ class App {
 	setupCamera() {
 		const sensorWidth = 36
 		const sensorHeight = 24
-		const focalLength = 70
+		// const focalLength = 20
 		const aspect = window.innerWidth / window.innerHeight
-		const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * focalLength))
-		const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
+		// const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * this.cameraParams.focalLength))
+		// const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
-		this.camera = new PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 10000)
-		this.camera.fov = MathUtils.radToDeg(fovVertical)
-		this.camera.setFocalLength(focalLength)
+		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.1, 10000)
+		// this.camera.fov = MathUtils.radToDeg(fovVertical)
+		// this.camera.setFocalLength(this.cameraParams.focalLength)
 
-		this.camera.updateProjectionMatrix()
-		this.camera.position.set(24.1159, 28.9351, 295.2)
-		this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
+		this.camera.position.set(0, 0.689351, 0.952)
+		// this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
 
-		this.camera.rotation.x = 88.9339
-		this.camera.rotation.y = 12.2002
+		// this.camera.rotation.y = MathUtils.degToRad(45)
+		// this.camera.updateProjectionMatrix()
 	}
 
 	createRenderer() {
@@ -231,11 +235,11 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.toneMapping = ACESFilmicToneMapping;
-		this.renderer.exposure = 1.0;
+		this.renderer.toneMapping = ACESFilmicToneMapping
+		this.renderer.exposure = 1.0
 
-		this.renderer.gammaFactor = 2.2;
-		this.renderer.gammaOutput = true;
+		this.renderer.gammaFactor = 2.2
+		this.renderer.gammaOutput = true
 		// this.renderer.setClearColor(0xffffff, 1)
 
 		const room = new RoomEnvironment()
@@ -244,7 +248,7 @@ class App {
 
 	createControls() {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-		// this.controls.enableDamping = false
+		this.controls.enableDamping = false
 		// this.controls.minDistance = 2.5
 		// this.controls.maxDistance = 5
 		// this.controls.minAzimuthAngle = -Math.PI / 2
@@ -361,18 +365,52 @@ class App {
 
 	async loadGLTF() {
 		let mesh = {}
-		const loader = new GLTFLoader(loadingManager)
-		loader.load("/facetoy/facetoy.gltf", (gltf) => {
-			mesh = gltf.scene
+		const loader = new OBJLoader()
+		const scene = this.scene
 
-			mesh.position.set(0, -20, 0)
-			// mesh.scale.set(20, 20, 20)
+		const objectsToLoad = [
+			{ path: "/obj/Brows.obj" },
+			{ path: "/obj/EyeWet.obj" },
+			{ path: "/obj/Head.obj" },
+			{ path: "/obj/Lashes.obj" },
+			{ path: "/obj/LensLeft.obj" },
+			{ path: "/obj/LensRight.obj" },
+			{ path: "/obj/RealtimeEyeballLeft.obj" },
+			{ path: "/obj/RealtimeEyeballRight.obj" },
+		]
 
-			console.log("mesh", mesh)
+		for (const obj of objectsToLoad) {
+			loader.load(obj.path, (loadedObject) => {
+				loadedObject.scale.set(1, 1, 1)
+				scene.add(loadedObject)
+			})
+		}
 
-			this.scene.add(mesh)
-			// this.addMeshHelpers(mesh)
-		})
+		// loader.load(
+		// 	"/obj/Head.obj",
+		// 	function (object) {
+		// 		object.scale.set(1, 1, 1)
+		// 		scene.add(object)
+		// 	},
+		// 	function (xhr) {
+		// 		// console.log((xhr.loaded / xhr.total) * 100 + "% loaded")
+		// 	},
+		// 	function (error) {
+		// 		// console.error("An error happened:", error)
+		// 	}
+		// )
+		// const loader = new GLTFLoader(loadingManager)
+		// loader.load("/facetoy/facetoy.gltf", (gltf) => {
+		// 	mesh = gltf.scene
+
+		// 	mesh.position.set(0, -20, 0)
+		// 	// mesh.scale.set(20, 20, 20)
+
+		// 	console.log("mesh", mesh)
+
+		// 	this.scene.add(mesh)
+		// 	// this.addMeshHelpers(mesh)
+		// })
 	}
 	async loadJSON() {
 		// const response = await fetch("/model/Facial.gltf")
@@ -612,9 +650,30 @@ class App {
 
 		// Add camera controls
 		const cameraFolder = this.gui.addFolder("Camera")
-		cameraFolder.add(this.camera.position, "x", -300, 300, 0.1).name("Position X")
-		cameraFolder.add(this.camera.position, "y", -300, 300, 0.1).name("Position Y")
-		cameraFolder.add(this.camera.position, "z", -300, 900, 0.1).name("Position Z")
+		cameraFolder.add(this.camera.position, "x", -15, 15, 0.01).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -15, 15, 0.01).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -15, 15, 0.01).name("Position Z")
+
+		cameraFolder
+			.add(this.camera, "fov", 10, 120)
+			.name("FOV")
+			.onChange(() => {
+				this.camera.updateProjectionMatrix()
+			})
+		const focalLengthController = cameraFolder
+			.add(this.cameraParams, "focalLength", 5, 100)
+			.name("Focal Length (mm)")
+			.onChange((value) => {
+				this.camera.setFocalLength(value)
+				this.camera.updateProjectionMatrix()
+			})
+		// cameraFolder
+		// 	.add(this.camera, "fov", 10, 120)
+		// 	.name("FOV")
+		// 	.onChange(() => {
+		// 		focalLengthController.setValue(camera.getFocalLength())
+		// 	})
+		// cameraFolder.add(this.cameraParams.focalLength, "focalLength", -100, 100, 0.01).name("focalLength")
 		cameraFolder.close()
 
 		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
