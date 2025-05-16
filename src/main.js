@@ -252,8 +252,6 @@ class App {
 	}
 
 	setupCamera() {
-		const sensorWidth = 36
-		const sensorHeight = 24
 		// const focalLength = 20
 		const aspect = window.innerWidth / window.innerHeight
 		// const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * this.cameraParams.focalLength))
@@ -412,7 +410,7 @@ class App {
 		const textureLoader = new TextureLoader(loadingManager)
 
 		this.eyewet.specular = textureLoader.load("/facetoy/specular/specular_1.png")
-		this.face.specular = textureLoader.load("/facetoy/specular/specular_2.png")
+		this.face.specular = textureLoader.load("/facetoy/specular/specular_face.png")
 		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_3.png")
 
 		this.face.normal = textureLoader.load("/facetoy/normal/normal_1.png")
@@ -430,7 +428,7 @@ class App {
 		this.tongue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
 		this.tongue.baseColor.colorSpace = SRGBColorSpace
 
-		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_1.png")
+		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_face.png")
 		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_2.png")
 	}
 
@@ -477,19 +475,17 @@ class App {
 				// You must assign the correct texture loaded from GLTF later:
 				// specularMap: textures[11]
 			})
-			// mesh.material.specularMap = this.eyewet.specular
-			// specularMap: this.eyewet.specular, // KHR_materials_specular
 			this.scene.add(mesh)
 		})
 	}
 
 	async loadFace(objloader, textureLoader) {
-		objloader.load("/facetoy/HeadOnly.obj", (obj) => {
+		objloader.load("/facetoy/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.castShadow = true
-			mesh.receiveShadow = true
+			// mesh.castShadow = true
+			// mesh.receiveShadow = true
 			mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 
@@ -498,14 +494,25 @@ class App {
 				side: DoubleSide, // doubleSided: true
 				metalness: 0, // from metallicFactor
 				map: this.face.baseColor, // baseColorTexture (index 0)
+
 				metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
 				roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
+
 				normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
 				normalScale: new Vector2(0.7, 0.7), // normalTexture scale
-				clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
-				clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
-				ior: 1.45, // KHR_materials_ior
-				specularMap: this.face.specular, //textures[12], // KHR_materials_specular
+
+				// Clearcoat extension
+				clearcoat: 0.04848499968647957,
+				clearcoatRoughness: 0.12393900007009506,
+				clearcoatMap: this.face.roughness,
+
+				// Specular extension
+				specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+				specularIntensityMap: this.face.specular,
+				specularColor: 0xffffff,
+				specularColorMap: this.face.specular,
+				// IOR extension
+				ior: 1.45,
 			})
 
 			this.scene.add(mesh)
