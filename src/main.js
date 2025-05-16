@@ -141,7 +141,7 @@ class App {
 
 	// components
 	face = {
-		albedo: null,
+		baseColor: null,
 		normal: null,
 		roughness: null,
 		specular: null,
@@ -154,7 +154,7 @@ class App {
 		normal: null,
 	}
 	eyeball = {
-		albedo: null,
+		baseColor: null,
 		height: null,
 		normal: null,
 		roghness: null,
@@ -162,11 +162,11 @@ class App {
 	}
 
 	teeth = {
-		albedo: null,
+		baseColor: null,
 		normal: null,
 	}
 	tougue = {
-		albedo: null,
+		baseColor: null,
 		normal: null,
 	}
 
@@ -402,8 +402,22 @@ class App {
 	}
 
 	async loadTexure() {
-		// const textureLoader = new TextureLoader(loadingManager)
-		// this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
+		const textureLoader = new TextureLoader(loadingManager)
+
+		this.eyewet.specular = textureLoader.load("/facetoy/specular/specular_1.png")
+		this.face.specular = textureLoader.load("/facetoy/specular/specular_2.png")
+		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_3.png")
+
+		this.face.normal = textureLoader.load("/facetoy/normal/normal_1.png")
+		this.lens.normal = textureLoader.load("/facetoy/normal/normal_2.png")
+		this.eyeball.normal = textureLoader.load("/facetoy/normal/normal_3.png")
+		this.teeth.normal = textureLoader.load("/facetoy/normal/normal_4.png")
+		this.tougue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
+
+		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_1.png")
+		this.eyeball.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_2.png")
+		this.teeth.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_3.png")
+		this.tougue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
 	}
 
 	async loadBrows(objloader, textureLoader) {
@@ -461,41 +475,27 @@ class App {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			obj.traverse((child) => {
-				if (child.isMesh) {
-					child.castShadow = true
-					child.receiveShadow = true
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
 
-					// const material = new MeshPhysicalMaterial({
-					// 	map: this.face.albedo,
-					// 	metalnessMap: this.face.roughness,
-					// 	normalMap: this.face.normal,
-					// 	clearcoat: 0.04848484694957733,
-					// 	clearcoatRoughness: 0.12393935769796371,
-					// 	ior: 1.4500000476837158,
-					// 	metalness: 0,
-					// })
-					const material = new MeshPhysicalMaterial({
-						name: "Material.001",
-						side: DoubleSide, // doubleSided: true
-						metalness: 0, // from metallicFactor
-						map: this.face.albedo, // baseColorTexture (index 0)
-						metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
-						roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
-						normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
-						normalScale: new Vector2(0.7, 0.7), // normalTexture scale
-						clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
-						clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
-						ior: 1.45, // KHR_materials_ior
-						specularMap: this.face.specular, //textures[12], // KHR_materials_specular
-					})
-					const smoothMesh = new Mesh(child.geometry, material)
-					smoothMesh.scale.set(1.5, 1.5, 1.5)
-					smoothMesh.position.set(0, -0.25, 0)
-					this.scene.add(smoothMesh)
-					// obj.material.flatShading = true
-				}
+			mesh.material = new MeshPhysicalMaterial({
+				name: "FaceMaterial",
+				side: DoubleSide, // doubleSided: true
+				metalness: 0, // from metallicFactor
+				map: this.face.albedo, // baseColorTexture (index 0)
+				metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
+				roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
+				normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
+				normalScale: new Vector2(0.7, 0.7), // normalTexture scale
+				clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
+				clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
+				ior: 1.45, // KHR_materials_ior
+				specularMap: this.face.specular, //textures[12], // KHR_materials_specular
 			})
+
+			this.scene.add(mesh)
 		})
 	}
 
@@ -513,49 +513,118 @@ class App {
 	}
 
 	async loadLens(objloader, textureLoader) {
+		let lenMaterial = new MeshPhysicalMaterial({
+			name: "Lens_Left",
+			color: new Color(0.502883, 0.502887, 0.502887), // baseColorFactor RGB
+			opacity: 0.1, // baseColorFactor Alpha
+			transparent: true, // alphaMode: "BLEND"
+			side: DoubleSide, // doubleSided: true
+			roughness: 0.06363636255264282, // roughnessFactor
+			metalness: 0, // not specified, assume default 0
+			normalMap: this.lens.normal, // normalTexture index 3
+			ior: 1.45, // KHR_materials_ior
+			specularColor: new Color(2, 2, 2), // KHR_materials_specular
+		})
+
 		objloader.load("/facetoy/LensLeft.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
 
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
-			})
+			obj.material = lenMaterial
 
 			this.scene.add(obj)
 		})
 		objloader.load("/facetoy/LensRight.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
-			})
+			obj.material = lenMaterial
 
 			this.scene.add(obj)
 		})
 	}
 	async loadEyeball(objloader, textureLoader) {
+		this.eyeball.albedo = textureLoader.load("/facetoy/face/baseColor_1.png")
+		this.eyeball.albedo.colorSpace = SRGBColorSpace
+		this.eyeball.normal = textureLoader.load("/facetoy/face/Normal.png")
+		this.eyeball.specular = textureLoader.load("/facetoy/face/Glossy.png")
+		this.eyeball.roughness = textureLoader.load("/facetoy/face/Roghness.png")
+
+		const eyeBallMaterial = new MeshPhysicalMaterial({
+			name: "Realtime_Eyeball_Left",
+			side: DoubleSide, // doubleSided: true
+			metalness: 0, // metallicFactor: 0
+			map: this.eyeball.albedo, // textures[4], // baseColorTexture index 4
+			metalnessMap: this.eyeball.roghness, // textures[6], // metallicRoughnessTexture index 6
+			roughnessMap: this.eyeball.roghness, // textures[6], // same texture as metalnessMap
+			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
+			ior: 1.45, // KHR_materials_ior
+			specularMap: this.eyeball.specular, // textures[13], // KHR_materials_specular
+		})
 		objloader.load("/facetoy/RealtimeEyeballLeft.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+
+			// mesh.material = new MeshPhysicalMaterial({
+			// 	name: "EyeballMaterial",
+			// 	side: DoubleSide, // doubleSided: true
+			// 	metalness: 0, // from metallicFactor
+			// 	map: this.face.albedo, // baseColorTexture (index 0)
+			// 	metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
+			// 	roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
+			// 	normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
+			// 	normalScale: new Vector2(0.7, 0.7), //s normalTexture scale
+			// 	clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
+			// 	clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
+			// 	ior: 1.45, // KHR_materials_ior
+			// 	specularMap: this.face.specular, //textures[12], // KHR_materials_specular
+			// })
+			// const material = new MeshPhongMaterial({
+			// 	color: 0x2244ff,
+			// })
+			mesh.material = new MeshPhysicalMaterial({
+				name: "Realtime_Eyeball_Left",
+				side: DoubleSide, // doubleSided: true
+				metalness: 0, // metallicFactor: 0
+				map: this.eyeball.albedo, // textures[4], // baseColorTexture index 4
+				metalnessMap: this.eyeball.roghness, // textures[6], // metallicRoughnessTexture index 6
+				roughnessMap: this.eyeball.roghness, // textures[6], // same texture as metalnessMap
+				normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
+				ior: 1.45, // KHR_materials_ior
+				specularMap: this.eyeball.specular, // textures[13], // KHR_materials_specular
 			})
-			this.scene.add(obj)
+
+			this.scene.add(mesh)
+
+			// console.log("mesh", mesh)
+
+			// mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.position.set(0, -0.25, 0)
+			// mesh.material = eyeBallMaterial
+
+			obj.traverse((child) => {
+				if (child.isMesh) {
+					child.castShadow = true
+					child.receiveShadow = true
+
+					const smoothMesh = new Mesh(child.geometry, eyeBallMaterial)
+					smoothMesh.scale.set(1.5, 1.5, 1.5)
+					smoothMesh.position.set(0, -0.25, 0)
+					this.scene.add(smoothMesh)
+					// obj.material.flatShading = true
+				}
+			})
+
+			this.scene.add(mesh)
 		})
 		objloader.load("/facetoy/RealtimeEyeballRight.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
-			})
+			obj.material = eyeBallMaterial
 			this.scene.add(obj)
 		})
 	}
@@ -565,13 +634,15 @@ class App {
 		const textureLoader = new TextureLoader(loadingManager)
 
 		// Brows
-		this.loadBrows(objloader, textureLoader)
+		// this.loadBrows(objloader, textureLoader)
 		// EyeWet
-		this.loadEyeWet(objloader, textureLoader)
+		// this.loadEyeWet(objloader, textureLoader)
 
 		this.loadFace(objloader, textureLoader)
 
-		this.loadLashes(objloader, textureLoader)
+		// this.loadLens(objloader, textureLoader)
+
+		// this.loadLashes(objloader, textureLoader)
 
 		this.loadEyeball(objloader, textureLoader)
 
@@ -665,7 +736,7 @@ class App {
 		const facemap = textureLoader.load("/model/FaceBaked2.jpg")
 		const faceRoughness = textureLoader.load("/model/Face_Roughness.jpg")
 		const faceMaterial = new MeshPhysicalMaterial({
-			name: "Material.001",
+			name: "FaceMaterial",
 			side: DoubleSide,
 			clearcoat: 0.04848484694957733,
 			clearcoatRoughness: 0.12393935769796371,
