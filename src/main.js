@@ -165,7 +165,7 @@ class App {
 		baseColor: null,
 		normal: null,
 	}
-	tougue = {
+	tongue = {
 		baseColor: null,
 		normal: null,
 	}
@@ -287,6 +287,7 @@ class App {
 	createControls() {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 		this.controls.enableDamping = false
+		this.controls.reset()
 		// this.controls.minDistance = 2.5
 		// this.controls.maxDistance = 5
 		// this.controls.minAzimuthAngle = -Math.PI / 2
@@ -307,17 +308,17 @@ class App {
 	}
 
 	setupLights() {
-		const ambientLight = new AmbientLight(0xffffff, 0.5)
+		const ambientLight = new AmbientLight(0xffffff, 0.63)
 		this.scene.add(ambientLight)
 
 		const pointLight = new PointLight(0xffffff, 1)
 		pointLight.position.set(5, 5, 5)
 		this.scene.add(pointLight)
-		this.lights.main = new DirectionalLight("white", 1.484)
-		this.lights.main.position.set(10, 10, 10)
-		this.scene.add(this.lights.main)
+		this.lights.direct = new DirectionalLight("white", 1.484)
+		this.lights.direct.position.set(10, 10, 10)
+		this.scene.add(this.lights.direct)
 
-		this.lights.ambient = new AmbientLight("white", 2)
+		this.lights.ambient = new AmbientLight("white", 0.62)
 		this.scene.add(this.lights.ambient)
 	}
 
@@ -412,7 +413,7 @@ class App {
 		this.lens.normal = textureLoader.load("/facetoy/normal/normal_2.png")
 		this.eyeball.normal = textureLoader.load("/facetoy/normal/normal_3.png")
 		this.teeth.normal = textureLoader.load("/facetoy/normal/normal_4.png")
-		this.tougue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
+		this.tongue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
 
 		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_1.png")
 		this.face.baseColor.colorSpace = SRGBColorSpace
@@ -420,8 +421,8 @@ class App {
 		this.eyeball.baseColor.colorSpace = SRGBColorSpace
 		this.teeth.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_3.png")
 		this.teeth.baseColor.colorSpace = SRGBColorSpace
-		this.tougue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
-		this.tougue.baseColor.colorSpace = SRGBColorSpace
+		this.tongue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
+		this.tongue.baseColor.colorSpace = SRGBColorSpace
 
 		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_1.png")
 		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_2.png")
@@ -613,72 +614,92 @@ class App {
 		})
 	}
 
+	async loadTongue(objloader, textureLoader) {
+		const eyeBallMaterial = new MeshPhysicalMaterial({
+			name: "Tongue",
+			side: DoubleSide, // doubleSided: true
+			map: this.tongue.baseColor, // baseColorTexture index 1
+			metalness: 0, // metallicFactor
+			roughness: 0.3, // roughnessFactor
+			color: new Color(1, 1, 1), // baseColorFactor RGB
+			opacity: 1, // baseColorFactor Alpha (1.0)
+			transparent: false, // alphaMode: "OPAQUE"
+			normalMap: this.tongue.normal, // normalTexture index 0
+			ior: 1.45, // KHR_materials_ior
+			specularIntensity: 0.6, // KHR_materials_specular (specularFactor)
+			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+		objloader.load("/facetoy/Tongue.obj", (obj) => {
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = eyeBallMaterial
+
+			this.scene.add(mesh)
+		})
+	}
+
+	async loadTeeth(objloader, textureLoader) {
+		const eyeBallMaterial = new MeshPhysicalMaterial({
+			name: "Teeth",
+			side: DoubleSide, // doubleSided: true
+			map: this.teeth.baseColor, // baseColorTexture index 1
+			color: new Color(1, 1, 1), // baseColorFactor RGB
+			opacity: 1, // baseColorFactor Alpha
+			transparent: false, // alphaMode: "OPAQUE"
+			metalness: 0, // metallicFactor
+			roughness: 0.3227272927761078, // roughnessFactor
+			normalMap: this.teeth.normal, // normalTexture index 0
+			ior: 1.45, // KHR_materials_ior
+			specularColor: new Color(0.6168678, 0.6168678, 0.6168678), // KHR_materials_specular
+			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+		objloader.load("/facetoy/UpperTeeth.obj", (obj) => {
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = eyeBallMaterial
+
+			this.scene.add(mesh)
+		})
+		objloader.load("/facetoy/LowerTeeth.obj", (obj) => {
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = eyeBallMaterial
+
+			this.scene.add(mesh)
+		})
+	}
+
 	async loadModel() {
 		const objloader = new OBJLoader(loadingManager)
 		const textureLoader = new TextureLoader(loadingManager)
 
-		// Brows
-		this.loadBrows(objloader, textureLoader)
-		// EyeWet
-		this.loadEyeWet(objloader, textureLoader)
+		// this.loadFace(objloader, textureLoader)
 
-		this.loadFace(objloader, textureLoader)
-
-		this.loadLens(objloader, textureLoader)
-
-		this.loadLashes(objloader, textureLoader)
-
-		this.loadEyeball(objloader, textureLoader)
-
-		// objloader.load("/facetoy/Teeth.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
-		// objloader.load("/facetoy/Tongue.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
+		// this.loadBrows(objloader, textureLoader)
+		// this.loadEyeWet(objloader, textureLoader)
+		// this.loadLens(objloader, textureLoader)
+		// this.loadLashes(objloader, textureLoader)
+		// this.loadEyeball(objloader, textureLoader)
+		this.loadTeeth(objloader, textureLoader)
+		this.loadTongue(objloader, textureLoader)
 	}
 
 	async loadGLTF() {
-		// let mesh = {}
-		// const loader = new OBJLoader()
-		// const scene = this.scene
-
-		// const objectsToLoad = [
-		// 	{ path: "/obj/Brows.obj" },
-		// 	{ path: "/obj/EyeWet.obj" },
-		// 	{ path: "/obj/Head.obj" },
-		// 	{ path: "/obj/Lashes.obj" },
-		// 	{ path: "/obj/LensLeft.obj" },
-		// 	{ path: "/obj/LensRight.obj" },
-		// 	{ path: "/obj/RealtimeEyeballLeft.obj" },
-		// 	{ path: "/obj/RealtimeEyeballRight.obj" },
-		// ]
-
-		// for (const obj of objectsToLoad) {
-		// 	loader.load(obj.path, (loadedObject) => {
-		// 		loadedObject.scale.set(1, 1, 1)
-		// 		// loadedObject
-		// 		scene.add(loadedObject)
-		// 	})
-		// }
-
-		// loader.load(
-		// 	"/obj/Head.obj",
-		// 	function (object) {
-		// 		object.scale.set(1, 1, 1)
-		// 		scene.add(object)
-		// 	},
-		// 	function (xhr) {
-		// 		// console.log((xhr.loaded / xhr.total) * 100 + "% loaded")
-		// 	},
-		// 	function (error) {
-		// 		// console.error("An error happened:", error)
-		// 	}
-		// )
 		const loader = new GLTFLoader(loadingManager)
 		loader.load("/facetoy.glb", (gltf) => {
 			let mesh = gltf.scene
@@ -884,11 +905,11 @@ class App {
 		// Main Light controls
 		// const mainFolder = this.gui.addFolder("Main Light")
 		// mainFolder.close() // Close by default
-		// mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
-		// mainFolder.addColor(this.lights.main, "color").name("Color")
-		// mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
-		// mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
-		// mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
+		// mainFolder.add(this.lights.direct, "intensity", 0, 2).name("Intensity")
+		// mainFolder.addColor(this.lights.direct, "color").name("Color")
+		// mainFolder.add(this.lights.direct.position, "x", -100, 100).name("Position X")
+		// mainFolder.add(this.lights.direct.position, "y", -100, 100).name("Position Y")
+		// mainFolder.add(this.lights.direct.position, "z", -100, 100).name("Position Z")
 
 		// // Front Light controls
 		// const frontFolder = this.gui.addFolder("Front Light")
@@ -966,7 +987,7 @@ class App {
 	}
 
 	addHelpers() {
-		// this.helpers.mainLight = new PointLightHelper(this.lights.main, 15)
+		// this.helpers.mainLight = new PointLightHelper(this.lights.direct, 15)
 		// this.scene.add(this.helpers.mainLight)
 		// this.helpers.mainLight.visible = false
 		// this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
