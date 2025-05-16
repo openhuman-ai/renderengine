@@ -17,7 +17,7 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, NormalAnimationBlendMode } from "./constants"
+import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, LinearSRGBColorSpace, NormalAnimationBlendMode, SRGBColorSpace } from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
@@ -419,9 +419,13 @@ class App {
 		// 	this.scene.add(obj)
 		// })
 		this.face.albedo = textureLoader.load("/facetoy/face/Face_Albedo.jpg")
+		this.face.albedo.colorSpace = SRGBColorSpace
 		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
+		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
+		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
+		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		objloader.load("/facetoy/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
@@ -431,40 +435,30 @@ class App {
 					// const geometry = child.geometry
 					const geometry = child.geometry.toNonIndexed()
 					geometry.computeVertexNormals()
-					console.log("geometry", geometry)
+					// console.log("geometry", geometry)
 
 					// child.material = material
 					child.castShadow = true
 					child.receiveShadow = true
+
+					const material = new MeshPhysicalMaterial({
+						// name: "MaterialFace",
+						// side: DoubleSide,
+						clearcoat: 0.04848484694957733,
+						clearcoatRoughness: 0.12393935769796371,
+						ior: 1.4500000476837158,
+						normalMap: this.face.normal,
+						map: this.face.albedo,
+						metalnessMap: this.face.roughness,
+						metalness: 0,
+					})
+					const smoothMesh = new Mesh(child.geometry, material)
+					smoothMesh.scale.set(1.5, 1.5, 1.5)
+					smoothMesh.position.set(0, -0.25, 0)
+					this.scene.add(smoothMesh)
 					// obj.material.flatShading = true
 				}
 			})
-
-			const material = new MeshPhysicalMaterial({
-				// name: "MaterialFace",
-				// side: DoubleSide,
-				clearcoat: 0.04848484694957733,
-				clearcoatRoughness: 0.12393935769796371,
-				ior: 1.4500000476837158,
-				normalMap: this.face.normal,
-				map: this.face.albedo,
-				metalnessMap: this.face.roughness,
-				metalness: 0,
-			})
-			const smoothMesh = new Mesh(mesh.geometry, material)
-			smoothMesh.scale.set(1.5, 1.5, 1.5)
-			smoothMesh.position.set(0, -0.25, 0)
-			this.scene.add(smoothMesh)
-
-			// mesh.geometry.computeVertexNormals()
-			//
-			//
-			// smoothMesh.position.set(0, -0.25, 0)
-			// this.scene.add(smoothMesh)
-			// mesh.material = material
-			// this.scene.add(mesh)
-
-			// this.scene.add(obj)
 		})
 	}
 
