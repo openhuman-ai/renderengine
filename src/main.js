@@ -271,8 +271,8 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		// this.renderer.exposure = 0.23
-		// this.renderer.toneMapping = ACESFilmicToneMapping
+		this.renderer.exposure = 0.23
+		this.renderer.toneMapping = ACESFilmicToneMapping
 
 		// this.renderer.gammaFactor = 2.2
 		// this.renderer.gammaOutput = true
