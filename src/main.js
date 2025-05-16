@@ -429,9 +429,12 @@ class App {
 
 	async loadBrows(objloader, textureLoader) {
 		objloader.load("/facetoy/Brows.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshPhysicalMaterial({
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = new MeshPhysicalMaterial({
 				name: "Brows",
 				color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
 				opacity: 0.721212, // baseColorFactor Alpha
@@ -443,17 +446,18 @@ class App {
 				metalness: 0, // default if not specified
 				roughness: 1, // default if not specified
 			})
-			this.scene.add(obj)
+			this.scene.add(mesh)
 		})
 	}
 
 	async loadEyeWet(objloader, textureLoader) {
-		this.eyewet.specular = textureLoader.load("/facetoy/eye/EyeWet.png")
-
 		objloader.load("/facetoy/EyeWet.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshPhysicalMaterial({
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = new MeshPhysicalMaterial({
 				name: "Eye_Wet",
 				color: new Color(0, 0, 0), // baseColorFactor RGB
 				opacity: 0.1, // baseColorFactor Alpha
@@ -466,9 +470,9 @@ class App {
 				// You must assign the correct texture loaded from GLTF later:
 				// specularMap: textures[11]
 			})
-			obj.material.specularMap = this.eyewet.specular
+			// mesh.material.specularMap = this.eyewet.specular
 			// specularMap: this.eyewet.specular, // KHR_materials_specular
-			this.scene.add(obj)
+			this.scene.add(mesh)
 		})
 	}
 
@@ -508,14 +512,24 @@ class App {
 
 	async loadLashes(objloader, textureLoader) {
 		objloader.load("/facetoy/Lashes.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = new MeshPhysicalMaterial({
+				name: "Brows",
+				color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
+				opacity: 0.721212, // baseColorFactor Alpha
+				transparent: true, // alphaMode: "BLEND"
+				side: DoubleSide, // doubleSided: true
+				metalness: 1, // metallicFactor
+				roughness: 1, // roughnessFactor
+				ior: 1.45, // KHR_materials_ior
+				specularColor: new Color(2, 2, 2), // KHR_materials_specular
+				emissive: new Color(0, 0, 0), // emissiveFactor
 			})
-			this.scene.add(obj)
+			this.scene.add(mesh)
 		})
 	}
 
@@ -534,19 +548,25 @@ class App {
 		})
 
 		objloader.load("/facetoy/LensLeft.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
 
-			obj.material = lenMaterial
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
 
-			this.scene.add(obj)
+			mesh.material = lenMaterial
+
+			this.scene.add(mesh)
 		})
 		objloader.load("/facetoy/LensRight.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = lenMaterial
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
 
-			this.scene.add(obj)
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = lenMaterial
+
+			this.scene.add(mesh)
 		})
 	}
 	async loadEyeball(objloader, textureLoader) {
@@ -598,15 +618,15 @@ class App {
 		const textureLoader = new TextureLoader(loadingManager)
 
 		// Brows
-		// this.loadBrows(objloader, textureLoader)
+		this.loadBrows(objloader, textureLoader)
 		// EyeWet
-		// this.loadEyeWet(objloader, textureLoader)
+		this.loadEyeWet(objloader, textureLoader)
 
 		this.loadFace(objloader, textureLoader)
 
-		// this.loadLens(objloader, textureLoader)
+		this.loadLens(objloader, textureLoader)
 
-		// this.loadLashes(objloader, textureLoader)
+		this.loadLashes(objloader, textureLoader)
 
 		this.loadEyeball(objloader, textureLoader)
 
