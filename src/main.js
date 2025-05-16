@@ -138,11 +138,35 @@ class App {
 		point2: undefined,
 	}
 
+	// components
 	face = {
 		albedo: null,
 		normal: null,
 		roughness: null,
 		specular: null,
+	}
+	eyewet = {
+		specular: null,
+	}
+	lens = {
+		specular: null,
+		normal: null,
+	}
+	eyeball = {
+		albedo: null,
+		height: null,
+		normal: null,
+		roghness: null,
+		specular: null,
+	}
+
+	teeth = {
+		albedo: null,
+		normal: null,
+	}
+	tougue = {
+		albedo: null,
+		normal: null,
 	}
 
 	pmremGenerator
@@ -385,40 +409,50 @@ class App {
 		objloader.load("/facetoy/Brows.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
+			obj.material = new MeshPhysicalMaterial({
+				name: "Brows",
+				color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
+				opacity: 0.721212, // baseColorFactor Alpha
+				transparent: true, // alphaMode: "BLEND"
+				side: DoubleSide, // doubleSided: true
+				ior: 1.45, // KHR_materials_ior
+				specularColor: new Color(2, 2, 2), // KHR_materials_specular
+				transmission: 0, // set explicitly if not used
+				metalness: 0, // default if not specified
+				roughness: 1, // default if not specified
 			})
 			this.scene.add(obj)
 		})
 	}
 
 	async loadEyeWet(objloader, textureLoader) {
+		this.eyewet.specular = textureLoader.load("/facetoy/eye/EyeWet.png")
+		this.eyewet.specular.colorSpace = LinearSRGBColorSpace
+
 		objloader.load("/facetoy/EyeWet.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
-			obj.material = new MeshStandardMaterial({
-				color: 0x000000,
-				roughness: 0.5,
-				metalness: 0.5,
+			obj.material = new MeshPhysicalMaterial({
+				name: "Eye_Wet",
+				color: new Color(0, 0, 0), // baseColorFactor RGB
+				opacity: 0.1, // baseColorFactor Alpha
+				transparent: true, // alphaMode: "BLEND"
+				side: DoubleSide, // doubleSided: true
+				roughness: 0.2030302882194519, // from pbrMetallicRoughness
+				metalness: 0, // from pbrMetallicRoughness
+				ior: 1.45, // KHR_materials_ior
+				// Placeholder for specular texture (index 11)
+				// You must assign the correct texture loaded from GLTF later:
+				// specularMap: textures[11]
 			})
+			obj.material.specularMap = this.eyewet.specular
+			// specularMap: this.eyewet.specular, // KHR_materials_specular
 			this.scene.add(obj)
 		})
-		// objloader.load("/facetoy/EyeWet.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
 	}
 
 	async loadFace(objloader, textureLoader) {
-		// objloader.load("/facetoy/Face.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
-		this.face.albedo = textureLoader.load("/facetoy/face/Face_Albedo.jpg")
+		this.face.albedo = textureLoader.load("/facetoy/face/baseColor_1.png")
 		this.face.albedo.colorSpace = SRGBColorSpace
 		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
 		this.face.albedo.colorSpace = LinearSRGBColorSpace
@@ -432,24 +466,16 @@ class App {
 
 			obj.traverse((child) => {
 				if (child.isMesh) {
-					// const geometry = child.geometry
-					const geometry = child.geometry.toNonIndexed()
-					geometry.computeVertexNormals()
-					// console.log("geometry", geometry)
-
-					// child.material = material
 					child.castShadow = true
 					child.receiveShadow = true
 
 					const material = new MeshPhysicalMaterial({
-						// name: "MaterialFace",
-						// side: DoubleSide,
+						map: this.face.albedo,
+						metalnessMap: this.face.roughness,
+						normalMap: this.face.normal,
 						clearcoat: 0.04848484694957733,
 						clearcoatRoughness: 0.12393935769796371,
 						ior: 1.4500000476837158,
-						normalMap: this.face.normal,
-						map: this.face.albedo,
-						metalnessMap: this.face.roughness,
 						metalness: 0,
 					})
 					const smoothMesh = new Mesh(child.geometry, material)
