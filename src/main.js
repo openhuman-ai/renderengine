@@ -47,6 +47,7 @@ import { MathUtils } from "./math/MathUtils"
 import { OBJLoader } from "./jsm/loaders/OBJLoader"
 import { PMREMGenerator } from "./extras/PMREMGenerator"
 import { Vector2 } from "./math/Vector2"
+import { DirectionalLightHelper } from "./helpers/DirectionalLightHelper"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -258,7 +259,7 @@ class App {
 		// const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * this.cameraParams.focalLength))
 		// const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
-		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.5, 10000)
+		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.1, 10000)
 		// this.camera.fov = MathUtils.radToDeg(fovVertical)
 		// this.camera.setFocalLength(this.cameraParams.focalLength)
 
@@ -325,6 +326,8 @@ class App {
 		this.lights.direct = new DirectionalLight(0xffffff, 2.5)
 		this.lights.direct.position.set(0.5, 0, 0.866)
 		this.scene.add(this.lights.direct)
+		const helper = new DirectionalLightHelper(this.lights.direct, 5)
+		this.scene.add(helper)
 	}
 
 	setupEventListeners() {
