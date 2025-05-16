@@ -538,17 +538,17 @@ class App {
 		// EyeWet
 		this.loadEyeWet(objloader, textureLoader)
 
-		// this.loadFace(objloader, textureLoader)
+		this.loadFace(objloader, textureLoader)
 
 		this.loadLashes(objloader, textureLoader)
 
 		this.loadEyeball(objloader, textureLoader)
 
-		objloader.load("/facetoy/Teeth.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			this.scene.add(obj)
-		})
+		// objloader.load("/facetoy/Teeth.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
 		// objloader.load("/facetoy/Tongue.obj", (obj) => {
 		// 	obj.scale.set(1.5, 1.5, 1.5)
 		// 	obj.position.set(0, -0.25, 0)
