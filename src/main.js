@@ -145,6 +145,7 @@ class App {
 		normal: null,
 		roughness: null,
 		specular: null,
+		displacement: null,
 	}
 	eyewet = {
 		specular: null,
@@ -155,10 +156,10 @@ class App {
 	}
 	eyeball = {
 		baseColor: null,
-		height: null,
 		normal: null,
 		roghness: null,
 		specular: null,
+		displacement: null,
 	}
 
 	teeth = {
@@ -413,15 +414,15 @@ class App {
 		this.face.specular = textureLoader.load("/facetoy/specular/specular_face.png")
 		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_3.png")
 
-		this.face.normal = textureLoader.load("/facetoy/normal/normal_1.png")
-		this.lens.normal = textureLoader.load("/facetoy/normal/normal_2.png")
-		this.eyeball.normal = textureLoader.load("/facetoy/normal/normal_3.png")
+		this.face.normal = textureLoader.load("/facetoy/normal/normal_face.png")
+		this.lens.normal = textureLoader.load("/facetoy/normal/normal_lens.png")
+		this.eyeball.normal = textureLoader.load("/facetoy/normal/normal_eyeball.png")
 		this.teeth.normal = textureLoader.load("/facetoy/normal/normal_4.png")
 		this.tongue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
 
-		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_1.png")
+		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_face.png")
 		this.face.baseColor.colorSpace = SRGBColorSpace
-		this.eyeball.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_2.png")
+		this.eyeball.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_eyeball.png")
 		this.eyeball.baseColor.colorSpace = SRGBColorSpace
 		this.teeth.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_3.png")
 		this.teeth.baseColor.colorSpace = SRGBColorSpace
@@ -429,7 +430,11 @@ class App {
 		this.tongue.baseColor.colorSpace = SRGBColorSpace
 
 		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_face.png")
-		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_2.png")
+		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_eyeball.png")
+
+		this.face.displacement = textureLoader.load("/facetoy/displacement/displacement_face.png")
+		this.eyeball.displacement = textureLoader.load("/facetoy/displacement/displacement_eyeball.png")
+
 	}
 
 	async loadBrows(objloader, textureLoader) {
@@ -500,6 +505,10 @@ class App {
 
 				normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
 				normalScale: new Vector2(0.7, 0.7), // normalTexture scale
+
+				displacementMap: this.face.displacement,
+				displacementScale: 0.00001,
+				displacementBias: 0.00001,
 
 				// Clearcoat extension
 				clearcoat: 0.04848499968647957,
@@ -579,22 +588,25 @@ class App {
 		})
 	}
 	async loadEyeball(objloader, textureLoader) {
-		// this.eyeball.baseColor = textureLoader.load("/facetoy/face/baseColor_1.png")
-		// this.eyeball.baseColor.colorSpace = SRGBColorSpace
-		// this.eyeball.normal = textureLoader.load("/facetoy/face/Normal.png")
-		// this.eyeball.specular = textureLoader.load("/facetoy/face/Glossy.png")
-		// this.eyeball.roughness = textureLoader.load("/facetoy/face/Roghness.png")
-
 		const eyeBallMaterial = new MeshPhysicalMaterial({
 			name: "Realtime_Eyeball_Left",
 			side: DoubleSide, // doubleSided: true
 			metalness: 0, // metallicFactor: 0
 			map: this.eyeball.baseColor, // textures[4], // baseColorTexture index 4
-			metalnessMap: this.eyeball.roghness, // textures[6], // metallicRoughnessTexture index 6
-			roughnessMap: this.eyeball.roghness, // textures[6], // same texture as metalnessMap
+			metalnessMap: this.eyeball.roughness, // textures[6], // metallicRoughnessTexture index 6
+			roughnessMap: this.eyeball.roughness, // textures[6], // same texture as metalnessMap
 			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
+
+			displacementMap: this.eyeball.displacement,
+			displacementScale: 0.0001,
+			displacementBias: 0.0001,
+
 			ior: 1.45, // KHR_materials_ior
-			specularMap: this.eyeball.specular, // textures[13], // KHR_materials_specular
+
+			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularIntensityMap: this.eyeball.specular,
+			specularColor: 0xffffff,
+			specularColorMap: this.eyeball.specular,
 		})
 		objloader.load("/facetoy/RealtimeEyeballLeft.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
