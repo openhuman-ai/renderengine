@@ -258,7 +258,7 @@ class App {
 		// const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * this.cameraParams.focalLength))
 		// const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
-		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.1, 10000)
+		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.5, 10000)
 		// this.camera.fov = MathUtils.radToDeg(fovVertical)
 		// this.camera.setFocalLength(this.cameraParams.focalLength)
 
@@ -506,8 +506,8 @@ class App {
 				normalScale: new Vector2(0.7, 0.7), // normalTexture scale
 
 				displacementMap: this.face.displacement,
-				displacementScale: 0.00001,
-				displacementBias: 0.00001,
+				displacementScale: 0.0001,
+				displacementBias: 0.0001,
 
 				// Clearcoat extension
 				clearcoat: 0.04848499968647957,
@@ -572,14 +572,14 @@ class App {
 			// specularColor: new Color(2, 2, 2), // KHR_materials_specular.specularColorFactor
 			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
 			specularIntensityMap: this.lens.specular,
-			specularColor: 0xffffff,
+			specularColor: new Color(2, 2, 2),
 			specularColorMap: this.lens.specular,
 
 			// IOR Extension
 			ior: 1.45, // KHR_materials_ior
 
 			// Emissive (unused)
-			emissive: new Color(0, 0, 0),
+			// emissive: 0x000000,
 		})
 
 		objloader.load("/facetoy/LensLeft.obj", (obj) => {
@@ -613,6 +613,7 @@ class App {
 			metalnessMap: this.eyeball.roughness, // textures[6], // metallicRoughnessTexture index 6
 			roughnessMap: this.eyeball.roughness, // textures[6], // same texture as metalnessMap
 			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
+			// wireframe:true,
 
 			displacementMap: this.eyeball.displacement,
 			displacementScale: 0.0001,
@@ -645,6 +646,7 @@ class App {
 			mesh.receiveShadow = true
 			mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
+			// mesh.position.set(0, -0.24, 0)
 			mesh.material = eyeBallMaterial
 
 			this.scene.add(mesh)
@@ -725,15 +727,15 @@ class App {
 		const objloader = new OBJLoader(loadingManager)
 		const textureLoader = new TextureLoader(loadingManager)
 
-		// this.loadFace(objloader, textureLoader)
+		this.loadFace(objloader, textureLoader)
 
-		// this.loadBrows(objloader, textureLoader)
-		// this.loadEyeWet(objloader, textureLoader)
+		this.loadBrows(objloader, textureLoader)
+		this.loadEyeWet(objloader, textureLoader)
 		this.loadLens(objloader, textureLoader)
-		// this.loadLashes(objloader, textureLoader)
+		this.loadLashes(objloader, textureLoader)
 		this.loadEyeball(objloader, textureLoader)
-		// this.loadTeeth(objloader, textureLoader)
-		// this.loadTongue(objloader, textureLoader)
+		this.loadTeeth(objloader, textureLoader)
+		this.loadTongue(objloader, textureLoader)
 	}
 
 	async loadGLTF() {
@@ -931,22 +933,22 @@ class App {
 		})
 
 		// Ambient Light controls
-		// const ambientFolder = this.gui.addFolder("Ambient Light")
-		// ambientFolder.close() // Close by default
-		// ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
-		// ambientFolder.addColor(this.lights.ambient, "color").name("Color")
-		// ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
-		// ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
-		// ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
+		const ambientFolder = this.gui.addFolder("Ambient Light")
+		ambientFolder.close() // Close by default
+		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
+		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
+		ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
+		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
+		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
 
 		// Main Light controls
-		// const mainFolder = this.gui.addFolder("Main Light")
-		// mainFolder.close() // Close by default
-		// mainFolder.add(this.lights.direct, "intensity", 0, 2).name("Intensity")
-		// mainFolder.addColor(this.lights.direct, "color").name("Color")
-		// mainFolder.add(this.lights.direct.position, "x", -100, 100).name("Position X")
-		// mainFolder.add(this.lights.direct.position, "y", -100, 100).name("Position Y")
-		// mainFolder.add(this.lights.direct.position, "z", -100, 100).name("Position Z")
+		const mainFolder = this.gui.addFolder("Direct Light")
+		mainFolder.close() // Close by default
+		mainFolder.add(this.lights.direct, "intensity", 0, 2).name("Intensity")
+		mainFolder.addColor(this.lights.direct, "color").name("Color")
+		mainFolder.add(this.lights.direct.position, "x", -100, 100).name("Position X")
+		mainFolder.add(this.lights.direct.position, "y", -100, 100).name("Position Y")
+		mainFolder.add(this.lights.direct.position, "z", -100, 100).name("Position Z")
 
 		// // Front Light controls
 		// const frontFolder = this.gui.addFolder("Front Light")
@@ -1024,12 +1026,12 @@ class App {
 	}
 
 	addHelpers() {
-		// this.helpers.mainLight = new PointLightHelper(this.lights.direct, 15)
-		// this.scene.add(this.helpers.mainLight)
-		// this.helpers.mainLight.visible = false
-		// this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
-		// this.scene.add(this.helpers.ambient)
-		// this.helpers.ambient.visible = false
+		this.helpers.mainLight = new PointLightHelper(this.lights.direct, 15)
+		this.scene.add(this.helpers.mainLight)
+		this.helpers.mainLight.visible = false
+		this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
+		this.scene.add(this.helpers.ambient)
+		this.helpers.ambient.visible = false
 
 		this.helpers.grid = new GridHelper(400, 40, 0x0000ff, 0x808080)
 		this.helpers.grid.position.y = -150
