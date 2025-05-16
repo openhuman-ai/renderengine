@@ -46,6 +46,7 @@ import { SkeletonHelper } from "./helpers/SkeletonHelper"
 import { MathUtils } from "./math/MathUtils"
 import { OBJLoader } from "./jsm/loaders/OBJLoader"
 import { PMREMGenerator } from "./extras/PMREMGenerator"
+import { Vector2 } from "./math/Vector2"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -427,7 +428,6 @@ class App {
 
 	async loadEyeWet(objloader, textureLoader) {
 		this.eyewet.specular = textureLoader.load("/facetoy/eye/EyeWet.png")
-		this.eyewet.specular.colorSpace = LinearSRGBColorSpace
 
 		objloader.load("/facetoy/EyeWet.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
@@ -455,11 +455,8 @@ class App {
 		this.face.albedo = textureLoader.load("/facetoy/face/baseColor_1.png")
 		this.face.albedo.colorSpace = SRGBColorSpace
 		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
-		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
-		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
-		this.face.albedo.colorSpace = LinearSRGBColorSpace
 		objloader.load("/facetoy/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
@@ -469,14 +466,28 @@ class App {
 					child.castShadow = true
 					child.receiveShadow = true
 
+					// const material = new MeshPhysicalMaterial({
+					// 	map: this.face.albedo,
+					// 	metalnessMap: this.face.roughness,
+					// 	normalMap: this.face.normal,
+					// 	clearcoat: 0.04848484694957733,
+					// 	clearcoatRoughness: 0.12393935769796371,
+					// 	ior: 1.4500000476837158,
+					// 	metalness: 0,
+					// })
 					const material = new MeshPhysicalMaterial({
-						map: this.face.albedo,
-						metalnessMap: this.face.roughness,
-						normalMap: this.face.normal,
-						clearcoat: 0.04848484694957733,
-						clearcoatRoughness: 0.12393935769796371,
-						ior: 1.4500000476837158,
-						metalness: 0,
+						name: "Material.001",
+						side: DoubleSide, // doubleSided: true
+						metalness: 0, // from metallicFactor
+						map: this.face.albedo, // baseColorTexture (index 0)
+						metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
+						roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
+						normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
+						normalScale: new Vector2(0.7, 0.7), // normalTexture scale
+						clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
+						clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
+						ior: 1.45, // KHR_materials_ior
+						specularMap: this.face.specular, //textures[12], // KHR_materials_specular
 					})
 					const smoothMesh = new Mesh(child.geometry, material)
 					smoothMesh.scale.set(1.5, 1.5, 1.5)
