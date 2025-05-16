@@ -218,6 +218,8 @@ class App {
 		// 	scene.environment = texture
 		// })
 		const scene = this.scene
+		this.pmremGenerator = new PMREMGenerator(this.renderer)
+		this.pmremGenerator.compileEquirectangularShader()
 
 		// const hdrEquirect = new RGBELoader().load("/studio_small_03_1k.hdr", function (texture) {
 		// 	texture.mapping = EquirectangularReflectionMapping
@@ -227,14 +229,21 @@ class App {
 		// 	scene.background = texture
 		// })
 
+		// const pmremGenerator = this.pmremGenerator
+		// const exrLoader = new EXRLoader()
+		// exrLoader.load("/venice_sunset_1k.exr", function (texture) {
+		// 	const envMap = pmremGenerator.fromEquirectangular(texture).texture
+		// 	// texture.mapping = EquirectangularReflectionMapping
+
+		// 	scene.environment = envMap
+		// 	scene.background = envMap
+		// })
 		const exrLoader = new EXRLoader()
 		exrLoader.load("/venice_sunset_1k.exr", function (texture) {
 			texture.mapping = EquirectangularReflectionMapping
 
-			// Set the environment map
 			scene.environment = texture
 
-			// Optionally, set the background
 			scene.background = texture
 		})
 	}
@@ -271,8 +280,8 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.exposure = 0.23
 		this.renderer.toneMapping = ACESFilmicToneMapping
+		this.renderer.toneMappingExposure = Math.pow(2, 0.23)
 
 		// this.renderer.gammaFactor = 2.2
 		// this.renderer.gammaOutput = true
@@ -308,18 +317,15 @@ class App {
 	}
 
 	setupLights() {
-		const ambientLight = new AmbientLight(0xffffff, 0.63)
-		this.scene.add(ambientLight)
+		// const ambientLight = new AmbientLight(0xffffff, 0.63)
+		// this.scene.add(ambientLight)
 
-		const pointLight = new PointLight(0xffffff, 1)
-		pointLight.position.set(5, 5, 5)
-		this.scene.add(pointLight)
-		this.lights.direct = new DirectionalLight("white", 1.484)
-		this.lights.direct.position.set(10, 10, 10)
-		this.scene.add(this.lights.direct)
-
-		this.lights.ambient = new AmbientLight("white", 0.62)
+		this.lights.ambient = new AmbientLight(0xffffff, 0.63)
 		this.scene.add(this.lights.ambient)
+
+		this.lights.direct = new DirectionalLight(0xffffff, 2.5)
+		this.lights.direct.position.set(0.5, 0, 0.866)
+		this.scene.add(this.lights.direct)
 	}
 
 	setupEventListeners() {
@@ -478,12 +484,7 @@ class App {
 	}
 
 	async loadFace(objloader, textureLoader) {
-		// this.face.baseColor = textureLoader.load("/facetoy/face/baseColor_1.png")
-		// this.face.baseColor.colorSpace = SRGBColorSpace
-		// this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
-		// this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
-		// this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
-		objloader.load("/facetoy/Head.obj", (obj) => {
+		objloader.load("/facetoy/HeadOnly.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
@@ -688,15 +689,15 @@ class App {
 		const objloader = new OBJLoader(loadingManager)
 		const textureLoader = new TextureLoader(loadingManager)
 
-		// this.loadFace(objloader, textureLoader)
+		this.loadFace(objloader, textureLoader)
 
-		// this.loadBrows(objloader, textureLoader)
-		// this.loadEyeWet(objloader, textureLoader)
-		// this.loadLens(objloader, textureLoader)
-		// this.loadLashes(objloader, textureLoader)
-		// this.loadEyeball(objloader, textureLoader)
+		this.loadBrows(objloader, textureLoader)
+		this.loadEyeWet(objloader, textureLoader)
+		this.loadLens(objloader, textureLoader)
+		this.loadLashes(objloader, textureLoader)
+		this.loadEyeball(objloader, textureLoader)
 		this.loadTeeth(objloader, textureLoader)
-		this.loadTongue(objloader, textureLoader)
+		// this.loadTongue(objloader, textureLoader)
 	}
 
 	async loadGLTF() {
