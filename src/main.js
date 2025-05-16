@@ -171,7 +171,7 @@ class App {
 		// this.setupCube()
 		this.loadTexure()
 		this.loadModel()
-		this.loadGLTF()
+		// this.loadGLTF()
 		// this.loadJSON()
 		// this.loadCustomModel()
 		this.createEnvironment()
@@ -246,16 +246,16 @@ class App {
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.toneMapping = ACESFilmicToneMapping
-		this.renderer.exposure = 1.0
+		// this.renderer.exposure = 0.23
+		// this.renderer.toneMapping = ACESFilmicToneMapping
 
-		this.renderer.gammaFactor = 2.2
-		this.renderer.gammaOutput = true
+		// this.renderer.gammaFactor = 2.2
+		// this.renderer.gammaOutput = true
 		// this.renderer.setClearColor(0xffffff, 1)
 
 		// const room = new RoomEnvironment()
-		this.pmremGenerator = new PMREMGenerator(this.renderer)
-		this.pmremGenerator.compileEquirectangularShader()
+		// this.pmremGenerator = new PMREMGenerator(this.renderer)
+		// this.pmremGenerator.compileEquirectangularShader()
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
 	}
 
@@ -282,12 +282,12 @@ class App {
 	}
 
 	setupLights() {
-		// const ambientLight = new AmbientLight(0xffffff, 0.5)
-		// this.scene.add(ambientLight)
+		const ambientLight = new AmbientLight(0xffffff, 0.5)
+		this.scene.add(ambientLight)
 
-		// const pointLight = new PointLight(0xffffff, 1)
-		// pointLight.position.set(5, 5, 5)
-		// this.scene.add(pointLight)
+		const pointLight = new PointLight(0xffffff, 1)
+		pointLight.position.set(5, 5, 5)
+		this.scene.add(pointLight)
 		this.lights.main = new DirectionalLight("white", 1.484)
 		this.lights.main.position.set(10, 10, 10)
 		this.scene.add(this.lights.main)
@@ -381,11 +381,7 @@ class App {
 		// this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
 	}
 
-	async loadModel() {
-		const objloader = new OBJLoader(loadingManager)
-		const textureLoader = new TextureLoader(loadingManager)
-
-		// Brows
+	async loadBrows(objloader, textureLoader) {
 		objloader.load("/facetoy/Brows.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
@@ -396,14 +392,33 @@ class App {
 			})
 			this.scene.add(obj)
 		})
+	}
+
+	async loadEyeWet(objloader, textureLoader) {
 		objloader.load("/facetoy/EyeWet.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
 			this.scene.add(obj)
 		})
+		// objloader.load("/facetoy/EyeWet.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
+	}
 
-		// Face
-		this.face.albedo = textureLoader.load("/facetoy/face/Albedo.png")
+	async loadFace(objloader, textureLoader) {
+		// objloader.load("/facetoy/Face.obj", (obj) => {
+		// 	obj.scale.set(1.5, 1.5, 1.5)
+		// 	obj.position.set(0, -0.25, 0)
+		// 	this.scene.add(obj)
+		// })
+		this.face.albedo = textureLoader.load("/facetoy/face/Face_Albedo.jpg")
 		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
 		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
 		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
@@ -411,83 +426,130 @@ class App {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			const material = new MeshPhysicalMaterial({
-				map: this.face.albedo,
-				metalness: 0,
-				ior: 1.45,
-				reflectivity: 0.5,
-				roughnessMap: this.face.roughness,
-				normalMap: this.face.normal,
-				clearcoatMap: this.face.specular,
-				// envMap: this.scene.environment,
-				transmission: 0,
-				thickness: 10.0,
-				clearcoat: 1.0,
-				clearcoatRoughness: 1.0,
+			obj.traverse((child) => {
+				if (child.isMesh) {
+					// const geometry = child.geometry
+					const geometry = child.geometry.toNonIndexed()
+					geometry.computeVertexNormals()
+					console.log("geometry", geometry)
+
+					// child.material = material
+					child.castShadow = true
+					child.receiveShadow = true
+					// obj.material.flatShading = true
+				}
 			})
 
-			mesh.geometry.computeVertexNormals()
+			const material = new MeshPhysicalMaterial({
+				// name: "MaterialFace",
+				// side: DoubleSide,
+				clearcoat: 0.04848484694957733,
+				clearcoatRoughness: 0.12393935769796371,
+				ior: 1.4500000476837158,
+				normalMap: this.face.normal,
+				map: this.face.albedo,
+				metalnessMap: this.face.roughness,
+				metalness: 0,
+			})
 			const smoothMesh = new Mesh(mesh.geometry, material)
 			smoothMesh.scale.set(1.5, 1.5, 1.5)
 			smoothMesh.position.set(0, -0.25, 0)
 			this.scene.add(smoothMesh)
+
+			// mesh.geometry.computeVertexNormals()
+			//
+			//
+			// smoothMesh.position.set(0, -0.25, 0)
+			// this.scene.add(smoothMesh)
 			// mesh.material = material
 			// this.scene.add(mesh)
 
-			// obj.traverse((child) => {
-			// 	if (child.isMesh) {
-			// 		// const geometry = child.geometry
-			// 		const geometry = child.geometry.toNonIndexed()
-			// 		geometry.computeVertexNormals()
-			// 		console.log("geometry", geometry)
-
-			// 		child.material = material
-			// 		child.castShadow = true
-			// 		child.receiveShadow = true
-			// 		obj.material.flatShading = true
-			// 	}
-			// })
-
 			// this.scene.add(obj)
 		})
+	}
 
+	async loadLashes(objloader, textureLoader) {
 		objloader.load("/facetoy/Lashes.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
 			this.scene.add(obj)
 		})
+	}
 
+	async loadLens(objloader, textureLoader) {
 		objloader.load("/facetoy/LensLeft.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
+
 			this.scene.add(obj)
 		})
 		objloader.load("/facetoy/LensRight.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
+
 			this.scene.add(obj)
 		})
+	}
+	async loadEyeball(objloader, textureLoader) {
 		objloader.load("/facetoy/RealtimeEyeballLeft.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
 			this.scene.add(obj)
 		})
 		objloader.load("/facetoy/RealtimeEyeballRight.obj", (obj) => {
 			obj.scale.set(1.5, 1.5, 1.5)
 			obj.position.set(0, -0.25, 0)
+			obj.material = new MeshStandardMaterial({
+				color: 0x000000,
+				roughness: 0.5,
+				metalness: 0.5,
+			})
 			this.scene.add(obj)
 		})
-		// objloader.load("/facetoy/Teeth.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
+	}
+
+	async loadModel() {
+		const objloader = new OBJLoader(loadingManager)
+		const textureLoader = new TextureLoader(loadingManager)
+
+		// Brows
+		this.loadBrows(objloader, textureLoader)
+		// EyeWet
+		this.loadEyeWet(objloader, textureLoader)
+
+		// this.loadFace(objloader, textureLoader)
+
+		this.loadLashes(objloader, textureLoader)
+
+		this.loadEyeball(objloader, textureLoader)
+
+		objloader.load("/facetoy/Teeth.obj", (obj) => {
+			obj.scale.set(1.5, 1.5, 1.5)
+			obj.position.set(0, -0.25, 0)
+			this.scene.add(obj)
+		})
 		// objloader.load("/facetoy/Tongue.obj", (obj) => {
-		// 	obj.scale.set(1.5, 1.5, 1.5)
-		// 	obj.position.set(0, -0.25, 0)
-		// 	this.scene.add(obj)
-		// })
-		// objloader.load("/facetoy/Head.obj", (obj) => {
 		// 	obj.scale.set(1.5, 1.5, 1.5)
 		// 	obj.position.set(0, -0.25, 0)
 		// 	this.scene.add(obj)
@@ -495,9 +557,9 @@ class App {
 	}
 
 	async loadGLTF() {
-		let mesh = {}
-		const loader = new OBJLoader()
-		const scene = this.scene
+		// let mesh = {}
+		// const loader = new OBJLoader()
+		// const scene = this.scene
 
 		// const objectsToLoad = [
 		// 	{ path: "/obj/Brows.obj" },
@@ -531,18 +593,18 @@ class App {
 		// 		// console.error("An error happened:", error)
 		// 	}
 		// )
-		// const loader = new GLTFLoader(loadingManager)
-		// loader.load("/facetoy/facetoy.gltf", (gltf) => {
-		// 	mesh = gltf.scene
+		const loader = new GLTFLoader(loadingManager)
+		loader.load("/facetoy.glb", (gltf) => {
+			let mesh = gltf.scene
 
-		// 	mesh.position.set(0, -20, 0)
-		// 	// mesh.scale.set(20, 20, 20)
+			// mesh.position.set(0, -20, 0)
+			// mesh.scale.set(20, 20, 20)
 
-		// 	console.log("mesh", mesh)
+			console.log("mesh", mesh)
 
-		// 	this.scene.add(mesh)
-		// 	// this.addMeshHelpers(mesh)
-		// })
+			this.scene.add(mesh)
+			// this.addMeshHelpers(mesh)
+		})
 	}
 	async loadJSON() {
 		// const response = await fetch("/model/Facial.gltf")
@@ -725,22 +787,22 @@ class App {
 		})
 
 		// Ambient Light controls
-		const ambientFolder = this.gui.addFolder("Ambient Light")
-		ambientFolder.close() // Close by default
-		ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
-		ambientFolder.addColor(this.lights.ambient, "color").name("Color")
-		ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
-		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
-		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
+		// const ambientFolder = this.gui.addFolder("Ambient Light")
+		// ambientFolder.close() // Close by default
+		// ambientFolder.add(this.lights.ambient, "intensity", 0, 2).name("Intensity")
+		// ambientFolder.addColor(this.lights.ambient, "color").name("Color")
+		// ambientFolder.add(this.lights.ambient.position, "x", -100, 100).name("Position X")
+		// ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
+		// ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
 
 		// Main Light controls
-		const mainFolder = this.gui.addFolder("Main Light")
-		mainFolder.close() // Close by default
-		mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
-		mainFolder.addColor(this.lights.main, "color").name("Color")
-		mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
-		mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
-		mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
+		// const mainFolder = this.gui.addFolder("Main Light")
+		// mainFolder.close() // Close by default
+		// mainFolder.add(this.lights.main, "intensity", 0, 2).name("Intensity")
+		// mainFolder.addColor(this.lights.main, "color").name("Color")
+		// mainFolder.add(this.lights.main.position, "x", -100, 100).name("Position X")
+		// mainFolder.add(this.lights.main.position, "y", -100, 100).name("Position Y")
+		// mainFolder.add(this.lights.main.position, "z", -100, 100).name("Position Z")
 
 		// // Front Light controls
 		// const frontFolder = this.gui.addFolder("Front Light")
@@ -818,12 +880,12 @@ class App {
 	}
 
 	addHelpers() {
-		this.helpers.mainLight = new PointLightHelper(this.lights.main, 15)
-		this.scene.add(this.helpers.mainLight)
-		this.helpers.mainLight.visible = false
-		this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
-		this.scene.add(this.helpers.ambient)
-		this.helpers.ambient.visible = false
+		// this.helpers.mainLight = new PointLightHelper(this.lights.main, 15)
+		// this.scene.add(this.helpers.mainLight)
+		// this.helpers.mainLight.visible = false
+		// this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
+		// this.scene.add(this.helpers.ambient)
+		// this.helpers.ambient.visible = false
 
 		this.helpers.grid = new GridHelper(400, 40, 0x0000ff, 0x808080)
 		this.helpers.grid.position.y = -150
