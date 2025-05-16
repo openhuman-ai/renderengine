@@ -415,9 +415,16 @@ class App {
 		this.tougue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
 
 		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_1.png")
+		this.face.baseColor.colorSpace = SRGBColorSpace
 		this.eyeball.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_2.png")
+		this.eyeball.baseColor.colorSpace = SRGBColorSpace
 		this.teeth.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_3.png")
+		this.teeth.baseColor.colorSpace = SRGBColorSpace
 		this.tougue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
+		this.tougue.baseColor.colorSpace = SRGBColorSpace
+
+		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_1.png")
+		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_2.png")
 	}
 
 	async loadBrows(objloader, textureLoader) {
@@ -466,11 +473,11 @@ class App {
 	}
 
 	async loadFace(objloader, textureLoader) {
-		this.face.albedo = textureLoader.load("/facetoy/face/baseColor_1.png")
-		this.face.albedo.colorSpace = SRGBColorSpace
-		this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
-		this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
-		this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
+		// this.face.baseColor = textureLoader.load("/facetoy/face/baseColor_1.png")
+		// this.face.baseColor.colorSpace = SRGBColorSpace
+		// this.face.normal = textureLoader.load("/facetoy/face/Normal.png")
+		// this.face.specular = textureLoader.load("/facetoy/face/Glossy.png")
+		// this.face.roughness = textureLoader.load("/facetoy/face/Roghness.png")
 		objloader.load("/facetoy/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
@@ -484,7 +491,7 @@ class App {
 				name: "FaceMaterial",
 				side: DoubleSide, // doubleSided: true
 				metalness: 0, // from metallicFactor
-				map: this.face.albedo, // baseColorTexture (index 0)
+				map: this.face.baseColor, // baseColorTexture (index 0)
 				metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
 				roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
 				normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
@@ -543,17 +550,17 @@ class App {
 		})
 	}
 	async loadEyeball(objloader, textureLoader) {
-		this.eyeball.albedo = textureLoader.load("/facetoy/face/baseColor_1.png")
-		this.eyeball.albedo.colorSpace = SRGBColorSpace
-		this.eyeball.normal = textureLoader.load("/facetoy/face/Normal.png")
-		this.eyeball.specular = textureLoader.load("/facetoy/face/Glossy.png")
-		this.eyeball.roughness = textureLoader.load("/facetoy/face/Roghness.png")
+		// this.eyeball.baseColor = textureLoader.load("/facetoy/face/baseColor_1.png")
+		// this.eyeball.baseColor.colorSpace = SRGBColorSpace
+		// this.eyeball.normal = textureLoader.load("/facetoy/face/Normal.png")
+		// this.eyeball.specular = textureLoader.load("/facetoy/face/Glossy.png")
+		// this.eyeball.roughness = textureLoader.load("/facetoy/face/Roghness.png")
 
 		const eyeBallMaterial = new MeshPhysicalMaterial({
 			name: "Realtime_Eyeball_Left",
 			side: DoubleSide, // doubleSided: true
 			metalness: 0, // metallicFactor: 0
-			map: this.eyeball.albedo, // textures[4], // baseColorTexture index 4
+			map: this.eyeball.baseColor, // textures[4], // baseColorTexture index 4
 			metalnessMap: this.eyeball.roghness, // textures[6], // metallicRoughnessTexture index 6
 			roughnessMap: this.eyeball.roghness, // textures[6], // same texture as metalnessMap
 			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
@@ -568,64 +575,21 @@ class App {
 			mesh.receiveShadow = true
 			mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
-
-			// mesh.material = new MeshPhysicalMaterial({
-			// 	name: "EyeballMaterial",
-			// 	side: DoubleSide, // doubleSided: true
-			// 	metalness: 0, // from metallicFactor
-			// 	map: this.face.albedo, // baseColorTexture (index 0)
-			// 	metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
-			// 	roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
-			// 	normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
-			// 	normalScale: new Vector2(0.7, 0.7), //s normalTexture scale
-			// 	clearcoat: 0.04848499968647957, // KHR_materials_clearcoat
-			// 	clearcoatRoughness: 0.12393900007009506, // KHR_materials_clearcoat
-			// 	ior: 1.45, // KHR_materials_ior
-			// 	specularMap: this.face.specular, //textures[12], // KHR_materials_specular
-			// })
-			// const material = new MeshPhongMaterial({
-			// 	color: 0x2244ff,
-			// })
-			mesh.material = new MeshPhysicalMaterial({
-				name: "Realtime_Eyeball_Left",
-				side: DoubleSide, // doubleSided: true
-				metalness: 0, // metallicFactor: 0
-				map: this.eyeball.albedo, // textures[4], // baseColorTexture index 4
-				metalnessMap: this.eyeball.roghness, // textures[6], // metallicRoughnessTexture index 6
-				roughnessMap: this.eyeball.roghness, // textures[6], // same texture as metalnessMap
-				normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
-				ior: 1.45, // KHR_materials_ior
-				specularMap: this.eyeball.specular, // textures[13], // KHR_materials_specular
-			})
-
-			this.scene.add(mesh)
-
-			// console.log("mesh", mesh)
-
-			// mesh.scale.set(1.5, 1.5, 1.5)
-			// mesh.position.set(0, -0.25, 0)
-			// mesh.material = eyeBallMaterial
-
-			obj.traverse((child) => {
-				if (child.isMesh) {
-					child.castShadow = true
-					child.receiveShadow = true
-
-					const smoothMesh = new Mesh(child.geometry, eyeBallMaterial)
-					smoothMesh.scale.set(1.5, 1.5, 1.5)
-					smoothMesh.position.set(0, -0.25, 0)
-					this.scene.add(smoothMesh)
-					// obj.material.flatShading = true
-				}
-			})
+			mesh.material = eyeBallMaterial
 
 			this.scene.add(mesh)
 		})
 		objloader.load("/facetoy/RealtimeEyeballRight.obj", (obj) => {
-			obj.scale.set(1.5, 1.5, 1.5)
-			obj.position.set(0, -0.25, 0)
-			obj.material = eyeBallMaterial
-			this.scene.add(obj)
+			const mesh = obj.children.find((child) => child.isMesh)
+			if (!mesh) return
+
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+			mesh.scale.set(1.5, 1.5, 1.5)
+			mesh.position.set(0, -0.25, 0)
+			mesh.material = eyeBallMaterial
+
+			this.scene.add(mesh)
 		})
 	}
 
