@@ -412,7 +412,7 @@ class App {
 
 		this.eyewet.specular = textureLoader.load("/facetoy/specular/specular_1.png")
 		this.face.specular = textureLoader.load("/facetoy/specular/specular_face.png")
-		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_3.png")
+		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_eyeball.png")
 
 		this.face.normal = textureLoader.load("/facetoy/normal/normal_face.png")
 		this.lens.normal = textureLoader.load("/facetoy/normal/normal_lens.png")
@@ -434,7 +434,6 @@ class App {
 
 		this.face.displacement = textureLoader.load("/facetoy/displacement/displacement_face.png")
 		this.eyeball.displacement = textureLoader.load("/facetoy/displacement/displacement_eyeball.png")
-
 	}
 
 	async loadBrows(objloader, textureLoader) {
@@ -553,16 +552,34 @@ class App {
 
 	async loadLens(objloader, textureLoader) {
 		let lenMaterial = new MeshPhysicalMaterial({
-			name: "Lens_Left",
+			name: "Lens Left",
+
+			// PBR
 			color: new Color(0.502883, 0.502887, 0.502887), // baseColorFactor RGB
+			transparent: true, // because alphaMode: BLEND
 			opacity: 0.1, // baseColorFactor Alpha
-			transparent: true, // alphaMode: "BLEND"
-			side: DoubleSide, // doubleSided: true
-			roughness: 0.06363636255264282, // roughnessFactor
-			metalness: 0, // not specified, assume default 0
-			normalMap: this.lens.normal, // normalTexture index 3
+			roughness: 0.06363636,
+			metalness: 1.0,
+
+			// Normals
+			normalMap: this.lens.normal,
+			normalScale: new Vector2(1, 1), // adjust if needed
+
+			// Double-sided rendering
+			side: DoubleSide,
+
+			// Specular Extension
+			// specularColor: new Color(2, 2, 2), // KHR_materials_specular.specularColorFactor
+			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularIntensityMap: this.lens.specular,
+			specularColor: 0xffffff,
+			specularColorMap: this.lens.specular,
+
+			// IOR Extension
 			ior: 1.45, // KHR_materials_ior
-			specularColor: new Color(2, 2, 2), // KHR_materials_specular
+
+			// Emissive (unused)
+			emissive: new Color(0, 0, 0),
 		})
 
 		objloader.load("/facetoy/LensLeft.obj", (obj) => {
@@ -708,14 +725,14 @@ class App {
 		const objloader = new OBJLoader(loadingManager)
 		const textureLoader = new TextureLoader(loadingManager)
 
-		this.loadFace(objloader, textureLoader)
+		// this.loadFace(objloader, textureLoader)
 
-		this.loadBrows(objloader, textureLoader)
-		this.loadEyeWet(objloader, textureLoader)
+		// this.loadBrows(objloader, textureLoader)
+		// this.loadEyeWet(objloader, textureLoader)
 		this.loadLens(objloader, textureLoader)
-		this.loadLashes(objloader, textureLoader)
+		// this.loadLashes(objloader, textureLoader)
 		this.loadEyeball(objloader, textureLoader)
-		this.loadTeeth(objloader, textureLoader)
+		// this.loadTeeth(objloader, textureLoader)
 		// this.loadTongue(objloader, textureLoader)
 	}
 
