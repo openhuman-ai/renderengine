@@ -17,7 +17,7 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, LinearSRGBColorSpace, NormalAnimationBlendMode, SRGBColorSpace } from "./constants"
+import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, LinearSRGBColorSpace, LinearToneMapping, NormalAnimationBlendMode, SRGBColorSpace } from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
@@ -53,6 +53,8 @@ import { Vector3 } from "./math/Vector3"
 import { Object3D } from "./core/Object3D"
 import { Group } from "./objects/Group"
 import { RectAreaLight } from "./lights/RectAreaLight"
+
+import { environments } from "./environments.js"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -94,13 +96,25 @@ const WEBGL_TYPE_SIZES = {
 	MAT4: 16,
 }
 
-class App {
+export class App {
 	canvas
 	renderer
 	camera
-	cameraParams = {
+	backgroundColor
+	state = {
+		bgColor: "#191919",
+		environment: environments[1].name,
+		autoRotate: false,
+		background: true,
 		focalLength: 60,
-		fov: 50,
+		fov: 60,
+		toneMapping: ACESFilmicToneMapping,
+		exposure: 0.4,
+		ambientColor: "#FFFFFF",
+		ambientIntensity: 0.84,
+		directIntensity: 2.2,
+		directColor: "#FFFFFF",
+		punctualLights: true,
 	}
 	scene
 	mixer
@@ -121,21 +135,17 @@ class App {
 		showLightHelpers: false,
 		vnh: false,
 		vth: false,
-
-		exposure: 3,
-		faceClearcoat: 0.04848499968647957,
-		faceClearcoatRoughness: 0.12393900007009506,
 	}
 	helpers = {
 		axes: null,
 		box: null,
 		grid: null,
-		mainLight: null,
-		ambient: null,
-		frontLight: null,
-		backLight: null,
-		point1: null,
-		point2: null,
+		directLight: null,
+		// ambient: null,
+		// frontLight: null,
+		// backLight: null,
+		// point1: null,
+		// point2: null,
 		vnh: null,
 		vth: null,
 		skeleton: null,
@@ -143,11 +153,11 @@ class App {
 	helperFolder
 	lights = {
 		ambient: undefined,
-		main: undefined,
-		front: undefined,
-		back: undefined,
-		point1: undefined,
-		point2: undefined,
+		direct: undefined,
+		// front: undefined,
+		// back: undefined,
+		// point1: undefined,
+		// point2: undefined,
 	}
 
 	// components
@@ -224,6 +234,8 @@ class App {
 	windowHalfX = window.innerWidth / 2
 	windowHalfY = window.innerHeight / 2
 
+	meshRoot
+
 	gltf
 	binaryBuffer
 	mesh
@@ -234,10 +246,12 @@ class App {
 
 	constructor() {
 		this.createRenderer()
-		this.setupCamera()
+		this.createScene()
+		this.createCamera()
+		this.createEnvironment()
 		this.createClock()
 		this.createControls()
-		this.setupLights()
+		this.createLights()
 		// this.setupCube()
 		this.loadTexure()
 		this.loadMaterial()
@@ -245,75 +259,16 @@ class App {
 		// this.loadGLTF()
 		// this.loadJSON()
 		// this.loadCustomModel()
-		this.createEnvironment()
 		this.addHelpers()
 		this.createGUI()
 
 		this.setupEventListeners()
 
+		window.OPENHUMAN = this
+
 		this.renderer.setAnimationLoop(() => {
 			this.render()
 		})
-	}
-
-	createEnvironment() {
-		// const rgbeLoader = new RGBELoader()
-		// rgbeLoader.load("/studio_small_03_1k.hdr", function (texture) {
-		// 	texture.mapping = EquirectangularReflectionMapping
-		// 	scene.background = texture
-		// 	scene.environment = texture
-		// })
-		const scene = this.scene
-		this.pmremGenerator = new PMREMGenerator(this.renderer)
-		this.pmremGenerator.compileEquirectangularShader()
-
-		// const hdrEquirect = new RGBELoader().load("/studio_small_03_1k.hdr", function (texture) {
-		// 	texture.mapping = EquirectangularReflectionMapping
-		// 	// Set the environment map
-		// 	scene.environment = texture
-		// 	// Optionally, set the background
-		// 	scene.background = texture
-		// })
-
-		// const pmremGenerator = this.pmremGenerator
-		// const exrLoader = new EXRLoader()
-		// exrLoader.load("/venice_sunset_1k.exr", function (texture) {
-		// 	const envMap = pmremGenerator.fromEquirectangular(texture).texture
-		// 	// texture.mapping = EquirectangularReflectionMapping
-
-		// 	scene.environment = envMap
-		// 	scene.background = envMap
-		// })
-		const exrLoader = new EXRLoader()
-		exrLoader.load("/venice_sunset_1k.exr", function (texture) {
-			texture.mapping = EquirectangularReflectionMapping
-
-			scene.environment = texture
-
-			scene.background = texture
-		})
-	}
-
-	createClock() {
-		this.clock = new Clock()
-	}
-
-	setupCamera() {
-		// const focalLength = 20
-		const aspect = window.innerWidth / window.innerHeight
-		// const fovHorizontal = 2 * Math.atan(sensorWidth / (2 * this.cameraParams.focalLength))
-		// const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
-
-		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.1, 10000)
-		this.camera.setFocalLength(this.cameraParams.focalLength)
-		// this.camera.fov = MathUtils.radToDeg(fovVertical)
-
-		this.camera.position.set(31.0456, 26.2669, 160.913)
-		// this.camera.rotation.set(MathUtils.degToRad(88.9339), MathUtils.degToRad(0), MathUtils.degToRad(13))
-		// this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
-
-		// this.camera.rotation.y = MathUtils.degToRad(45)
-		// this.camera.updateProjectionMatrix()
 	}
 
 	createRenderer() {
@@ -321,13 +276,10 @@ class App {
 		if (!canvas) throw new Error("Canvas element not found")
 		this.canvas = canvas
 
-		this.scene = new Scene()
-
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
+		this.renderer.setClearColor(0xcccccc)
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-		this.renderer.toneMapping = Number(ACESFilmicToneMapping)
-		this.renderer.toneMappingExposure = Math.pow(2, 0.23)
 
 		// this.renderer.gammaFactor = 2.2
 		// this.renderer.gammaOutput = true
@@ -339,10 +291,77 @@ class App {
 		// this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture
 	}
 
+	createScene() {
+		this.backgroundColor = new Color(this.state.bgColor)
+		this.scene = new Scene()
+		this.scene.background = this.backgroundColor
+	}
+
+	createEnvironment() {
+		// // const rgbeLoader = new RGBELoader()
+		// // rgbeLoader.load("/studio_small_03_1k.hdr", function (texture) {
+		// // 	texture.mapping = EquirectangularReflectionMapping
+		// // 	scene.background = texture
+		// // 	scene.environment = texture
+		// // })
+		// const scene = this.scene
+		this.pmremGenerator = new PMREMGenerator(this.renderer)
+		this.pmremGenerator.compileEquirectangularShader()
+
+		this.updateEnvironment()
+
+		// // const hdrEquirect = new RGBELoader().load("/studio_small_03_1k.hdr", function (texture) {
+		// // 	texture.mapping = EquirectangularReflectionMapping
+		// // 	// Set the environment map
+		// // 	scene.environment = texture
+		// // 	// Optionally, set the background
+		// // 	scene.background = texture
+		// // })
+
+		// // const pmremGenerator = this.pmremGenerator
+		// // const exrLoader = new EXRLoader()
+		// // exrLoader.load("/venice_sunset_1k.exr", function (texture) {
+		// // 	const envMap = pmremGenerator.fromEquirectangular(texture).texture
+		// // 	// texture.mapping = EquirectangularReflectionMapping
+
+		// // 	scene.environment = envMap
+		// // 	scene.background = envMap
+		// // })
+		// const exrLoader = new EXRLoader()
+		// exrLoader.load("/HDRI.exr", function (texture) {
+		// 	texture.mapping = EquirectangularReflectionMapping
+
+		// 	scene.environment = texture
+
+		// 	scene.background = texture
+		// })
+	}
+
+	createClock() {
+		this.clock = new Clock()
+	}
+
+	createCamera() {
+		// const focalLength = 20
+		const aspect = window.innerWidth / window.innerHeight
+		this.camera = new PerspectiveCamera(this.state.fov, aspect, 0.1, 10000)
+		this.scene.add(this.camera)
+		// this.camera.setFocalLength(this.state.focalLength)
+		// this.camera.fov = MathUtils.radToDeg(fovVertical)
+
+		// this.camera.position.set(31.0456, 26.2669, 160.913)
+		// this.camera.rotation.set(MathUtils.degToRad(88.9339), MathUtils.degToRad(0), MathUtils.degToRad(13))
+		// this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
+
+		// this.camera.rotation.y = MathUtils.degToRad(45)
+		// this.camera.updateProjectionMatrix()
+	}
+
 	createControls() {
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 		this.controls.enableDamping = false
-		this.controls.reset()
+		// this.controls.reset()
+		this.controls.autoRotate = this.state.autoRotate
 		// this.controls.minDistance = 2.5
 		// this.controls.maxDistance = 5
 		// this.controls.minAzimuthAngle = -Math.PI / 2
@@ -352,7 +371,7 @@ class App {
 
 		// this.controls.enableDamping = true
 		// this.controls.dampingFactor = 0.05
-		// this.controls.screenSpacePanning = true
+		this.controls.screenSpacePanning = true
 	}
 
 	setupCube() {
@@ -362,20 +381,28 @@ class App {
 		this.scene.add(this.cube)
 	}
 
-	setupLights() {
+	createLights() {
 		// const ambientLight = new AmbientLight(0xffffff, 0.63)
 		// this.scene.add(ambientLight)
+		const state = this.state
 
-		this.lights.ambient = new AmbientLight(0xffffff, 0.63)
-		this.scene.add(this.lights.ambient)
+		this.lights.ambient = new AmbientLight(state.ambientColor, state.ambientIntensity)
+		this.camera.add(this.lights.ambient)
+		// this.lights.ambient.position.set(29.490512351215415, 9.542161596494855, 54.84826183924672)
+		// this.scene.add(this.lights.ambient)
 
-		// this.lights.direct = new DirectionalLight(0xffffff, 2.5)
-		// this.lights.direct.position.set(0.5, 0, 0.866);
-		this.lights.direct = new RectAreaLight(0xffffff, 2.5, 30, 30)
-		this.lights.direct.position.set(5, 20.5581, 20.5581)
-		this.lights.direct.rotation.set(-1.19286, 0.15951, -0.39485)
+		this.lights.direct = new DirectionalLight(state.directColor, state.directIntensity)
+		this.lights.direct.position.set(0.5, 0, 0.866)
+		// this.lights.direct = new RectAreaLight(0xffffff, 2.5, 30, 30)
+		// this.lights.direct.position.set(5, 20.5581, 20.5581)
+		// this.lights.direct.position.set(30.32054859620017, 9.608268401048035, 55.40199979388174)
+
+		// this.lights.direct.position.set(-75.91937256908001, 109.34746955415513, 107.01013084245002)
+
+		// this.lights.direct.rotation.set(-1.19286, 0.15951, -0.39485)
 		// console.log("object.rotation.order", this.lights.direct.rotation.order)
-		this.scene.add(this.lights.direct)
+		this.camera.add(this.lights.direct)
+		// this.scene.add(this.lights.direct)
 		// const helper = new DirectionalLightHelper(this.lights.direct, 5)
 		// this.scene.add(helper)
 	}
@@ -479,10 +506,10 @@ class App {
 		const textureLoader = new TextureLoader(loadingManager)
 
 		this.eyewet.specular = textureLoader.load("/facetoy/specular/specular_1.png")
-		this.face.specular = textureLoader.load("/facetoy/specular/specular_face.png")
+		this.face.specular = textureLoader.load("/facetoy/specular/specular_2.png")
 		this.eyeball.specular = textureLoader.load("/facetoy/specular/specular_eyeball.png")
 
-		this.face.normal = textureLoader.load("/facetoy/normal/normal_face.png")
+		this.face.normal = textureLoader.load("/facetoy/normal/normal_1.png")
 		this.lens.normal = textureLoader.load("/facetoy/normal/normal_lens.png")
 		this.eyeball.normal = textureLoader.load("/facetoy/normal/normal_eyeball.png")
 		this.teeth.normal = textureLoader.load("/facetoy/normal/normal_4.png")
@@ -511,8 +538,8 @@ class App {
 			name: "face",
 			side: DoubleSide,
 
-			map: this.face.baseColor, // baseColorTexture (index 0)
-			normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
+			map: this.face.baseColor,
+			normalMap: this.face.normal,
 			normalScale: new Vector2(0.7, 0.7), // normalTexture scale
 			metalness: 0.0,
 
@@ -523,18 +550,21 @@ class App {
 			clearcoat: 0.04848499968647957,
 			clearcoatRoughness: 0.12393900007009506,
 			clearcoatMap: this.face.roughness,
+			// clearcoatNormalMap : this.face.normal,
+			// clearcoatRoughnessMap: this.face.roughness,
 
 			// Specular extension
-			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularColor: new Color(0xffffff),
+			specularIntensity: 1, // not directly in GLTF, adjust as needed
 			specularIntensityMap: this.face.specular,
-			specularColor: 0xffffff,
-			specularColorMap: this.face.specular,
 			// IOR extension
 			ior: 1.45,
+			sheenColor: new Color(0, 0, 0),
+			sheenRoughness: 1,
 
-			displacementMap: this.face.displacement,
-			displacementScale: 0.0001,
-			displacementBias: 0.0001,
+			// displacementMap: this.face.displacement,
+			// displacementScale: 0.0001,
+			// displacementBias: 0.0001,
 		})
 
 		this.brows.material = new MeshPhysicalMaterial({
@@ -740,15 +770,46 @@ class App {
 				meshMap.set(name, mesh)
 			})
 
+			group.updateMatrixWorld()
 			const box = new Box3().setFromObject(group)
-			const center = new Vector3()
-			box.getCenter(center)
-			group.position.sub(center)
-		})
+			const size = box.getSize(new Vector3()).length()
+			const center = box.getCenter(new Vector3())
 
-		console.log("meshMap", meshMap)
-		const face = meshMap.get("Head")
-		console.log("face", face)
+			this.controls.reset()
+
+			// this.addMeshHelpers(group)
+
+			group.position.x -= center.x
+			group.position.y -= center.y
+			group.position.z -= center.z
+
+			this.controls.maxDistance = size * 10
+
+			// this.camera.near = size / 100
+			// this.camera.far = size * 100
+			// this.camera.updateProjectionMatrix()
+
+			// this.camera.position.copy(center)
+			this.camera.position.x += size / 9.0
+			this.camera.position.y += size / 9.0
+			this.camera.position.z += size / 1.0
+
+
+			// this.camera.lookAt(center)
+
+			// this.setCamera(this.camera)
+
+			// this.brows.mesh = meshMap.get("Brows")
+			// this.eyewet.mesh = meshMap.get("EyeWet")
+			// this.lens.meshLeft = meshMap.get("LensLeft")
+			// this.lens.meshRight = meshMap.get("LensRight")
+			// this.lashes.mesh = meshMap.get("Lashes")
+			// this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
+			// this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
+			// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
+			// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
+			// this.tongue.tougueMesh = meshMap.get("Tongue")
+		})
 	}
 
 	loadAndApplyMaterial(objloader, { name, path, material }) {
@@ -780,17 +841,64 @@ class App {
 
 	async loadGLTF() {
 		const loader = new GLTFLoader(loadingManager)
-		loader.load("/facetoy.glb", (gltf) => {
-			let mesh = gltf.scene
-
-			// mesh.position.set(0, -20, 0)
-			// mesh.scale.set(20, 20, 20)
-
-			console.log("mesh", mesh)
-
-			this.scene.add(mesh)
-			// this.addMeshHelpers(mesh)
+		loader.load("/facetoy/facetoy.glb", (gltf) => {
+			window.OPENHUMAN.gltf = gltf
+			let scene = gltf.scene || gltf.scenes[0]
+			let clips = gltf.animations || []
+			this.loadContent(scene, clips)
 		})
+	}
+
+	loadContent(object, clips) {
+		this.clear()
+
+		object.updateMatrixWorld()
+		const box = new Box3().setFromObject(object)
+		const size = box.getSize(new Vector3()).length()
+		const center = box.getCenter(new Vector3())
+
+		this.controls.reset()
+
+		object.position.x -= center.x
+		object.position.y -= center.y
+		object.position.z -= center.z
+
+		this.controls.maxDistance = size * 10
+
+		this.camera.near = size / 100
+		this.camera.far = size * 100
+		this.camera.updateProjectionMatrix()
+
+		this.camera.position.copy(center)
+		this.camera.position.x += size / 2.0
+		this.camera.position.y += size / 5.0
+		this.camera.position.z += size / 2.0
+		this.camera.lookAt(center)
+
+		this.setCamera(this.camera)
+		this.controls.saveState()
+
+		this.scene.add(object)
+		this.meshRoot = object
+
+		this.state.punctualLights = true
+		this.meshRoot.traverse((node) => {
+			if (node.isLight) {
+				this.state.punctualLights = false
+			}
+		})
+
+		// mesh.position.set(0, -0.2, 0)
+		// mesh.scale.set(0.01, 0.01, 0.01)
+		// this.scene.add(mesh)
+		// // this.camera.position.set(0, 0, 0)
+		// this.camera.position.set(0.310456, 0.262669, 1.60913)
+		// this.addMeshHelpers(object)
+
+		this.updateLights()
+		// this.updateGUI()
+		this.updateEnvironment()
+		this.updateDisplay()
 	}
 
 	async loadJSON() {
@@ -885,8 +993,40 @@ class App {
 	// 	})
 	// }
 
+	updateBackground() {
+		this.backgroundColor.set(this.state.bgColor)
+	}
+
 	createGUI() {
 		this.gui = new GUI()
+
+		const displaceFolder = this.gui.addFolder("Display")
+		// displaceFolder.close()
+		const envBackgroundCtrl = displaceFolder.add(this.state, "background")
+		envBackgroundCtrl.onChange(() => this.updateEnvironment())
+		const autoRotateCtrl = displaceFolder.add(this.state, "autoRotate")
+		autoRotateCtrl.onChange(() => this.updateDisplay())
+		const bgColorCtrl = displaceFolder.addColor(this.state, "bgColor")
+		bgColorCtrl.onChange(() => this.updateBackground())
+
+		const envMapCtrl = displaceFolder
+			.add(
+				this.state,
+				"environment",
+				environments.map((env) => env.name)
+			)
+			.onChange(() => this.updateEnvironment())
+		displaceFolder
+			.add(this.state, "toneMapping", {
+				Linear: LinearToneMapping,
+				"ACES Filmic": ACESFilmicToneMapping,
+			})
+			.onChange(() => this.updateLights())
+		displaceFolder
+			.add(this.state, "exposure", 0.0, 5.0, 0.001)
+			.name("Tone Mapping Exposure")
+			.onChange(() => this.updateLights())
+		// displaceFolder.add(this.guiParams, "showFace").onChange((visible) => {
 
 		// Add helper visibility controls
 		this.helperFolder = this.gui.addFolder("Helpers")
@@ -898,98 +1038,112 @@ class App {
 			if (this.helpers.box) this.helpers.box.visible = visible
 		})
 		this.helperFolder.add(this.guiParams, "showLightHelpers").onChange((visible) => {
-			if (this.helpers.mainLight) this.helpers.mainLight.visible = visible
+			if (this.helpers.directLight) this.helpers.directLight.visible = visible
 			if (this.helpers.ambient) this.helpers.ambient.visible = visible
-			if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
-			if (this.helpers.backLight) this.helpers.backLight.visible = visible
-			if (this.helpers.point1) this.helpers.point1.visible = visible
-			if (this.helpers.point2) this.helpers.point2.visible = visible
+			// if (this.helpers.frontLight) this.helpers.frontLight.visible = visible
+			// if (this.helpers.backLight) this.helpers.backLight.visible = visible
+			// if (this.helpers.point1) this.helpers.point1.visible = visible
+			// if (this.helpers.point2) this.helpers.point2.visible = visible
 		})
 
-		const faceFolder = this.gui.addFolder("Face")
-		faceFolder.close()
-		faceFolder.addColor(this.face.material, "color").name("Color")
-		faceFolder.add(this.face.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		faceFolder.add(this.face.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		faceFolder.add(this.face.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		faceFolder.add(this.face.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		faceFolder.addColor(this.face.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		faceFolder.add(this.face.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		faceFolder.add(this.face.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		faceFolder.add(this.face.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		faceFolder.add(this.face.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		faceFolder.add(this.face.material, "toneMapped").name("Tone Mapped")
-		faceFolder.add(this.face.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		faceFolder.add(this.face.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		faceFolder.add(this.face.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		faceFolder.add(this.face.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		faceFolder.addColor(this.face.material, "sheenColor").name("Sheen Color")
-		faceFolder.add(this.face.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		faceFolder.add(this.face.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		faceFolder.add(this.face.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		faceFolder
-			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-			.name("Clearcoat Normal Scale")
-			.onChange((v) => {
-				this.face.material.clearcoatNormalScale.set(v, v)
-			})
+		// renderFolder.add(this.renderer, "gammaFactor", 0.0, 5.0, 0.01).name("Gamma Factor")
+		// renderFolder.add(this.renderer, "gammaOutput").name("Gamma Output")
+		// renderFolder.add(this.renderer, "physicallyCorrectLights").name("Physically Correct Lights")
+		// renderFolder.add(this.renderer, "outputEncoding", 0, 5, 0.01).name("Output Encoding")
+		// renderFolder.add(this.renderer, "premultipliedAlpha").name("Premultiplied Alpha")
+		// renderFolder.add(this.renderer, "alpha").name("Alpha")
+		// renderFolder.add(this.renderer, "antialias").name("Antialias")
+		// renderFolder.add(this.renderer, "shadowMap.enabled").name("Shadow Map Enabled")
+		// renderFolder.add(this.renderer, "shadowMap.type", 0, 5, 0.01).name("Shadow Map Type")
+		// renderFolder.add(this.renderer, "shadowMap.autoUpdate").name("Shadow Map Auto Update")
+		// renderFolder.add(this.renderer, "shadowMap.needsUpdate").name("Shadow Map Needs Update")
+		// renderFolder.add(this.renderer, "shadowMap.type").name("Shadow Map Type")
 
-		const eyeballFolder = this.gui.addFolder("Eyeball")
-		eyeballFolder.close()
-		eyeballFolder.addColor(this.eyeball.material, "color").name("Color")
-		eyeballFolder.add(this.eyeball.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		eyeballFolder.add(this.eyeball.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		eyeballFolder.add(this.eyeball.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		eyeballFolder.add(this.eyeball.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		eyeballFolder.addColor(this.eyeball.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		eyeballFolder.add(this.eyeball.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		eyeballFolder.add(this.eyeball.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		eyeballFolder.add(this.eyeball.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		eyeballFolder.add(this.eyeball.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		eyeballFolder.add(this.eyeball.material, "toneMapped").name("Tone Mapped")
-		eyeballFolder.add(this.eyeball.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		eyeballFolder.add(this.eyeball.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		eyeballFolder.add(this.eyeball.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		eyeballFolder.add(this.eyeball.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		eyeballFolder.addColor(this.eyeball.material, "sheenColor").name("Sheen Color")
-		eyeballFolder.add(this.eyeball.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		eyeballFolder.add(this.eyeball.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		eyeballFolder.add(this.eyeball.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		eyeballFolder
-			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-			.name("Clearcoat Normal Scale")
-			.onChange((v) => {
-				this.eyeball.material.clearcoatNormalScale.set(v, v)
-			})
+		// const faceFolder = this.gui.addFolder("Face")
+		// faceFolder.close()
+		// faceFolder.addColor(this.face.material, "color").name("Color")
+		// faceFolder.add(this.face.material, "reflectivity", 0.0, 1.0, 0.0001).name("Reflectivity")
+		// faceFolder.add(this.face.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		// faceFolder.add(this.face.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		// faceFolder.add(this.face.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		// faceFolder.add(this.face.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		// faceFolder.addColor(this.face.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		// faceFolder.add(this.face.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		// faceFolder.add(this.face.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		// faceFolder.add(this.face.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		// faceFolder.add(this.face.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		// faceFolder.add(this.face.material, "toneMapped").name("Tone Mapped")
+		// faceFolder.add(this.face.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		// faceFolder.add(this.face.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		// faceFolder.add(this.face.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		// faceFolder.add(this.face.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		// faceFolder.addColor(this.face.material, "sheenColor").name("Sheen Color")
+		// faceFolder.add(this.face.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		// faceFolder.add(this.face.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		// faceFolder.add(this.face.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		// faceFolder
+		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+		// 	.name("Clearcoat Normal Scale")
+		// 	.onChange((v) => {
+		// 		this.face.material.clearcoatNormalScale.set(v, v)
+		// 	})
 
-		const lensFolder = this.gui.addFolder("Lens")
-		lensFolder.close()
-		lensFolder.addColor(this.lens.material, "color").name("Color")
-		lensFolder.add(this.lens.material, "opacity", 0.0, 1.0, 0.0001).name("Opacity")
-		lensFolder.add(this.lens.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		lensFolder.add(this.lens.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		lensFolder.add(this.lens.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		lensFolder.add(this.lens.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		lensFolder.addColor(this.lens.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		lensFolder.add(this.lens.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		lensFolder.add(this.lens.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		lensFolder.add(this.lens.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		lensFolder.add(this.lens.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		lensFolder.add(this.lens.material, "toneMapped").name("Tone Mapped")
-		lensFolder.add(this.lens.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		lensFolder.add(this.lens.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		lensFolder.add(this.lens.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		lensFolder.add(this.lens.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		lensFolder.addColor(this.lens.material, "sheenColor").name("Sheen Color")
-		lensFolder.add(this.lens.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		lensFolder.add(this.lens.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		lensFolder.add(this.lens.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		lensFolder
-			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-			.name("Clearcoat Normal Scale")
-			.onChange((v) => {
-				this.lens.material.clearcoatNormalScale.set(v, v)
-			})
+		// const eyeballFolder = this.gui.addFolder("Eyeball")
+		// eyeballFolder.close()
+		// eyeballFolder.addColor(this.eyeball.material, "color").name("Color")
+		// eyeballFolder.add(this.eyeball.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		// eyeballFolder.add(this.eyeball.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		// eyeballFolder.add(this.eyeball.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		// eyeballFolder.add(this.eyeball.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		// eyeballFolder.addColor(this.eyeball.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		// eyeballFolder.add(this.eyeball.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		// eyeballFolder.add(this.eyeball.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		// eyeballFolder.add(this.eyeball.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		// eyeballFolder.add(this.eyeball.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		// eyeballFolder.add(this.eyeball.material, "toneMapped").name("Tone Mapped")
+		// eyeballFolder.add(this.eyeball.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		// eyeballFolder.add(this.eyeball.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		// eyeballFolder.add(this.eyeball.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		// eyeballFolder.add(this.eyeball.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		// eyeballFolder.addColor(this.eyeball.material, "sheenColor").name("Sheen Color")
+		// eyeballFolder.add(this.eyeball.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		// eyeballFolder.add(this.eyeball.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		// eyeballFolder.add(this.eyeball.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		// eyeballFolder
+		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+		// 	.name("Clearcoat Normal Scale")
+		// 	.onChange((v) => {
+		// 		this.eyeball.material.clearcoatNormalScale.set(v, v)
+		// 	})
+
+		// const lensFolder = this.gui.addFolder("Lens")
+		// lensFolder.close()
+		// lensFolder.addColor(this.lens.material, "color").name("Color")
+		// lensFolder.add(this.lens.material, "opacity", 0.0, 1.0, 0.0001).name("Opacity")
+		// lensFolder.add(this.lens.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		// lensFolder.add(this.lens.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		// lensFolder.add(this.lens.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		// lensFolder.add(this.lens.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		// lensFolder.addColor(this.lens.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		// lensFolder.add(this.lens.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		// lensFolder.add(this.lens.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		// lensFolder.add(this.lens.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		// lensFolder.add(this.lens.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		// lensFolder.add(this.lens.material, "toneMapped").name("Tone Mapped")
+		// lensFolder.add(this.lens.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		// lensFolder.add(this.lens.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		// lensFolder.add(this.lens.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		// lensFolder.add(this.lens.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		// lensFolder.addColor(this.lens.material, "sheenColor").name("Sheen Color")
+		// lensFolder.add(this.lens.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		// lensFolder.add(this.lens.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		// lensFolder.add(this.lens.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		// lensFolder
+		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+		// 	.name("Clearcoat Normal Scale")
+		// 	.onChange((v) => {
+		// 		this.lens.material.clearcoatNormalScale.set(v, v)
+		// 	})
 
 		// Ambient Light controls
 		const ambientFolder = this.gui.addFolder("Ambient Light")
@@ -1000,7 +1154,7 @@ class App {
 		ambientFolder.add(this.lights.ambient.position, "y", -100, 100).name("Position Y")
 		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
 
-		// Main Light controls
+		// Direct Light controls
 		const directLightFolder = this.gui.addFolder("Direct Light")
 		directLightFolder.close() // Close by default
 		directLightFolder.add(this.lights.direct, "intensity", 0, 100, 0.01).name("Intensity")
@@ -1064,7 +1218,7 @@ class App {
 				this.camera.updateProjectionMatrix()
 			})
 		const focalLengthController = cameraFolder
-			.add(this.cameraParams, "focalLength", 5, 100)
+			.add(this.state, "focalLength", 5, 100)
 			.name("Focal Length (mm)")
 			.onChange((value) => {
 				this.camera.setFocalLength(value)
@@ -1089,12 +1243,15 @@ class App {
 	}
 
 	addHelpers() {
-		this.helpers.mainLight = new PointLightHelper(this.lights.direct, 15)
-		this.scene.add(this.helpers.mainLight)
-		this.helpers.mainLight.visible = false
-		this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
-		this.scene.add(this.helpers.ambient)
-		this.helpers.ambient.visible = false
+		// this.helpers.directLight = new PointLightHelper(this.lights.direct, 15)
+		// this.scene.add(this.helpers.directLight)
+		// this.helpers.directLight.visible = false
+		// this.helpers.ambient = new PointLightHelper(this.lights.ambient, 15)
+		// this.scene.add(this.helpers.ambient)
+		// this.helpers.ambient.visible = false
+		this.helpers.directLight = new DirectionalLightHelper(this.lights.direct, 5)
+		this.scene.add(this.helpers.directLight)
+		this.helpers.directLight.visible = true
 
 		this.helpers.grid = new GridHelper(400, 40, 0x0000ff, 0x808080)
 		this.helpers.grid.position.y = -150
@@ -1112,65 +1269,159 @@ class App {
 	}
 
 	addMeshHelpers(target) {
-		const mesh = target.clone()
-		this.helpers.box = new BoxHelper(mesh)
-		this.scene.add(this.helpers.box)
-		this.helpers.box.visible = true
+		target.traverse((node) => {
+			if (node.isMesh && node.name === "Head") {
+				console.log("node", node, node.geometry)
+				const mesh = node
+				this.helpers.box = new BoxHelper(mesh)
+				this.scene.add(this.helpers.box)
+				this.helpers.box.visible = true
 
-		this.helpers.axes = new AxesHelper(10)
-		this.scene.add(this.helpers.axes)
-		this.helpers.axes.visible = true
+				this.helpers.axes = new AxesHelper(10)
+				this.scene.add(this.helpers.axes)
+				this.helpers.axes.visible = true
 
-		mesh.geometry.computeTangents()
-		this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
-		this.scene.add(this.helpers.vnh)
-		this.helpers.vnh.visible = false
+				node.geometry.computeTangents()
+				this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
+				this.scene.add(this.helpers.vnh)
+				this.helpers.vnh.visible = false
 
-		this.helpers.vth = new VertexTangentsHelper(mesh, 0.09)
-		this.scene.add(this.helpers.vth)
-		this.helpers.vth.visible = false
+				this.helpers.vth = new VertexTangentsHelper(mesh, 0.09)
+				this.scene.add(this.helpers.vth)
+				this.helpers.vth.visible = false
 
-		this.guiParams = {
-			vnh: false,
-			vth: false,
-		}
+				this.guiParams = {
+					vnh: false,
+					vth: false,
+				}
 
-		this.helperFolder
-			.add(this.guiParams, "vnh")
-			.name("Vertex Normals Helper")
-			.onChange((visible) => {
-				if (this.helpers.vnh) this.helpers.vnh.visible = visible
-			})
-		this.helperFolder
-			.add(this.guiParams, "vth")
-			.name("Vertex Normals Helper")
-			.onChange((visible) => {
-				if (this.helpers.vth) this.helpers.vth.visible = visible
-			})
+				this.helperFolder
+					.add(this.guiParams, "vnh")
+					.name("Vertex Normals Helper")
+					.onChange((visible) => {
+						if (this.helpers.vnh) this.helpers.vnh.visible = visible
+					})
+				this.helperFolder
+					.add(this.guiParams, "vth")
+					.name("Vertex Normals Helper")
+					.onChange((visible) => {
+						if (this.helpers.vth) this.helpers.vth.visible = visible
+					})
 
-		this.helpers.skeleton = new SkeletonHelper(mesh)
-		this.scene.add(this.helpers.skeleton)
+				this.helpers.skeleton = new SkeletonHelper(mesh)
+				this.scene.add(this.helpers.skeleton)
 
-		// const newMesh = mesh.geometry.clone()
-		// const wireframe = new WireframeGeometry(newMesh)
-		// let line = new LineSegments(wireframe)
-		// line.material.depthTest = false
-		// line.material.opacity = 0.25
-		// line.material.transparent = true
-		// line.position.x = 4
-		// this.scene.add(line)
-		// this.scene.add(new BoxHelper(line))
+				// const newMesh = mesh.geometry.clone()
+				// const wireframe = new WireframeGeometry(newMesh)
+				// let line = new LineSegments(wireframe)
+				// line.material.depthTest = false
+				// line.material.opacity = 0.25
+				// line.material.transparent = true
+				// line.position.x = 4
+				// this.scene.add(line)
+				// this.scene.add(new BoxHelper(line))
 
-		this.meshFolder.add(target.position, "x", -20, 20, 0.01).name("Position X")
-		this.meshFolder.add(target.position, "y", -50, 50, 0.1).name("Position Y")
-		this.meshFolder.add(target.position, "z", -50, 50, 0.1).name("Position Z")
+				this.meshFolder.add(target.position, "x", -20, 20, 0.01).name("Position X")
+				this.meshFolder.add(target.position, "y", -50, 50, 0.1).name("Position Y")
+				this.meshFolder.add(target.position, "z", -50, 50, 0.1).name("Position Z")
 
-		this.meshFolder.add(target.scale, "x", -20, 20, 0.01).name("Scale X")
-		this.meshFolder.add(target.scale, "y", -50, 50, 0.1).name("Scale Y")
-		this.meshFolder.add(target.scale, "z", -50, 50, 0.1).name("Scale Z")
+				this.meshFolder.add(target.scale, "x", -20, 20, 0.01).name("Scale X")
+				this.meshFolder.add(target.scale, "y", -50, 50, 0.1).name("Scale Y")
+				this.meshFolder.add(target.scale, "z", -50, 50, 0.1).name("Scale Z")
+			}
+		})
 	}
 
-	updateLights() {}
+	updateDisplay() {
+		this.controls.autoRotate = this.state.autoRotate
+	}
+
+	updateEnvironment() {
+		const environment = environments.filter((entry) => entry.name === this.state.environment)[0]
+		// console.log("updateEnvironment", environment)
+		this.getEnvironmentTexture(environment).then(({ envMap }) => {
+			this.scene.environment = envMap
+			this.scene.background = this.state.background ? envMap : this.backgroundColor
+		})
+	}
+
+	getEnvironmentTexture(environment) {
+		const { id, path } = environment
+		// neutral (THREE.RoomEnvironment)
+		// if (id === "neutral") {
+		// 	return Promise.resolve({ envMap: this.neutralEnvironment })
+		// }
+		// console.log("getEnvironmentTexture", environment)
+		// none
+		if (id === "") {
+			return Promise.resolve({ envMap: null })
+		}
+
+		return new Promise((resolve, reject) => {
+			new EXRLoader().load(
+				path,
+				(texture) => {
+					const envMap = this.pmremGenerator.fromEquirectangular(texture).texture
+					this.pmremGenerator.dispose()
+
+					resolve({ envMap })
+				},
+				undefined,
+				reject
+			)
+		})
+	}
+
+	updateLights() {
+		const state = this.state
+		this.renderer.toneMapping = Number(state.toneMapping)
+		console.log("exposure", state.exposure)
+		this.renderer.toneMappingExposure = Math.pow(2, state.exposure)
+
+		// this.renderer.toneMapping = Number(ACESFilmicToneMapping)
+		// this.renderer.toneMappingExposure = Math.pow(2, 0.23)
+
+		this.lights.ambient.intensity = state.ambientIntensity
+		this.lights.ambient.color.set(state.ambientColor)
+
+		this.lights.direct.intensity = state.directIntensity
+		this.lights.direct.color.set(state.directColor)
+	}
+
+	setCamera(name) {
+		this.controls.enabled = true
+		this.activeCamera = this.defaultCamera
+	}
+
+	clear() {
+		if (!this.meshRoot) return
+
+		this.scene.remove(this.meshRoot)
+
+		// dispose geometry
+		this.meshRoot.traverse((node) => {
+			if (!node.geometry) return
+
+			node.geometry.dispose()
+		})
+
+		// dispose textures
+		this.traverseMaterials(this.content, (material) => {
+			for (const key in material) {
+				if (key !== "envMap" && material[key] && material[key].isTexture) {
+					material[key].dispose()
+				}
+			}
+		})
+	}
+
+	traverseMaterials(object, callback) {
+		object.traverse((node) => {
+			if (!node.geometry) return
+			const materials = Array.isArray(node.material) ? node.material : [node.material]
+			materials.forEach(callback)
+		})
+	}
 
 	render() {
 		const delta = this.clock.getDelta()
