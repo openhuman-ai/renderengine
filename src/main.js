@@ -48,6 +48,10 @@ import { OBJLoader } from "./jsm/loaders/OBJLoader"
 import { PMREMGenerator } from "./extras/PMREMGenerator"
 import { Vector2 } from "./math/Vector2"
 import { DirectionalLightHelper } from "./helpers/DirectionalLightHelper"
+import { Box3 } from "./math/Box3"
+import { Vector3 } from "./math/Vector3"
+import { Object3D } from "./core/Object3D"
+import { Group } from "./objects/Group"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -94,7 +98,7 @@ class App {
 	renderer
 	camera
 	cameraParams = {
-		focalLength: 20,
+		focalLength: 60,
 		fov: 50,
 	}
 	scene
@@ -103,6 +107,7 @@ class App {
 	clock
 	material
 	model
+
 	composer
 	effectFXAA
 	meshWithMorphTargets
@@ -166,10 +171,12 @@ class App {
 	teeth = {
 		baseColor: null,
 		normal: null,
+		roughness: null,
 	}
 	tongue = {
 		baseColor: null,
 		normal: null,
+		roughness: null,
 	}
 
 	pmremGenerator
@@ -260,10 +267,11 @@ class App {
 		// const fovVertical = 2 * Math.atan(Math.tan(fovHorizontal / 2) / aspect)
 
 		this.camera = new PerspectiveCamera(this.cameraParams.fov, window.innerWidth / window.innerHeight, 0.1, 10000)
+		this.camera.setFocalLength(this.cameraParams.focalLength)
 		// this.camera.fov = MathUtils.radToDeg(fovVertical)
-		// this.camera.setFocalLength(this.cameraParams.focalLength)
 
-		this.camera.position.set(0, 0.389351, 1)
+		this.camera.position.set(31.0456, 26.2669, 160.913)
+		// this.camera.rotation.set(MathUtils.degToRad(88.9339), MathUtils.degToRad(0), MathUtils.degToRad(13))
 		// this.camera.rotation.set(MathUtils.degToRad(90), MathUtils.degToRad(0), MathUtils.degToRad(13))
 
 		// this.camera.rotation.y = MathUtils.degToRad(45)
@@ -326,8 +334,8 @@ class App {
 		this.lights.direct = new DirectionalLight(0xffffff, 2.5)
 		this.lights.direct.position.set(0.5, 0, 0.866)
 		this.scene.add(this.lights.direct)
-		const helper = new DirectionalLightHelper(this.lights.direct, 5)
-		this.scene.add(helper)
+		// const helper = new DirectionalLightHelper(this.lights.direct, 5)
+		// this.scene.add(helper)
 	}
 
 	setupEventListeners() {
@@ -434,17 +442,19 @@ class App {
 
 		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_face.png")
 		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_eyeball.png")
+		this.teeth.roughness = textureLoader.load("/facetoy/roughness/roughness_teeth.png")
+		this.tongue.roughness = textureLoader.load("/facetoy/roughness/roughness_tongue.png")
 
 		this.face.displacement = textureLoader.load("/facetoy/displacement/displacement_face.png")
 		this.eyeball.displacement = textureLoader.load("/facetoy/displacement/displacement_eyeball.png")
 	}
 
 	async loadBrows(objloader, textureLoader) {
-		objloader.load("/facetoy/Brows.obj", (obj) => {
+		objloader.load("/obj1/Brows.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = new MeshPhysicalMaterial({
 				name: "Brows",
@@ -463,11 +473,11 @@ class App {
 	}
 
 	async loadEyeWet(objloader, textureLoader) {
-		objloader.load("/facetoy/EyeWet.obj", (obj) => {
+		objloader.load("/obj1/EyeWet.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = new MeshPhysicalMaterial({
 				name: "Eye_Wet",
@@ -487,14 +497,20 @@ class App {
 	}
 
 	async loadFace(objloader, textureLoader) {
-		objloader.load("/facetoy/Head.obj", (obj) => {
+		objloader.load("/obj1/Head.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			// mesh.castShadow = true
 			// mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
-			mesh.position.set(0, -0.25, 0)
+			mesh.geometry.computeBoundingBox()
+			const box = new Box3().setFromObject(mesh)
+			const size = box.getSize(new Vector3()).length()
+			const center = box.getCenter(new Vector3())
+
+			mesh.position.x -= center.x
+			mesh.position.y -= center.y
+			mesh.position.z -= center.z
 
 			mesh.material = new MeshPhysicalMaterial({
 				name: "FaceMaterial",
@@ -531,14 +547,14 @@ class App {
 	}
 
 	async loadLashes(objloader, textureLoader) {
-		objloader.load("/facetoy/Lashes.obj", (obj) => {
+		objloader.load("/obj1/Lashes.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = new MeshPhysicalMaterial({
-				name: "Brows",
+				name: "Lashes",
 				color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
 				opacity: 0.721212, // baseColorFactor Alpha
 				transparent: true, // alphaMode: "BLEND"
@@ -555,7 +571,7 @@ class App {
 
 	async loadLens(objloader, textureLoader) {
 		let lenMaterial = new MeshPhysicalMaterial({
-			name: "Lens Left",
+			name: "Lens",
 
 			// PBR
 			color: new Color(0.502883, 0.502887, 0.502887), // baseColorFactor RGB
@@ -585,22 +601,22 @@ class App {
 			// emissive: 0x000000,
 		})
 
-		objloader.load("/facetoy/LensLeft.obj", (obj) => {
+		objloader.load("/obj1/LensLeft.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 
 			mesh.material = lenMaterial
 
 			this.scene.add(mesh)
 		})
-		objloader.load("/facetoy/LensRight.obj", (obj) => {
+		objloader.load("/obj1/LensRight.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = lenMaterial
 
@@ -629,25 +645,25 @@ class App {
 			specularColor: 0xffffff,
 			specularColorMap: this.eyeball.specular,
 		})
-		objloader.load("/facetoy/RealtimeEyeballLeft.obj", (obj) => {
+		objloader.load("/obj1/RealtimeEyeballLeft.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			mesh.castShadow = true
 			mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = eyeBallMaterial
 
 			this.scene.add(mesh)
 		})
-		objloader.load("/facetoy/RealtimeEyeballRight.obj", (obj) => {
+		objloader.load("/obj1/RealtimeEyeballRight.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			mesh.castShadow = true
 			mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			// mesh.position.set(0, -0.24, 0)
 			mesh.material = eyeBallMaterial
@@ -661,8 +677,11 @@ class App {
 			name: "Tongue",
 			side: DoubleSide, // doubleSided: true
 			map: this.tongue.baseColor, // baseColorTexture index 1
+
 			metalness: 0, // metallicFactor
 			roughness: 0.3, // roughnessFactor
+			roughnessMap: this.tongue.roughness,
+
 			color: new Color(1, 1, 1), // baseColorFactor RGB
 			opacity: 1, // baseColorFactor Alpha (1.0)
 			transparent: false, // alphaMode: "OPAQUE"
@@ -671,13 +690,14 @@ class App {
 			specularIntensity: 0.6, // KHR_materials_specular (specularFactor)
 			emissive: new Color(0, 0, 0), // emissiveFactor
 		})
-		objloader.load("/facetoy/Tongue.obj", (obj) => {
+
+		objloader.load("/obj1/Tongue.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			mesh.castShadow = true
 			mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = eyeBallMaterial
 
@@ -694,31 +714,34 @@ class App {
 			opacity: 1, // baseColorFactor Alpha
 			transparent: false, // alphaMode: "OPAQUE"
 			metalness: 0, // metallicFactor
+
 			roughness: 0.3227272927761078, // roughnessFactor
+			roughnessMap: this.teeth.roughness,
+
 			normalMap: this.teeth.normal, // normalTexture index 0
 			ior: 1.45, // KHR_materials_ior
 			specularColor: new Color(0.6168678, 0.6168678, 0.6168678), // KHR_materials_specular
 			emissive: new Color(0, 0, 0), // emissiveFactor
 		})
-		objloader.load("/facetoy/UpperTeeth.obj", (obj) => {
+		objloader.load("/obj1/UpperTeeth.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			mesh.castShadow = true
 			mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = eyeBallMaterial
 
 			this.scene.add(mesh)
 		})
-		objloader.load("/facetoy/LowerTeeth.obj", (obj) => {
+		objloader.load("/obj1/LowerTeeth.obj", (obj) => {
 			const mesh = obj.children.find((child) => child.isMesh)
 			if (!mesh) return
 
 			mesh.castShadow = true
 			mesh.receiveShadow = true
-			mesh.scale.set(1.5, 1.5, 1.5)
+			// mesh.scale.set(1.5, 1.5, 1.5)
 			mesh.position.set(0, -0.25, 0)
 			mesh.material = eyeBallMaterial
 
@@ -727,18 +750,284 @@ class App {
 	}
 
 	async loadModel() {
+		const group = new Group()
+		this.scene.add(group)
+		// const textureLoader = new TextureLoader(loadingManager)
+
+		const faceMaterial = new MeshPhysicalMaterial({
+			name: "FaceMaterial",
+			side: DoubleSide, // doubleSided: true
+			metalness: 0, // from metallicFactor
+			map: this.face.baseColor, // baseColorTexture (index 0)
+
+			metalnessMap: this.face.roughness, // textures[2], // metallicRoughnessTexture (index 2)
+			roughnessMap: this.face.roughness, // textures[2], // same texture as metalnessMap
+
+			normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
+			normalScale: new Vector2(0.7, 0.7), // normalTexture scale
+
+			displacementMap: this.face.displacement,
+			displacementScale: 0.0001,
+			displacementBias: 0.0001,
+
+			// Clearcoat extension
+			clearcoat: 0.04848499968647957,
+			clearcoatRoughness: 0.12393900007009506,
+			clearcoatMap: this.face.roughness,
+
+			// Specular extension
+			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularIntensityMap: this.face.specular,
+			specularColor: 0xffffff,
+			specularColorMap: this.face.specular,
+			// IOR extension
+			ior: 1.45,
+		})
+
+		const browsMaterial = new MeshPhysicalMaterial({
+			name: "Brows",
+			color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
+			opacity: 0.721212, // baseColorFactor Alpha
+			transparent: true, // alphaMode: "BLEND"
+			side: DoubleSide, // doubleSided: true
+			ior: 1.45, // KHR_materials_ior
+			specularColor: new Color(2, 2, 2), // KHR_materials_specular
+			transmission: 0, // set explicitly if not used
+			metalness: 0, // default if not specified
+			roughness: 1, // default if not specified
+		})
+
+		const eyeWetMaterial = new MeshPhysicalMaterial({
+			name: "Eye_Wet",
+			color: new Color(0, 0, 0), // baseColorFactor RGB
+			opacity: 0.1, // baseColorFactor Alpha
+			transparent: true, // alphaMode: "BLEND"
+			side: DoubleSide, // doubleSided: true
+			roughness: 0.2030302882194519, // from pbrMetallicRoughness
+			metalness: 0, // from pbrMetallicRoughness
+			ior: 1.45, // KHR_materials_ior
+			// Placeholder for specular texture (index 11)
+			// You must assign the correct texture loaded from GLTF later:
+			// specularMap: textures[11]
+		})
+
+		const lensMaterial = new MeshPhysicalMaterial({
+			name: "Lens",
+
+			// PBR
+			color: new Color(0.502883, 0.502887, 0.502887), // baseColorFactor RGB
+			transparent: true, // because alphaMode: BLEND
+			opacity: 0.1, // baseColorFactor Alpha
+			roughness: 0.06363636,
+			metalness: 1.0,
+
+			// Normals
+			normalMap: this.lens.normal,
+			normalScale: new Vector2(1, 1), // adjust if needed
+
+			// Double-sided rendering
+			side: DoubleSide,
+
+			// Specular Extension
+			// specularColor: new Color(2, 2, 2), // KHR_materials_specular.specularColorFactor
+			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularIntensityMap: this.lens.specular,
+			specularColor: new Color(2, 2, 2),
+			specularColorMap: this.lens.specular,
+
+			// IOR Extension
+			ior: 1.45, // KHR_materials_ior
+
+			// Emissive (unused)
+			// emissive: 0x000000,
+		})
+
+		const lashesMaterial = new MeshPhysicalMaterial({
+			name: "Lashes",
+			color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
+			opacity: 0.721212, // baseColorFactor Alpha
+			transparent: true, // alphaMode: "BLEND"
+			side: DoubleSide, // doubleSided: true
+			metalness: 1, // metallicFactor
+			roughness: 1, // roughnessFactor
+			ior: 1.45, // KHR_materials_ior
+			specularColor: new Color(2, 2, 2), // KHR_materials_specular
+			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+
+		const eyeballMaterial = new MeshPhysicalMaterial({
+			name: "Realtime_Eyeball_Left",
+			side: DoubleSide, // doubleSided: true
+			metalness: 0, // metallicFactor: 0
+			map: this.eyeball.baseColor, // textures[4], // baseColorTexture index 4
+			metalnessMap: this.eyeball.roughness, // textures[6], // metallicRoughnessTexture index 6
+			roughnessMap: this.eyeball.roughness, // textures[6], // same texture as metalnessMap
+			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
+			// wireframe:true,
+
+			displacementMap: this.eyeball.displacement,
+			displacementScale: 0.0001,
+			displacementBias: 0.0001,
+
+			ior: 1.45, // KHR_materials_ior
+
+			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
+			specularIntensityMap: this.eyeball.specular,
+			specularColor: 0xffffff,
+			specularColorMap: this.eyeball.specular,
+		})
+
+		const teethMaterial = new MeshPhysicalMaterial({
+			name: "Teeth",
+			side: DoubleSide, // doubleSided: true
+			map: this.teeth.baseColor, // baseColorTexture index 1
+			color: new Color(1, 1, 1), // baseColorFactor RGB
+			opacity: 1, // baseColorFactor Alpha
+			transparent: false, // alphaMode: "OPAQUE"
+			metalness: 0, // metallicFactor
+
+			roughness: 0.3227272927761078, // roughnessFactor
+			roughnessMap: this.teeth.roughness,
+
+			normalMap: this.teeth.normal, // normalTexture index 0
+			ior: 1.45, // KHR_materials_ior
+			specularColor: new Color(0.6168678, 0.6168678, 0.6168678), // KHR_materials_specular
+			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+
+		const tongueMaterial = new MeshPhysicalMaterial({
+			name: "Tongue",
+			side: DoubleSide, // doubleSided: true
+			map: this.tongue.baseColor, // baseColorTexture index 1
+
+			metalness: 0, // metallicFactor
+			roughness: 0.3, // roughnessFactor
+			roughnessMap: this.tongue.roughness,
+
+			color: new Color(1, 1, 1), // baseColorFactor RGB
+			opacity: 1, // baseColorFactor Alpha (1.0)
+			transparent: false, // alphaMode: "OPAQUE"
+			normalMap: this.tongue.normal, // normalTexture index 0
+			ior: 1.45, // KHR_materials_ior
+			specularIntensity: 0.6, // KHR_materials_specular (specularFactor)
+			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+
+		const models = [
+			{
+				name: "Head",
+				path: "/obj1/Head.obj",
+				material: faceMaterial,
+			},
+			{
+				name: "Brows",
+				path: "/obj1/Brows.obj",
+				material: browsMaterial,
+			},
+			{
+				name: "EyeWet",
+				path: "/obj1/EyeWet.obj",
+				material: eyeWetMaterial,
+			},
+			{
+				name: "LensLeft",
+				path: "/obj1/LensLeft.obj",
+				material: lensMaterial,
+			},
+			{
+				name: "LensRight",
+				path: "/obj1/LensRight.obj",
+				material: lensMaterial,
+			},
+			{
+				name: "Lashes",
+				path: "/obj1/Lashes.obj",
+				material: lashesMaterial,
+			},
+			{
+				name: "RealtimeEyeballLeft",
+				path: "/obj1/RealtimeEyeballLeft.obj",
+				material: eyeballMaterial,
+			},
+			{
+				name: "RealtimeEyeballRight",
+				path: "/obj1/RealtimeEyeballRight.obj",
+				material: eyeballMaterial,
+			},
+			{
+				name: "UpperTeeth",
+				path: "/obj1/UpperTeeth.obj",
+				material: teethMaterial,
+			},
+			{
+				name: "LowerTeeth",
+				path: "/obj1/LowerTeeth.obj",
+				material: teethMaterial,
+			},
+			{
+				name: "Tongue",
+				path: "/obj1/Tongue.obj",
+				material: tongueMaterial,
+			},
+		]
+
+		const meshMap = new Map()
+
 		const objloader = new OBJLoader(loadingManager)
-		const textureLoader = new TextureLoader(loadingManager)
+		Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
+			meshes.forEach(({ name, mesh }) => {
+				group.add(mesh)
+				console.log('name', name, mesh)
+				meshMap.set(name, mesh)
+			})
 
-		this.loadFace(objloader, textureLoader)
+			const box = new Box3().setFromObject(group)
+			const center = new Vector3()
+			box.getCenter(center)
+			group.position.sub(center)
+		})
 
-		this.loadBrows(objloader, textureLoader)
-		this.loadEyeWet(objloader, textureLoader)
-		this.loadLens(objloader, textureLoader)
-		this.loadLashes(objloader, textureLoader)
-		this.loadEyeball(objloader, textureLoader)
-		this.loadTeeth(objloader, textureLoader)
-		this.loadTongue(objloader, textureLoader)
+		console.log('meshMap', meshMap)
+		const face = meshMap.get("Head")
+		console.log("face", face)
+
+		// face.position.x = 100
+
+		// this.loadFace(objloader, textureLoader)
+		// this.loadBrows(objloader, textureLoader)
+		// this.loadEyeWet(objloader, textureLoader)
+		// this.loadLens(objloader, textureLoader)
+		// this.loadLashes(objloader, textureLoader)
+		// this.loadEyeball(objloader, textureLoader)
+		// this.loadTeeth(objloader, textureLoader)
+		// this.loadTongue(objloader, textureLoader)
+	}
+
+	loadAndApplyMaterial(objloader, { name, path, material }) {
+		return new Promise((resolve, reject) => {
+			objloader.load(
+				path,
+				(obj) => {
+					let mesh = null
+
+					obj.traverse((child) => {
+						if (child.isMesh) {
+							child.material = material
+							child.name = name
+							mesh = child
+						}
+					})
+
+					if (mesh) {
+						resolve({ name, mesh })
+					} else {
+						reject(new Error(`No mesh found in ${path}`))
+					}
+				},
+				undefined,
+				reject
+			)
+		})
 	}
 
 	async loadGLTF() {
@@ -993,9 +1282,9 @@ class App {
 
 		// Add camera controls
 		const cameraFolder = this.gui.addFolder("Camera")
-		cameraFolder.add(this.camera.position, "x", -15, 15, 0.01).name("Position X")
-		cameraFolder.add(this.camera.position, "y", -15, 15, 0.01).name("Position Y")
-		cameraFolder.add(this.camera.position, "z", -15, 15, 0.01).name("Position Z")
+		cameraFolder.add(this.camera.position, "x", -300, 300, 0.1).name("Position X")
+		cameraFolder.add(this.camera.position, "y", -300, 300, 0.1).name("Position Y")
+		cameraFolder.add(this.camera.position, "z", -300, 300, 0.1).name("Position Z")
 
 		cameraFolder
 			.add(this.camera, "fov", 10, 120)
@@ -1055,11 +1344,11 @@ class App {
 		const mesh = target.clone()
 		this.helpers.box = new BoxHelper(mesh)
 		this.scene.add(this.helpers.box)
-		this.helpers.box.visible = false
+		this.helpers.box.visible = true
 
 		this.helpers.axes = new AxesHelper(10)
 		this.scene.add(this.helpers.axes)
-		this.helpers.axes.visible = false
+		this.helpers.axes.visible = true
 
 		mesh.geometry.computeTangents()
 		this.helpers.vnh = new VertexNormalsHelper(mesh, 0.2)
