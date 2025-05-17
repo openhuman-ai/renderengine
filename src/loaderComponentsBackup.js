@@ -1,3 +1,12 @@
+	// this.loadFace(objloader, textureLoader)
+		// this.loadBrows(objloader, textureLoader)
+		// this.loadEyeWet(objloader, textureLoader)
+		// this.loadLens(objloader, textureLoader)
+		// this.loadLashes(objloader, textureLoader)
+		// this.loadEyeball(objloader, textureLoader)
+		// this.loadTeeth(objloader, textureLoader)
+		// this.loadTongue(objloader, textureLoader)
+
 
 	async loadBrows(objloader, textureLoader) {
 		objloader.load("/obj1/Brows.obj", (obj) => {
@@ -297,4 +306,85 @@
 
 			this.scene.add(mesh)
 		})
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	addFace() {
+		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
+
+		const faceNormal = textureLoader.load("/model/Face_Normal.jpg")
+		const facemap = textureLoader.load("/model/FaceBaked2.jpg")
+		const faceRoughness = textureLoader.load("/model/Face_Roughness.jpg")
+		const faceMaterial = new MeshPhysicalMaterial({
+			name: "FaceMaterial",
+			side: DoubleSide,
+			clearcoat: 0.04848484694957733,
+			clearcoatRoughness: 0.12393935769796371,
+			ior: 1.4500000476837158,
+			normalMap: faceNormal,
+			map: facemap,
+			metalnessMap: faceRoughness,
+			metalness: 0,
+		})
+		const face = new Mesh(geometry, faceMaterial)
+		face.position.set(-3, 0, 0)
+		this.scene.add(face)
+	}
+
+	addTeeth() {
+		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
+
+		const teethBaseColorTexture = textureLoader.load("/model/Teeth_diffuse.jpg")
+		const teethNormalTexture = textureLoader.load("/model/Teeth_Normal.jpg")
+		const teethMaterial = new MeshPhysicalMaterial({
+			color: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
+			map: teethBaseColorTexture,
+			normalMap: teethNormalTexture,
+			metalness: 0,
+			roughness: 0.3227272927761078,
+			transparent: true,
+			side: DoubleSide,
+			ior: 1.45,
+			specularIntensity: 1.0,
+			specularColor: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
+		})
+		const teeth = new Mesh(geometry, teethMaterial)
+		this.scene.add(teeth)
+	}
+
+	addTongue() {
+		const geometry = new SphereGeometry(1, 320, 320)
+		const textureLoader = new TextureLoader()
+
+		const tongueBaseColorTexture = textureLoader.load("/model/Tongue_Diffuse.jpg")
+		const tongueNormalTexture = textureLoader.load("/model/Tongue_Normal.jpg")
+		const tongueMaterial = new MeshPhysicalMaterial({
+			color: new Color(1.0, 0.6, 0.6),
+			map: tongueBaseColorTexture,
+			normalMap: tongueNormalTexture,
+			metalness: 0,
+			roughness: 0.3,
+			transparent: true,
+			side: DoubleSide,
+			ior: 1.45,
+			specularIntensity: 0.6,
+		})
+		const tongue = new Mesh(geometry, tongueMaterial)
+		tongue.position.set(3, 0, 0)
+		this.scene.add(tongue)
 	}

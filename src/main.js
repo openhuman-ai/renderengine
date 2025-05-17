@@ -488,7 +488,7 @@ class App {
 		this.teeth.normal = textureLoader.load("/facetoy/normal/normal_4.png")
 		this.tongue.normal = textureLoader.load("/facetoy/normal/normal_5.png")
 
-		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_face.png")
+		this.face.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_1.png") // baseColor_face.png
 		this.face.baseColor.colorSpace = SRGBColorSpace
 		this.eyeball.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_eyeball.png")
 		this.eyeball.baseColor.colorSpace = SRGBColorSpace
@@ -497,7 +497,7 @@ class App {
 		this.tongue.baseColor = textureLoader.load("/facetoy/baseColor/baseColor_4.png")
 		this.tongue.baseColor.colorSpace = SRGBColorSpace
 
-		this.face.roughness = textureLoader.load("/facetoy/roughness/roughness_face.png")
+		this.face.roughness = textureLoader.load("/facetoy/roughness/metallicRoughness_1.png")
 		this.eyeball.roughness = textureLoader.load("/facetoy/roughness/roughness_eyeball.png")
 		this.teeth.roughness = textureLoader.load("/facetoy/roughness/roughness_teeth.png")
 		this.tongue.roughness = textureLoader.load("/facetoy/roughness/roughness_tongue.png")
@@ -509,7 +509,7 @@ class App {
 	async loadMaterial() {
 		this.face.material = new MeshPhysicalMaterial({
 			name: "face",
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 
 			map: this.face.baseColor, // baseColorTexture (index 0)
 			normalMap: this.face.normal, // textures[1], // normalTexture (index 1)
@@ -527,14 +527,14 @@ class App {
 			// Specular extension
 			specularIntensity: 1.0, // not directly in GLTF, adjust as needed
 			specularIntensityMap: this.face.specular,
-			// specularColor: 0xffffff,
-			// specularColorMap: this.face.specular,
+			specularColor: 0xffffff,
+			specularColorMap: this.face.specular,
 			// IOR extension
 			ior: 1.45,
 
-			// displacementMap: this.face.displacement,
-			// displacementScale: 0.0001,
-			// displacementBias: 0.0001,
+			displacementMap: this.face.displacement,
+			displacementScale: 0.0001,
+			displacementBias: 0.0001,
 		})
 
 		this.brows.material = new MeshPhysicalMaterial({
@@ -542,7 +542,7 @@ class App {
 			color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
 			opacity: 0.721212, // baseColorFactor Alpha
 			transparent: true, // alphaMode: "BLEND"
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			ior: 1.45, // KHR_materials_ior
 			specularColor: new Color(2, 2, 2), // KHR_materials_specular
 			transmission: 0, // set explicitly if not used
@@ -555,7 +555,7 @@ class App {
 			color: new Color(0, 0, 0), // baseColorFactor RGB
 			opacity: 0.1, // baseColorFactor Alpha
 			transparent: true, // alphaMode: "BLEND"
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			roughness: 0.2030302882194519, // from pbrMetallicRoughness
 			metalness: 0, // from pbrMetallicRoughness
 			ior: 1.45, // KHR_materials_ior
@@ -569,8 +569,8 @@ class App {
 
 			// PBR
 			color: new Color(0.502883, 0.502887, 0.502887), // baseColorFactor RGB
-			transparent: true, // because alphaMode: BLEND
-			opacity: 0.1, // baseColorFactor Alpha
+			transparent: true,
+			opacity: 0.3,
 			roughness: 0.06363636,
 			metalness: 1.0,
 
@@ -592,7 +592,7 @@ class App {
 			ior: 1.45, // KHR_materials_ior
 
 			// Emissive (unused)
-			// emissive: 0x000000,
+			emissive: 0x000000,
 		})
 
 		this.lashes.material = new MeshPhysicalMaterial({
@@ -600,7 +600,7 @@ class App {
 			color: new Color(0.0739023, 0.073903, 0.073903), // baseColorFactor RGB
 			opacity: 0.721212, // baseColorFactor Alpha
 			transparent: true, // alphaMode: "BLEND"
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			metalness: 1, // metallicFactor
 			roughness: 1, // roughnessFactor
 			ior: 1.45, // KHR_materials_ior
@@ -610,9 +610,10 @@ class App {
 
 		this.eyeball.material = new MeshPhysicalMaterial({
 			name: "eyeball",
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			metalness: 0, // metallicFactor: 0
 			map: this.eyeball.baseColor, // textures[4], // baseColorTexture index 4
+			roughness: 1.0,
 			metalnessMap: this.eyeball.roughness, // textures[6], // metallicRoughnessTexture index 6
 			roughnessMap: this.eyeball.roughness, // textures[6], // same texture as metalnessMap
 			normalMap: this.eyeball.normal, // textures[5], // normalTexture index 5
@@ -632,7 +633,7 @@ class App {
 
 		this.teeth.material = new MeshPhysicalMaterial({
 			name: "teeth",
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			map: this.teeth.baseColor, // baseColorTexture index 1
 			color: new Color(1, 1, 1), // baseColorFactor RGB
 			opacity: 1, // baseColorFactor Alpha
@@ -650,7 +651,7 @@ class App {
 
 		this.tongue.material = new MeshPhysicalMaterial({
 			name: "tongue",
-			side: DoubleSide, // doubleSided: true
+			side: DoubleSide,
 			map: this.tongue.baseColor, // baseColorTexture index 1
 
 			metalness: 0, // metallicFactor
@@ -748,17 +749,6 @@ class App {
 		console.log("meshMap", meshMap)
 		const face = meshMap.get("Head")
 		console.log("face", face)
-
-		// face.position.x = 100
-
-		// this.loadFace(objloader, textureLoader)
-		// this.loadBrows(objloader, textureLoader)
-		// this.loadEyeWet(objloader, textureLoader)
-		// this.loadLens(objloader, textureLoader)
-		// this.loadLashes(objloader, textureLoader)
-		// this.loadEyeball(objloader, textureLoader)
-		// this.loadTeeth(objloader, textureLoader)
-		// this.loadTongue(objloader, textureLoader)
 	}
 
 	loadAndApplyMaterial(objloader, { name, path, material }) {
@@ -802,6 +792,7 @@ class App {
 			// this.addMeshHelpers(mesh)
 		})
 	}
+
 	async loadJSON() {
 		// const response = await fetch("/model/Facial.gltf")
 		// this.gltf = await response.json()
@@ -820,73 +811,6 @@ class App {
 		// const material = new MeshStandardMaterial({ color: 0xffffff })
 		// const mesh = new Mesh(geometry, material)
 		// this.scene.add(mesh)
-	}
-
-	addFace() {
-		const geometry = new SphereGeometry(1, 320, 320)
-		const textureLoader = new TextureLoader()
-
-		const faceNormal = textureLoader.load("/model/Face_Normal.jpg")
-		const facemap = textureLoader.load("/model/FaceBaked2.jpg")
-		const faceRoughness = textureLoader.load("/model/Face_Roughness.jpg")
-		const faceMaterial = new MeshPhysicalMaterial({
-			name: "FaceMaterial",
-			side: DoubleSide,
-			clearcoat: 0.04848484694957733,
-			clearcoatRoughness: 0.12393935769796371,
-			ior: 1.4500000476837158,
-			normalMap: faceNormal,
-			map: facemap,
-			metalnessMap: faceRoughness,
-			metalness: 0,
-		})
-		const face = new Mesh(geometry, faceMaterial)
-		face.position.set(-3, 0, 0)
-		this.scene.add(face)
-	}
-
-	addTeeth() {
-		const geometry = new SphereGeometry(1, 320, 320)
-		const textureLoader = new TextureLoader()
-
-		const teethBaseColorTexture = textureLoader.load("/model/Teeth_diffuse.jpg")
-		const teethNormalTexture = textureLoader.load("/model/Teeth_Normal.jpg")
-		const teethMaterial = new MeshPhysicalMaterial({
-			color: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
-			map: teethBaseColorTexture,
-			normalMap: teethNormalTexture,
-			metalness: 0,
-			roughness: 0.3227272927761078,
-			transparent: true,
-			side: DoubleSide,
-			ior: 1.45,
-			specularIntensity: 1.0,
-			specularColor: new Color(0.6168677806854248, 0.6168677806854248, 0.6168677806854248),
-		})
-		const teeth = new Mesh(geometry, teethMaterial)
-		this.scene.add(teeth)
-	}
-
-	addTongue() {
-		const geometry = new SphereGeometry(1, 320, 320)
-		const textureLoader = new TextureLoader()
-
-		const tongueBaseColorTexture = textureLoader.load("/model/Tongue_Diffuse.jpg")
-		const tongueNormalTexture = textureLoader.load("/model/Tongue_Normal.jpg")
-		const tongueMaterial = new MeshPhysicalMaterial({
-			color: new Color(1.0, 0.6, 0.6),
-			map: tongueBaseColorTexture,
-			normalMap: tongueNormalTexture,
-			metalness: 0,
-			roughness: 0.3,
-			transparent: true,
-			side: DoubleSide,
-			ior: 1.45,
-			specularIntensity: 0.6,
-		})
-		const tongue = new Mesh(geometry, tongueMaterial)
-		tongue.position.set(3, 0, 0)
-		this.scene.add(tongue)
 	}
 
 	async loadCustomModel() {
@@ -982,11 +906,90 @@ class App {
 			if (this.helpers.point2) this.helpers.point2.visible = visible
 		})
 
-		const pbrFolder = this.gui.addFolder("PBR Folder")
-		pbrFolder.close() // Close by default
-		// pbrFolder.add(this.guiParams, "showPBR").onChange((visible) => {
-		// 	if (this.helpers.pbr) this.helpers.pbr.visible = visible
-		// })
+		const faceFolder = this.gui.addFolder("Face")
+		faceFolder.close()
+		faceFolder.addColor(this.face.material, "color").name("Color")
+		faceFolder.add(this.face.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		faceFolder.add(this.face.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		faceFolder.add(this.face.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		faceFolder.add(this.face.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		faceFolder.addColor(this.face.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		faceFolder.add(this.face.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		faceFolder.add(this.face.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		faceFolder.add(this.face.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		faceFolder.add(this.face.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		faceFolder.add(this.face.material, "toneMapped").name("Tone Mapped")
+		faceFolder.add(this.face.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		faceFolder.add(this.face.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		faceFolder.add(this.face.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		faceFolder.add(this.face.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		faceFolder.addColor(this.face.material, "sheenColor").name("Sheen Color")
+		faceFolder.add(this.face.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		faceFolder.add(this.face.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		faceFolder.add(this.face.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		faceFolder
+			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+			.name("Clearcoat Normal Scale")
+			.onChange((v) => {
+				this.face.material.clearcoatNormalScale.set(v, v)
+			})
+
+		const eyeballFolder = this.gui.addFolder("Eyeball")
+		eyeballFolder.close()
+		eyeballFolder.addColor(this.eyeball.material, "color").name("Color")
+		eyeballFolder.add(this.eyeball.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		eyeballFolder.add(this.eyeball.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		eyeballFolder.add(this.eyeball.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		eyeballFolder.add(this.eyeball.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		eyeballFolder.addColor(this.eyeball.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		eyeballFolder.add(this.eyeball.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		eyeballFolder.add(this.eyeball.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		eyeballFolder.add(this.eyeball.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		eyeballFolder.add(this.eyeball.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		eyeballFolder.add(this.eyeball.material, "toneMapped").name("Tone Mapped")
+		eyeballFolder.add(this.eyeball.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		eyeballFolder.add(this.eyeball.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		eyeballFolder.add(this.eyeball.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		eyeballFolder.add(this.eyeball.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		eyeballFolder.addColor(this.eyeball.material, "sheenColor").name("Sheen Color")
+		eyeballFolder.add(this.eyeball.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		eyeballFolder.add(this.eyeball.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		eyeballFolder.add(this.eyeball.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		eyeballFolder
+			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+			.name("Clearcoat Normal Scale")
+			.onChange((v) => {
+				this.eyeball.material.clearcoatNormalScale.set(v, v)
+			})
+
+		const lensFolder = this.gui.addFolder("Lens")
+		lensFolder.close()
+		lensFolder.addColor(this.lens.material, "color").name("Color")
+		lensFolder.add(this.lens.material, "opacity", 0.0, 1.0, 0.0001).name("Opacity")
+		lensFolder.add(this.lens.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+		lensFolder.add(this.lens.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+		lensFolder.add(this.lens.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+		lensFolder.add(this.lens.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+		lensFolder.addColor(this.lens.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+		lensFolder.add(this.lens.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+		lensFolder.add(this.lens.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+		lensFolder.add(this.lens.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+		lensFolder.add(this.lens.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+		lensFolder.add(this.lens.material, "toneMapped").name("Tone Mapped")
+		lensFolder.add(this.lens.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+		lensFolder.add(this.lens.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+		lensFolder.add(this.lens.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+		lensFolder.add(this.lens.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+		lensFolder.addColor(this.lens.material, "sheenColor").name("Sheen Color")
+		lensFolder.add(this.lens.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+		lensFolder.add(this.lens.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+		lensFolder.add(this.lens.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+		lensFolder
+			.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+			.name("Clearcoat Normal Scale")
+			.onChange((v) => {
+				this.lens.material.clearcoatNormalScale.set(v, v)
+			})
 
 		// Ambient Light controls
 		const ambientFolder = this.gui.addFolder("Ambient Light")
@@ -1180,6 +1183,7 @@ class App {
 
 		// if (this.vnh) this.vnh.update()
 		// if (this.vth) this.vth.update()
+		// console.log(this.mouseX, this.mouseY)
 
 		// // Rotate the cube
 		// this.cube.rotation.x += 0.01
