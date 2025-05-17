@@ -52,6 +52,7 @@ import { Box3 } from "./math/Box3"
 import { Vector3 } from "./math/Vector3"
 import { Object3D } from "./core/Object3D"
 import { Group } from "./objects/Group"
+import { RectAreaLight } from "./lights/RectAreaLight"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -332,7 +333,10 @@ class App {
 		this.scene.add(this.lights.ambient)
 
 		this.lights.direct = new DirectionalLight(0xffffff, 2.5)
-		this.lights.direct.position.set(0.5, 0, 0.866)
+		// this.lights.direct = new RectAreaLight(0xffffff, 10, 17.12, 17.12)
+		this.lights.direct.position.set(5, 20.5581, 20.5581)
+		this.lights.direct.rotation.set(-1.19286, 0.15951, -0.39485)
+		// console.log("object.rotation.order", this.lights.direct.rotation.order)
 		this.scene.add(this.lights.direct)
 		// const helper = new DirectionalLightHelper(this.lights.direct, 5)
 		// this.scene.add(helper)
@@ -977,7 +981,6 @@ class App {
 		Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
 			meshes.forEach(({ name, mesh }) => {
 				group.add(mesh)
-				console.log('name', name, mesh)
 				meshMap.set(name, mesh)
 			})
 
@@ -987,7 +990,7 @@ class App {
 			group.position.sub(center)
 		})
 
-		console.log('meshMap', meshMap)
+		console.log("meshMap", meshMap)
 		const face = meshMap.get("Head")
 		console.log("face", face)
 
@@ -1234,13 +1237,17 @@ class App {
 		ambientFolder.add(this.lights.ambient.position, "z", -100, 100).name("Position Z")
 
 		// Main Light controls
-		const mainFolder = this.gui.addFolder("Direct Light")
-		mainFolder.close() // Close by default
-		mainFolder.add(this.lights.direct, "intensity", 0, 2).name("Intensity")
-		mainFolder.addColor(this.lights.direct, "color").name("Color")
-		mainFolder.add(this.lights.direct.position, "x", -100, 100).name("Position X")
-		mainFolder.add(this.lights.direct.position, "y", -100, 100).name("Position Y")
-		mainFolder.add(this.lights.direct.position, "z", -100, 100).name("Position Z")
+		const directLightFolder = this.gui.addFolder("Direct Light")
+		directLightFolder.close() // Close by default
+		directLightFolder.add(this.lights.direct, "intensity", 0, 100, 0.01).name("Intensity")
+		directLightFolder.addColor(this.lights.direct, "color").name("Color")
+		directLightFolder.add(this.lights.direct.position, "x", -100, 100, 0.01).name("Position X")
+		directLightFolder.add(this.lights.direct.position, "y", -100, 100, 0.01).name("Position Y")
+		directLightFolder.add(this.lights.direct.position, "z", -100, 100, 0.01).name("Position Z")
+
+		directLightFolder.add(this.lights.direct.rotation, "x", -Math.PI, Math.PI, 0.01).name("Rotation X")
+		directLightFolder.add(this.lights.direct.rotation, "y", -Math.PI, Math.PI, 0.01).name("Rotation Y")
+		directLightFolder.add(this.lights.direct.rotation, "z", -Math.PI, Math.PI, 0.01).name("Rotation Z")
 
 		// // Front Light controls
 		// const frontFolder = this.gui.addFolder("Front Light")
