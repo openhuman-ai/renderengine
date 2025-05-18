@@ -285,10 +285,10 @@ export class App {
 		this.createControls()
 		this.createLights()
 		// this.setupCube()
-		// this.loadTexure()
-		// this.loadMaterial()
-		// this.loadModel()
-		this.loadGLTF()
+		this.loadTexure()
+		this.loadMaterial()
+		this.loadModel()
+		// this.loadGLTF()
 		// this.loadJSON()
 		// this.loadCustomModel()
 		if (this.state.postProcessing) {
@@ -820,16 +820,16 @@ export class App {
 
 			this.controls.maxDistance = size * 10
 
-			// this.camera.near = size / 100
-			// this.camera.far = size * 100
-			// this.camera.updateProjectionMatrix()
+			this.camera.near = size / 100
+			this.camera.far = size * 100
+			this.camera.setFocalLength(30)
+			this.camera.updateProjectionMatrix()
 
-			// this.camera.position.copy(center)
-			this.camera.position.x += size / 8.0
-			this.camera.position.y += size / 9.0
-			this.camera.position.z += size / 1.0
-
-			// this.camera.lookAt(center)
+			this.camera.position.copy(center)
+			this.camera.position.x += size / 3.0
+			this.camera.position.y -= size / 3.0
+			this.camera.position.z += size * 2
+			this.camera.lookAt(center)
 
 			// this.setCamera(this.camera)
 
@@ -843,6 +843,11 @@ export class App {
 			// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
 			// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
 			// this.tongue.tougueMesh = meshMap.get("Tongue")
+
+			this.updateLights()
+			// this.updateGUI()
+			this.updateEnvironment()
+			this.updateDisplay()
 		})
 	}
 
@@ -913,7 +918,7 @@ export class App {
 		this.camera.lookAt(center)
 
 		this.setCamera(this.camera)
-		// this.controls.saveState()
+		this.controls.saveState()
 
 		this.scene.add(object)
 		this.meshRoot = object
@@ -1046,7 +1051,7 @@ export class App {
 		this.gui = new GUI()
 
 		const displaceFolder = this.gui.addFolder("Display")
-		// displaceFolder.close()
+		displaceFolder.close()
 		const envBackgroundCtrl = displaceFolder.add(this.state, "background")
 		envBackgroundCtrl.onChange(() => this.updateEnvironment())
 		const autoRotateCtrl = displaceFolder.add(this.state, "autoRotate")
