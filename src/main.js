@@ -55,6 +55,7 @@ import { Group } from "./objects/Group"
 import { RectAreaLight } from "./lights/RectAreaLight"
 
 import { environments } from "./environments.js"
+import { BokehPass } from "./jsm/postprocessing/BokehPass"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -100,6 +101,15 @@ export class App {
 	canvas
 	renderer
 	camera
+	cameraParams = {
+		fov: 60,
+		aspect: window.innerWidth / window.innerHeight,
+		near: 0.1,
+		far: 10000,
+		rotateX: 0,
+		rotateY: 0,
+		rotateZ: 0,
+	}
 	backgroundColor
 	state = {
 		bgColor: "#191919",
@@ -115,6 +125,24 @@ export class App {
 		directIntensity: 2.2,
 		directColor: "#FFFFFF",
 		punctualLights: true,
+
+		postProcessing: false,
+		bokeh: false,
+		bloom: false,
+		film: false,
+		dotScreen: false,
+
+		bokehFocus: 10.0,
+		bokehAperture: 0.025,
+		bokehMaxBlur: 0.01,
+		bokehWidth: 0.5,
+		bokehHeight: 0.5,
+		bokehFocalLength: 0.5,
+		bokehFStop: 0.5,
+		bokehMaxBlurRadius: 0.5,
+		bokehBlur: 0.5,
+		bokehAspect: 1.0,
+		bokehFocalDistance: 0.5,
 	}
 	scene
 	mixer
@@ -124,6 +152,10 @@ export class App {
 	model
 
 	composer
+	postProcessing = {
+		bokehPass: null,
+	}
+
 	effectFXAA
 	meshWithMorphTargets
 	morphTargetFolder
@@ -253,12 +285,15 @@ export class App {
 		this.createControls()
 		this.createLights()
 		// this.setupCube()
-		this.loadTexure()
-		this.loadMaterial()
-		this.loadModel()
-		// this.loadGLTF()
+		// this.loadTexure()
+		// this.loadMaterial()
+		// this.loadModel()
+		this.loadGLTF()
 		// this.loadJSON()
 		// this.loadCustomModel()
+		if (this.state.postProcessing) {
+			this.createPostProcessing()
+		}
 		this.addHelpers()
 		this.createGUI()
 
@@ -790,10 +825,9 @@ export class App {
 			// this.camera.updateProjectionMatrix()
 
 			// this.camera.position.copy(center)
-			this.camera.position.x += size / 9.0
+			this.camera.position.x += size / 8.0
 			this.camera.position.y += size / 9.0
 			this.camera.position.z += size / 1.0
-
 
 			// this.camera.lookAt(center)
 
@@ -858,6 +892,8 @@ export class App {
 		const center = box.getCenter(new Vector3())
 
 		this.controls.reset()
+		console.log("center", center)
+		console.log("size", size)
 
 		object.position.x -= center.x
 		object.position.y -= center.y
@@ -867,16 +903,17 @@ export class App {
 
 		this.camera.near = size / 100
 		this.camera.far = size * 100
+		this.camera.setFocalLength(30)
 		this.camera.updateProjectionMatrix()
 
 		this.camera.position.copy(center)
-		this.camera.position.x += size / 2.0
-		this.camera.position.y += size / 5.0
-		this.camera.position.z += size / 2.0
+		this.camera.position.x += size / 3.0
+		this.camera.position.y -= size / 3.0
+		this.camera.position.z += size * 2
 		this.camera.lookAt(center)
 
 		this.setCamera(this.camera)
-		this.controls.saveState()
+		// this.controls.saveState()
 
 		this.scene.add(object)
 		this.meshRoot = object
@@ -888,17 +925,25 @@ export class App {
 			}
 		})
 
-		// mesh.position.set(0, -0.2, 0)
-		// mesh.scale.set(0.01, 0.01, 0.01)
-		// this.scene.add(mesh)
-		// // this.camera.position.set(0, 0, 0)
-		// this.camera.position.set(0.310456, 0.262669, 1.60913)
 		// this.addMeshHelpers(object)
 
 		this.updateLights()
 		// this.updateGUI()
 		this.updateEnvironment()
 		this.updateDisplay()
+	}
+
+	createPostProcessing() {
+		this.composer = new EffectComposer(this.renderer)
+		this.renderPass = new RenderPass(this.scene, this.camera)
+
+		// this.postProcessing.bokehPass = new BokehPass(this.scene, this.camera, {
+		// 	focus: this.state.bokehFocalDistance,
+		// 	aperture: this.state.bokehAperture,
+		// 	maxblur: this.state.bokehMaxBlur,
+		// })
+
+		this.composer.addPass(new RenderPass(this.scene, this.camera))
 	}
 
 	async loadJSON() {
@@ -1059,91 +1104,94 @@ export class App {
 		// renderFolder.add(this.renderer, "shadowMap.needsUpdate").name("Shadow Map Needs Update")
 		// renderFolder.add(this.renderer, "shadowMap.type").name("Shadow Map Type")
 
-		// const faceFolder = this.gui.addFolder("Face")
-		// faceFolder.close()
-		// faceFolder.addColor(this.face.material, "color").name("Color")
-		// faceFolder.add(this.face.material, "reflectivity", 0.0, 1.0, 0.0001).name("Reflectivity")
-		// faceFolder.add(this.face.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		// faceFolder.add(this.face.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		// faceFolder.add(this.face.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		// faceFolder.add(this.face.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		// faceFolder.addColor(this.face.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		// faceFolder.add(this.face.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		// faceFolder.add(this.face.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		// faceFolder.add(this.face.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		// faceFolder.add(this.face.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		// faceFolder.add(this.face.material, "toneMapped").name("Tone Mapped")
-		// faceFolder.add(this.face.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		// faceFolder.add(this.face.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		// faceFolder.add(this.face.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		// faceFolder.add(this.face.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		// faceFolder.addColor(this.face.material, "sheenColor").name("Sheen Color")
-		// faceFolder.add(this.face.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		// faceFolder.add(this.face.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		// faceFolder.add(this.face.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		// faceFolder
-		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-		// 	.name("Clearcoat Normal Scale")
-		// 	.onChange((v) => {
-		// 		this.face.material.clearcoatNormalScale.set(v, v)
-		// 	})
+		const loadFace = false
+		if (loadFace) {
+			const faceFolder = this.gui.addFolder("Face")
+			faceFolder.close()
+			faceFolder.addColor(this.face.material, "color").name("Color")
+			faceFolder.add(this.face.material, "reflectivity", 0.0, 1.0, 0.0001).name("Reflectivity")
+			faceFolder.add(this.face.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+			faceFolder.add(this.face.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+			faceFolder.add(this.face.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+			faceFolder.add(this.face.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+			faceFolder.addColor(this.face.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+			faceFolder.add(this.face.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+			faceFolder.add(this.face.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+			faceFolder.add(this.face.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+			faceFolder.add(this.face.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+			faceFolder.add(this.face.material, "toneMapped").name("Tone Mapped")
+			faceFolder.add(this.face.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+			faceFolder.add(this.face.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+			faceFolder.add(this.face.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+			faceFolder.add(this.face.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+			faceFolder.addColor(this.face.material, "sheenColor").name("Sheen Color")
+			faceFolder.add(this.face.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+			faceFolder.add(this.face.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+			faceFolder.add(this.face.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+			faceFolder
+				.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+				.name("Clearcoat Normal Scale")
+				.onChange((v) => {
+					this.face.material.clearcoatNormalScale.set(v, v)
+				})
 
-		// const eyeballFolder = this.gui.addFolder("Eyeball")
-		// eyeballFolder.close()
-		// eyeballFolder.addColor(this.eyeball.material, "color").name("Color")
-		// eyeballFolder.add(this.eyeball.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		// eyeballFolder.add(this.eyeball.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		// eyeballFolder.add(this.eyeball.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		// eyeballFolder.add(this.eyeball.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		// eyeballFolder.addColor(this.eyeball.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		// eyeballFolder.add(this.eyeball.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		// eyeballFolder.add(this.eyeball.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		// eyeballFolder.add(this.eyeball.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		// eyeballFolder.add(this.eyeball.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		// eyeballFolder.add(this.eyeball.material, "toneMapped").name("Tone Mapped")
-		// eyeballFolder.add(this.eyeball.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		// eyeballFolder.add(this.eyeball.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		// eyeballFolder.add(this.eyeball.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		// eyeballFolder.add(this.eyeball.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		// eyeballFolder.addColor(this.eyeball.material, "sheenColor").name("Sheen Color")
-		// eyeballFolder.add(this.eyeball.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		// eyeballFolder.add(this.eyeball.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		// eyeballFolder.add(this.eyeball.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		// eyeballFolder
-		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-		// 	.name("Clearcoat Normal Scale")
-		// 	.onChange((v) => {
-		// 		this.eyeball.material.clearcoatNormalScale.set(v, v)
-		// 	})
+			const eyeballFolder = this.gui.addFolder("Eyeball")
+			eyeballFolder.close()
+			eyeballFolder.addColor(this.eyeball.material, "color").name("Color")
+			eyeballFolder.add(this.eyeball.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+			eyeballFolder.add(this.eyeball.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+			eyeballFolder.add(this.eyeball.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+			eyeballFolder.add(this.eyeball.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+			eyeballFolder.addColor(this.eyeball.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+			eyeballFolder.add(this.eyeball.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+			eyeballFolder.add(this.eyeball.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+			eyeballFolder.add(this.eyeball.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+			eyeballFolder.add(this.eyeball.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+			eyeballFolder.add(this.eyeball.material, "toneMapped").name("Tone Mapped")
+			eyeballFolder.add(this.eyeball.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+			eyeballFolder.add(this.eyeball.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+			eyeballFolder.add(this.eyeball.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+			eyeballFolder.add(this.eyeball.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+			eyeballFolder.addColor(this.eyeball.material, "sheenColor").name("Sheen Color")
+			eyeballFolder.add(this.eyeball.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+			eyeballFolder.add(this.eyeball.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+			eyeballFolder.add(this.eyeball.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+			eyeballFolder
+				.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+				.name("Clearcoat Normal Scale")
+				.onChange((v) => {
+					this.eyeball.material.clearcoatNormalScale.set(v, v)
+				})
 
-		// const lensFolder = this.gui.addFolder("Lens")
-		// lensFolder.close()
-		// lensFolder.addColor(this.lens.material, "color").name("Color")
-		// lensFolder.add(this.lens.material, "opacity", 0.0, 1.0, 0.0001).name("Opacity")
-		// lensFolder.add(this.lens.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
-		// lensFolder.add(this.lens.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
-		// lensFolder.add(this.lens.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
-		// lensFolder.add(this.lens.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
-		// lensFolder.addColor(this.lens.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
-		// lensFolder.add(this.lens.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
-		// lensFolder.add(this.lens.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
-		// lensFolder.add(this.lens.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
-		// lensFolder.add(this.lens.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
-		// lensFolder.add(this.lens.material, "toneMapped").name("Tone Mapped")
-		// lensFolder.add(this.lens.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
-		// lensFolder.add(this.lens.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
-		// lensFolder.add(this.lens.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
-		// lensFolder.add(this.lens.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
-		// lensFolder.addColor(this.lens.material, "sheenColor").name("Sheen Color")
-		// lensFolder.add(this.lens.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
-		// lensFolder.add(this.lens.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
-		// lensFolder.add(this.lens.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
-		// lensFolder
-		// 	.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
-		// 	.name("Clearcoat Normal Scale")
-		// 	.onChange((v) => {
-		// 		this.lens.material.clearcoatNormalScale.set(v, v)
-		// 	})
+			const lensFolder = this.gui.addFolder("Lens")
+			lensFolder.close()
+			lensFolder.addColor(this.lens.material, "color").name("Color")
+			lensFolder.add(this.lens.material, "opacity", 0.0, 1.0, 0.0001).name("Opacity")
+			lensFolder.add(this.lens.material, "roughness", 0.0, 1.0, 0.0001).name("Roughness")
+			lensFolder.add(this.lens.material, "metalness", 0.0, 1.0, 0.0001).name("Metalness")
+			lensFolder.add(this.lens.material, "bumpScale", 0.0, 5.0, 0.01).name("Bump Scale")
+			lensFolder.add(this.lens.material, "specularIntensity", 0.0, 1.0, 0.0001).name("Specular Intensity")
+			lensFolder.addColor(this.lens.material, "specularColor", 0.0, 1.0, 0.0001).name("Specular Color")
+			lensFolder.add(this.lens.material, "displacementScale", 0.0, 5.0, 0.01).name("Displacement Scale")
+			lensFolder.add(this.lens.material, "displacementBias", -2.0, 2.0, 0.01).name("Displacement Bias")
+			lensFolder.add(this.lens.material, "envMapIntensity", 0.0, 5.0, 0.01).name("Env Map Intensity")
+			lensFolder.add(this.lens.material, "aoMapIntensity", 0.0, 5.0, 0.01).name("AO Map Intensity")
+			lensFolder.add(this.lens.material, "toneMapped").name("Tone Mapped")
+			lensFolder.add(this.lens.material, "clearcoat", 0.0, 1.0, 0.0001).name("Clearcoat")
+			lensFolder.add(this.lens.material, "clearcoatRoughness", 0.0, 1.0, 0.0001).name("Clearcoat Roughness")
+			lensFolder.add(this.lens.material, "ior", 1.0, 2.5, 0.01).name("Index of Refraction")
+			lensFolder.add(this.lens.material, "sheen", 0.0, 1.0, 0.01).name("Sheen")
+			lensFolder.addColor(this.lens.material, "sheenColor").name("Sheen Color")
+			lensFolder.add(this.lens.material, "sheenRoughness", 0.0, 1.0, 0.01).name("Sheen Roughness")
+			lensFolder.add(this.lens.material, "transmission", 0.0, 1.0, 0.01).name("Transmission")
+			lensFolder.add(this.lens.material, "thickness", 0.0, 5.0, 0.01).name("Thickness")
+			lensFolder
+				.add({ clearcoatNormalScale: 1.0 }, "clearcoatNormalScale", 0.0, 5.0, 0.01)
+				.name("Clearcoat Normal Scale")
+				.onChange((v) => {
+					this.lens.material.clearcoatNormalScale.set(v, v)
+				})
+		}
 
 		// Ambient Light controls
 		const ambientFolder = this.gui.addFolder("Ambient Light")
@@ -1211,6 +1259,44 @@ export class App {
 		cameraFolder.add(this.camera.position, "y", -300, 300, 0.1).name("Position Y")
 		cameraFolder.add(this.camera.position, "z", -300, 300, 0.1).name("Position Z")
 
+		// const cameraParams = {
+		// 	x:
+		// }
+		// console.log("object", this.camera.rotation)
+		cameraFolder
+			.add(this.camera.rotation, "_x", -Math.PI, Math.PI, 0.01)
+			.name("Rotate X")
+			.onChange((value) => {
+				// this.controls.enabled = false
+				console.log("object", this.camera.rotation, this.camera.rotation._x, value)
+				this.camera.rotation.x = value
+				// this.controls.enabled = true
+				// this.controls.update()
+				// console.log("this.controls.target", this.controls.target)
+				// this.controls.target.x = value
+				// this.controls.target.set(10, 20, 0)
+			})
+
+		cameraFolder
+			.add(this.camera.rotation, "y", -Math.PI, Math.PI, 0.01)
+			.name("Rotate Y")
+			.onChange((value) => {
+				this.controls.enabled = false
+				this.camera.rotation.y = value
+				this.camera.updateProjectionMatrix()
+				this.controls.enabled = true
+			})
+
+		cameraFolder
+			.add(this.camera.rotation, "z", -Math.PI, Math.PI, 0.01)
+			.name("Rotate Z")
+			.onChange((value) => {
+				this.controls.enabled = false
+				this.camera.rotation.z = value
+				this.camera.updateProjectionMatrix()
+				this.controls.enabled = true
+			})
+
 		cameraFolder
 			.add(this.camera, "fov", 10, 120)
 			.name("FOV")
@@ -1233,12 +1319,80 @@ export class App {
 		// cameraFolder.add(this.cameraParams.focalLength, "focalLength", -100, 100, 0.01).name("focalLength")
 		cameraFolder.close()
 
+		const postprocessFolder = this.gui.addFolder("PostProcessing")
+		postprocessFolder.close()
+		postprocessFolder
+			.add(this.state, "bokeh")
+			.name("Enable Bokeh")
+			.onChange((enabled) => {
+				if (enabled) {
+					this.composer.addPass(this.postProcessing.bokehPass)
+				} else {
+					this.composer.removePass(this.postProcessing.bokehPass)
+				}
+			})
+		// console.log("this.postProcessing.bokehPass", this.postProcessing.bokehPass)
+		postprocessFolder
+			.add(this.state, "bokehFocalLength", 0.0, 100.0, 0.01)
+			.name("Bokeh Focal Distance")
+			.onChange((value) => {
+				this.postProcessing.bokehPass.materialBokeh.uniforms["focus"].value = value
+			})
+		// postprocessFolder
+		// 	.add(this.state, "bokehFocalDistance", 0.0, 100.0, 0.01)
+		// 	.name("Bokeh Focal Distance")
+		// 	.onChange((value) => {
+		// 		this.state.bokehFocalDistance = value
+		// 	})
+		postprocessFolder
+			.add(this.state, "bokehAperture", 0.0, 100.0, 0.01)
+			.name("Bokeh Aperture")
+			.onChange((value) => {
+				this.state.bokehAperture = value
+			})
+		postprocessFolder
+			.add(this.state, "bokehMaxBlur", 0.0, 100.0, 0.01)
+			.name("Bokeh Max Blur")
+			.onChange((value) => {
+				this.state.bokehMaxBlur = value
+			})
+		// maxblur: this.state.bokehMaxBlur,
+		// postprocessFolder
+		// 	.add(this.state, "bloom")
+		// 	.name("Bloom")
+		// 	.onChange(() => {
+		// 		if (this.state.bloom) {
+		// 			this.composer.addPass(bloomPass)
+		// 		} else {
+		// 			this.composer.removePass(bloomPass)
+		// 		}
+		// 	})
+		// postprocessFolder
+		// 	.add(this.state, "film")
+		// 	.name("Film")
+		// 	.onChange(() => {
+		// 		if (this.state.film) {
+		// 			this.composer.addPass(filmPass)
+		// 		} else {
+		// 			this.composer.removePass(filmPass)
+		// 		}
+		// 	})
+		// postprocessFolder
+		// 	.add(this.state, "dotScreen")
+		// 	.name("Dot Screen")
+		// 	.onChange(() => {
+		// 		if (this.state.dotScreen) {
+		// 			this.composer.addPass(dotScreenPass)
+		// 		} else {
+		// 			this.composer.removePass(dotScreenPass)
+		// 		}
+		// 	})
+
 		// this.morphTargetFolder = this.gui.addFolder("Morph Targets")
 		// this.morphTargetFolder.close()
 
 		this.meshFolder = this.gui.addFolder("Mesh")
 		this.meshFolder.close()
-
 		// this.gui.close()
 	}
 
@@ -1271,7 +1425,7 @@ export class App {
 	addMeshHelpers(target) {
 		target.traverse((node) => {
 			if (node.isMesh && node.name === "Head") {
-				console.log("node", node, node.geometry)
+				// console.log("node", node, node.geometry)
 				const mesh = node
 				this.helpers.box = new BoxHelper(mesh)
 				this.scene.add(this.helpers.box)
@@ -1375,7 +1529,7 @@ export class App {
 	updateLights() {
 		const state = this.state
 		this.renderer.toneMapping = Number(state.toneMapping)
-		console.log("exposure", state.exposure)
+		// console.log("exposure", state.exposure)
 		this.renderer.toneMappingExposure = Math.pow(2, state.exposure)
 
 		// this.renderer.toneMapping = Number(ACESFilmicToneMapping)
@@ -1444,7 +1598,11 @@ export class App {
 			this.controls.update()
 		}
 
-		this.renderer.render(this.scene, this.camera)
+		if (this.state.postProcessing) {
+			this.composer.render()
+		} else {
+			this.renderer.render(this.scene, this.camera)
+		}
 	}
 }
 

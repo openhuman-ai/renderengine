@@ -1,11 +1,16 @@
-import { Color, HalfFloatType, MeshDepthMaterial, NearestFilter, NoBlending, RGBADepthPacking, ShaderMaterial, UniformsUtils, WebGLRenderTarget } from "three"
+// import { Color, HalfFloatType, MeshDepthMaterial, NearestFilter, NoBlending, RGBADepthPacking, ShaderMaterial, UniformsUtils, WebGLRenderTarget } from "three"
 import { Pass, FullScreenQuad } from "./Pass.js"
 import { BokehShader } from "../shaders/BokehShader.js"
+import { Color } from "@/math/Color.js"
+import { HalfFloatType, NearestFilter, NoBlending, RGBADepthPacking } from "@/constants.js"
+import { MeshDepthMaterial } from "@/materials/MeshDepthMaterial.js"
+import { ShaderMaterial } from "@/materials/ShaderMaterial.js"
+import { UniformsUtils } from "@/renderers/shaders/UniformsUtils.js"
+import { WebGLRenderTarget } from "@/renderers/WebGLRenderTarget.js"
 
 /**
  * Depth-of-field post-process with bokeh shader
  */
-
 class BokehPass extends Pass {
 	constructor(scene, camera, params) {
 		super()
