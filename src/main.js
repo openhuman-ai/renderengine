@@ -289,6 +289,7 @@ export class App {
 		this.loadMaterial()
 		this.loadModel()
 		// this.loadGLTF()
+		// this.loadHair()
 		// this.loadJSON()
 		// this.loadCustomModel()
 		if (this.state.postProcessing) {
@@ -735,6 +736,14 @@ export class App {
 
 	async loadModel() {
 		const group = new Group()
+		const loader = new GLTFLoader(loadingManager)
+		loader.load("/hair/hair.glb", (gltf) => {
+			window.OPENHUMAN.gltf = gltf
+			let scene = gltf.scene || gltf.scenes[0]
+			group.add(scene)
+			// this.loadContent(scene, clips)
+		})
+
 		this.scene.add(group)
 		// const textureLoader = new TextureLoader(loadingManager)
 
@@ -875,6 +884,16 @@ export class App {
 				undefined,
 				reject
 			)
+		})
+	}
+
+	async loadHair() {
+		const loader = new GLTFLoader(loadingManager)
+		loader.load("/hair/hair.glb", (gltf) => {
+			window.OPENHUMAN.gltf = gltf
+			let scene = gltf.scene || gltf.scenes[0]
+			let clips = gltf.animations || []
+			this.loadContent(scene, clips)
 		})
 	}
 

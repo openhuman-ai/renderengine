@@ -122,6 +122,7 @@ import { Material } from "@/materials/Material.js"
 import { Texture } from "@/textures/Texture.js"
 import { MeshPhysicalMaterial } from "@/materials/MeshPhysicalMaterial.js"
 import { Vector2 } from "@/math/Vector2.js"
+import { Skeleton } from "@/objects/Skeleton.js"
 
 class GLTFLoader extends Loader {
 	constructor(manager) {
