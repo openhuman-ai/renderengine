@@ -29,7 +29,7 @@ import { CopyShader } from "./jsm/shaders/CopyShader"
 import { VerticalBlurShader } from "./jsm/shaders/VerticalBlurShader"
 import { BufferGeometry } from "./core/BufferGeometry"
 import { MeshStandardMaterial } from "./materials/MeshStandardMaterial"
-import { BufferAttribute } from "./core/BufferAttribute"
+import { BufferAttribute, Float32BufferAttribute, Uint16BufferAttribute } from "./core/BufferAttribute"
 import { SphereGeometry } from "./geometries/SphereGeometry"
 import { MeshPhysicalMaterial } from "./materials/MeshPhysicalMaterial"
 import { TextureLoader } from "./loaders/TextureLoader"
@@ -56,6 +56,11 @@ import { RectAreaLight } from "./lights/RectAreaLight"
 
 import { environments } from "./environments.js"
 import { BokehPass } from "./jsm/postprocessing/BokehPass"
+import { MeshBasicMaterial } from "./materials/MeshBasicMaterial"
+import { CylinderGeometry } from "./geometries/CylinderGeometry"
+import { Bone } from "./objects/Bone"
+import { SkinnedMesh } from "./objects/SkinnedMesh"
+import { Skeleton } from "./objects/Skeleton"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -276,6 +281,13 @@ export class App {
 	vnh
 	vth
 
+	sizing = {
+		halfHeight: 2.5,
+		segmentHeight: 1.0,
+		segments: 5,
+	}
+	skeleton
+
 	constructor() {
 		this.createRenderer()
 		this.createScene()
@@ -284,10 +296,11 @@ export class App {
 		this.createClock()
 		this.createControls()
 		this.createLights()
-		// this.setupCube()
-		this.loadTexure()
-		this.loadMaterial()
-		this.loadModel()
+		// this.createCube()
+		this.createCylinder()
+		// this.loadTexure()
+		// this.loadMaterial()
+		// this.loadModel()
 		// this.loadGLTF()
 		// this.loadHair()
 		// this.loadJSON()
@@ -410,11 +423,70 @@ export class App {
 		this.controls.screenSpacePanning = true
 	}
 
-	setupCube() {
+	createCube() {
 		const geometry = new BoxGeometry(1, 1, 1)
 		const material = new MeshPhongMaterial({ color: 0x00ff00 })
 		this.cube = new Mesh(geometry, material)
 		this.scene.add(this.cube)
+	}
+
+	createCylinder() {
+		const geometry = new CylinderGeometry(5, 5, 5, 5, this.sizing.segments, true)
+		const material = new MeshBasicMaterial({
+			color: 0x156289,
+			wireframe: true,
+			skinning: true,
+		})
+
+		// 3. Tạo xương (bones) theo segment
+		const bones = []
+		let prevBone = null
+
+		for (let i = 0; i <= this.sizing.segments; i++) {
+			const bone = new Bone()
+			bone.position.y = i * this.sizing.segmentHeight
+			if (prevBone) {
+				prevBone.add(bone)
+			}
+			bones.push(bone)
+			prevBone = bone
+		}
+
+		// 4. Tạo skin indices và skin weights thủ công
+		const position = geometry.attributes.position
+		const vertex = new Vector3()
+
+		const skinIndices = []
+		const skinWeights = []
+
+		for (let i = 0; i < position.count; i++) {
+			vertex.fromBufferAttribute(position, i)
+
+			// Chuyển vertex.y về hệ tọa độ 0 -> chiều cao hình trụ
+			const y = vertex.y + this.sizing.halfHeight
+
+			const skinIndex = Math.floor(y / this.sizing.segmentHeight)
+			const skinWeight = (y % this.sizing.segmentHeight) / this.sizing.segmentHeight
+
+			// Mỗi vertex chịu ảnh hưởng bởi 2 bone liền kề
+			skinIndices.push(skinIndex, skinIndex + 1, 0, 0)
+			skinWeights.push(1 - skinWeight, skinWeight, 0, 0)
+		}
+
+		geometry.setAttribute("skinIndex", new Uint16BufferAttribute(skinIndices, 4))
+		geometry.setAttribute("skinWeight", new Float32BufferAttribute(skinWeights, 4))
+
+		// 5. Tạo SkinnedMesh và Skeleton
+		const mesh = new SkinnedMesh(geometry, material)
+		this.skeleton = new Skeleton(bones)
+
+		// Thêm xương gốc vào mesh
+		mesh.add(bones[0])
+
+		// Gắn skeleton vào mesh
+		mesh.bind(this.skeleton)
+
+		this.scene.add(mesh)
 	}
 
 	createLights() {
@@ -1418,6 +1490,12 @@ export class App {
 		this.meshFolder = this.gui.addFolder("Mesh")
 		this.meshFolder.close()
 		// this.gui.close()
+
+		const skeletonFolder = this.gui.addFolder("Skeleton")
+		skeletonFolder.close()
+		skeletonFolder.add(this.sizing, "halfHeight", -10, 10, 0.01).name("halfHeight")
+		skeletonFolder.add(this.sizing, "segmentHeight", -10, 10, 0.01).name("segmentHeight")
+		skeletonFolder.add(this.sizing, "segments", -10, 10, 0.01).name("segments")
 	}
 
 	addHelpers() {
@@ -1525,7 +1603,7 @@ export class App {
 
 	getEnvironmentTexture(environment) {
 		const { id, path } = environment
-		// neutral (THREE.RoomEnvironment)
+		// neutral (RoomEnvironment)
 		// if (id === "neutral") {
 		// 	return Promise.resolve({ envMap: this.neutralEnvironment })
 		// }
@@ -1617,9 +1695,13 @@ export class App {
 		// // Rotate the cube
 		// this.cube.rotation.x += 0.01
 		// this.cube.rotation.y += 0.01
+		if (this.skeleton) {
+			this.skeleton.bones[0].rotation.x = Math.sin(Date.now() * 0.001) * 0.3
+			this.skeleton.bones[1].rotation.x = Math.sin(Date.now() * 0.001 + 1) * 0.5
+		}
 
+		this.controls.update()
 		if (this.controls) {
-			this.controls.update()
 		}
 
 		if (this.state.postProcessing) {
