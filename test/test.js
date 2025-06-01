@@ -19,8 +19,10 @@ import { Mesh } from "@/objects/Mesh"
 import { Color } from "@/math/Color"
 import { RawShaderMaterial } from "@/materials/RawShaderMaterial"
 
-import vertexShader from "./vertex.glsl"
-import fragmentShader from "./fragment.glsl"
+// import vertexShader from "./vertex.glsl"
+// import fragmentShader from "./fragment.glsl"
+import vertexShader from "./vertex_full.glsl"
+import fragmentShader from "./fragment_full.glsl"
 
 class CubeRotateSample {
 	constructor() {
@@ -84,6 +86,15 @@ class CubeRotateSample {
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
 				uniforms: this.uniforms,
+				defines: {
+					USE_UV: true,
+					USE_MAP: true,
+					USE_NORMALMAP: true,
+					USE_SKINNING: false, // Enable if using skinned meshes
+					USE_MORPHTARGETS: false, // Enable if using morph targets
+					USE_BATCHING: false, // Enable if using instanced/batched rendering
+					STANDARD: true,
+				},
 				side: DoubleSide,
 			})
 
@@ -92,47 +103,19 @@ class CubeRotateSample {
 		})
 	}
 
-	vertexShader() {
-		return `
-      precision mediump float;
-
-      uniform mat4 modelViewMatrix;
-      uniform mat4 projectionMatrix;
-
-      attribute vec3 position;
-      attribute vec2 uv;
-
-      varying vec2 vUv;
-
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `
-	}
-
-	fragmentShader() {
-		return `
-      precision mediump float;
-
-      uniform float uTime;
-      uniform sampler2D uTexture;
-
-      varying vec2 vUv;
-
-      void main() {
-        vec4 texColor = texture2D(uTexture, vUv);
-        gl_FragColor = vec4(texColor.rgb, 1.0);
-      }
-    `
-	}
-
 	animate() {
 		requestAnimationFrame(this.animate)
 
 		if (this.cube) {
 			this.cube.rotation.x += 0.01
 			this.cube.rotation.y += 0.01
+
+			this.cube.updateMatrixWorld()
+			// this.uniforms.modelMatrix.value = this.cube.matrixWorld
+			// this.uniforms.modelViewMatrix.value = this.cube.modelViewMatrix
+			// this.uniforms.normalMatrix.value = this.cube.normalMatrix
+			// this.uniforms.projectionMatrix.value = this.camera.projectionMatrix
+			// this.uniforms.viewMatrix.value = this.camera.matrixWorldInverse
 		}
 
 		this.renderer.render(this.scene, this.camera)
