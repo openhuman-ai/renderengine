@@ -19,6 +19,9 @@ import { Mesh } from "@/objects/Mesh"
 import { Color } from "@/math/Color"
 import { RawShaderMaterial } from "@/materials/RawShaderMaterial"
 
+import vertexShader from "./vertex.glsl"
+import fragmentShader from "./fragment.glsl"
+
 class CubeRotateSample {
 	constructor() {
 		this.scene = new Scene()
@@ -78,8 +81,8 @@ class CubeRotateSample {
 			// })
 			const geometry = new BoxGeometry(1, 1, 1)
 			const material = new RawShaderMaterial({
-				vertexShader: this.vertexShader(),
-				fragmentShader: this.fragmentShader(),
+				vertexShader: vertexShader,
+				fragmentShader: fragmentShader,
 				uniforms: this.uniforms,
 				side: DoubleSide,
 			})
