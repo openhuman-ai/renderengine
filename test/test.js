@@ -18,6 +18,8 @@ import { BoxGeometry } from "@/geometries/BoxGeometry"
 import { Mesh } from "@/objects/Mesh"
 import { Color } from "@/math/Color"
 import { RawShaderMaterial } from "@/materials/RawShaderMaterial"
+import { ShaderMaterial } from "@/materials/ShaderMaterial"
+
 
 // import vertexShader from "./vertex.glsl"
 // import fragmentShader from "./fragment.glsl"
@@ -25,6 +27,15 @@ import vertexShader from "./vertex_full.glsl"
 import fragmentShader from "./fragment_full.glsl"
 
 class CubeRotateSample {
+	gui
+	cube
+	// // uniforms
+	// // scene
+	// // camera
+	// // renderer
+	// // light
+
+
 	constructor() {
 		this.scene = new Scene()
 		this.scene.background = new Color(0xffffff)
@@ -39,6 +50,7 @@ class CubeRotateSample {
 		this.uniforms = {
 			uTime: { value: 0 },
 			uTexture: { value: null },
+			uPosition: 0
 		}
 		this.animate = this.animate.bind(this)
 		window.addEventListener("resize", () => this.onWindowResize())
@@ -52,6 +64,7 @@ class CubeRotateSample {
 			this.uniforms.uTexture.value = texture
 			this.addCube()
 			this.animate()
+			this.addGUI()
 		})
 	}
 
@@ -74,7 +87,7 @@ class CubeRotateSample {
 	addCube() {
 		const textureLoader = new TextureLoader()
 		textureLoader.load("https://threejs.org/examples/textures/uv_grid_opengl.jpg", (texture) => {
-			// const material = new RawShaderMaterial({
+			// const material = new MeshPhysicalMaterial({
 			// 	map: texture,
 			// 	metalness: 0.5,
 			// 	roughness: 0.3,
@@ -82,18 +95,18 @@ class CubeRotateSample {
 			// 	reflectivity: 0.5,
 			// })
 			const geometry = new BoxGeometry(1, 1, 1)
-			const material = new RawShaderMaterial({
+			const material = new ShaderMaterial({
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
 				uniforms: this.uniforms,
 				defines: {
-					USE_UV: true,
-					USE_MAP: true,
-					USE_NORMALMAP: true,
+					USE_UV: false,
+					USE_MAP: false,
+					USE_NORMALMAP: false,
 					USE_SKINNING: false, // Enable if using skinned meshes
 					USE_MORPHTARGETS: false, // Enable if using morph targets
 					USE_BATCHING: false, // Enable if using instanced/batched rendering
-					STANDARD: true,
+					// STANDARD: false,
 				},
 				side: DoubleSide,
 			})
@@ -101,6 +114,14 @@ class CubeRotateSample {
 			this.cube = new Mesh(geometry, material)
 			this.scene.add(this.cube)
 		})
+	}
+
+	addGUI() {
+		this.gui = new GUI()
+
+		const displaceFolder = this.gui.addFolder("Display")
+		displaceFolder.add(this.uniforms, "uPosition", 0, Math.PI * 2, 0.01).name("Position")
+		displaceFolder.close()
 	}
 
 	animate() {

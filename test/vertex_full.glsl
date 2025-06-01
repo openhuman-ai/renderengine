@@ -1,5 +1,3 @@
-#version 300 es
-
 #define STANDARD
 
 varying vec3 vViewPosition;
@@ -46,7 +44,7 @@ float average(const in vec3 v) {
 // do not collapse into a single function per: http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
 highp float rand(const in vec2 uv) {
 
-	const highp float a = 12.9898f, b = 78.233f, c = 43758.5453f;
+	const highp float a = 12.9898, b = 78.233, c = 43758.5453;
 	highp float dt = dot(uv.xy, vec2(a, b)), sn = mod(dt, PI);
 
 	return fract(sin(sn) * c);
@@ -81,14 +79,14 @@ varying vec3 vPosition;
 #endif
 
 vec3 transformDirection(in vec3 dir, in mat4 matrix) {
-	return normalize((matrix * vec4(dir, 0.0f)).xyz);
+	return normalize((matrix * vec4(dir, 0.0)).xyz);
 }
 
 vec3 inverseTransformDirection(in vec3 dir, in mat4 matrix) {
 	// dir can be either a direction vector or a normal vector
 	// upper-left 3x3 of matrix is assumed to be orthogonal
 
-	return normalize((vec4(dir, 0.0f) * matrix).xyz);
+	return normalize((vec4(dir, 0.0) * matrix).xyz);
 }
 
 mat3 transposeMat3(const in mat3 m) {
@@ -102,14 +100,14 @@ mat3 transposeMat3(const in mat3 m) {
 }
 
 bool isPerspectiveMatrix(mat4 m) {
-	return m[2][3] == -1.0f;
+	return m[2][3] == -1.0;
 }
 
 vec2 equirectUv(in vec3 dir) {
 	// dir is assumed to be unit length
-	float u = atan(dir.z, dir.x) * RECIPROCAL_PI2 + 0.5f;
+	float u = atan(dir.z, dir.x) * RECIPROCAL_PI2 + 0.5;
 
-	float v = asin(clamp(dir.y, -1.0f, 1.0f)) * RECIPROCAL_PI + 0.5f;
+	float v = asin(clamp(dir.y, -1.0, 1.0)) * RECIPROCAL_PI + 0.5;
 
 	return vec2(u, v);
 }
@@ -125,18 +123,18 @@ vec3 F_Schlick(const in vec3 f0, const in float f90, const in float dotVH) {
 
 	// Optimized variant (presented by Epic at SIGGRAPH '13)
 	// https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf
-	float fresnel = exp2((-5.55473f * dotVH - 6.98316f) * dotVH);
+	float fresnel = exp2((-5.55473 * dotVH - 6.98316) * dotVH);
 
-	return f0 * (1.0f - fresnel) + (f90 * fresnel);
+	return f0 * (1.0 - fresnel) + (f90 * fresnel);
 }
 
 float F_Schlick(const in float f0, const in float f90, const in float dotVH) {
 	// Original approximation by Christophe Schlick '94
 	// float fresnel = pow( 1.0 - dotVH, 5.0 );
 
-	float fresnel = exp2((-5.55473f * dotVH - 6.98316f) * dotVH);
+	float fresnel = exp2((-5.55473 * dotVH - 6.98316) * dotVH);
 
-	return f0 * (1.0f - fresnel) + (f90 * fresnel);
+	return f0 * (1.0 - fresnel) + (f90 * fresnel);
 }
 
 // ********************* #include <batching_pars_vertex> *********************
@@ -628,11 +626,11 @@ void main() {
 // ********************* #include <color_vertex>
 #if defined( USE_COLOR_ALPHA )
 
-	vColor = vec4(1.0f);
+	vColor = vec4(1.0);
 
 #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR ) || defined( USE_BATCHING_COLOR )
 
-	vColor = vec3(1.0f);
+	vColor = vec3(1.0);
 
 #endif
 
@@ -682,12 +680,12 @@ void main() {
 
 		#if defined( USE_COLOR_ALPHA )
 
-		if(morphTargetInfluences[i] != 0.0f)
+		if(morphTargetInfluences[i] != 0.0)
 			vColor += getMorph(gl_VertexID, i, 2) * morphTargetInfluences[i];
 
 		#elif defined( USE_COLOR )
 
-		if(morphTargetInfluences[i] != 0.0f)
+		if(morphTargetInfluences[i] != 0.0)
 			vColor += getMorph(gl_VertexID, i, 2).rgb * morphTargetInfluences[i];
 
 		#endif
@@ -719,7 +717,7 @@ void main() {
 
 	for(int i = 0; i < MORPHTARGETS_COUNT; i++) {
 
-		if(morphTargetInfluences[i] != 0.0f)
+		if(morphTargetInfluences[i] != 0.0)
 			objectNormal += getMorph(gl_VertexID, i, 1).xyz * morphTargetInfluences[i];
 
 	}
@@ -739,18 +737,18 @@ void main() {
 // ********************* #include <skinnormal_vertex>
 #ifdef USE_SKINNING
 
-	mat4 skinMatrix = mat4(0.0f);
+	mat4 skinMatrix = mat4(0.0);
 	skinMatrix += skinWeight.x * boneMatX;
 	skinMatrix += skinWeight.y * boneMatY;
 	skinMatrix += skinWeight.z * boneMatZ;
 	skinMatrix += skinWeight.w * boneMatW;
 	skinMatrix = bindMatrixInverse * skinMatrix * bindMatrix;
 
-	objectNormal = vec4(skinMatrix * vec4(objectNormal, 0.0f)).xyz;
+	objectNormal = vec4(skinMatrix * vec4(objectNormal, 0.0)).xyz;
 
 	#ifdef USE_TANGENT
 
-	objectTangent = vec4(skinMatrix * vec4(objectTangent, 0.0f)).xyz;
+	objectTangent = vec4(skinMatrix * vec4(objectTangent, 0.0)).xyz;
 
 	#endif
 
@@ -809,7 +807,7 @@ void main() {
 
 #ifdef USE_TANGENT
 
-	transformedTangent = (modelViewMatrix * vec4(transformedTangent, 0.0f)).xyz;
+	transformedTangent = (modelViewMatrix * vec4(transformedTangent, 0.0)).xyz;
 
 	#ifdef FLIP_SIDED
 
@@ -852,7 +850,7 @@ void main() {
 
 	for(int i = 0; i < MORPHTARGETS_COUNT; i++) {
 
-		if(morphTargetInfluences[i] != 0.0f)
+		if(morphTargetInfluences[i] != 0.0)
 			transformed += getMorph(gl_VertexID, i, 0).xyz * morphTargetInfluences[i];
 
 	}
@@ -862,9 +860,9 @@ void main() {
 // ********************* #include <skinning_vertex>
 #ifdef USE_SKINNING
 
-	vec4 skinVertex = bindMatrix * vec4(transformed, 1.0f);
+	vec4 skinVertex = bindMatrix * vec4(transformed, 1.0);
 
-	vec4 skinned = vec4(0.0f);
+	vec4 skinned = vec4(0.0);
 	skinned += boneMatX * skinVertex * skinWeight.x;
 	skinned += boneMatY * skinVertex * skinWeight.y;
 	skinned += boneMatZ * skinVertex * skinWeight.z;
@@ -882,7 +880,7 @@ void main() {
 #endif
 
 // ********************* #include <project_vertex>
-	vec4 mvPosition = vec4(transformed, 1.0f);
+	vec4 mvPosition = vec4(transformed, 1.0);
 
 #ifdef USE_BATCHING
 
@@ -903,7 +901,7 @@ void main() {
 // ********************* #include <logdepthbuf_vertex>
 #ifdef USE_LOGDEPTHBUF
 
-	vFragDepth = 1.0f + gl_Position.w;
+	vFragDepth = 1.0 + gl_Position.w;
 	vIsPerspective = float(isPerspectiveMatrix(projectionMatrix));
 
 #endif
@@ -920,7 +918,7 @@ void main() {
 // ********************* #include <worldpos_vertex>
 #if defined( USE_ENVMAP ) || defined( DISTANCE ) || defined ( USE_SHADOWMAP ) || defined ( USE_TRANSMISSION ) || NUM_SPOT_LIGHT_COORDS > 0
 
-	vec4 worldPosition = vec4(transformed, 1.0f);
+	vec4 worldPosition = vec4(transformed, 1.0);
 
 	#ifdef USE_BATCHING
 
