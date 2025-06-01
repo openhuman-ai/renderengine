@@ -17,7 +17,16 @@ import { WebGLRenderer } from "./renderers/WebGLRenderer"
 import GUI from "./gui/GUI"
 import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
-import { ACESFilmicToneMapping, DoubleSide, EquirectangularReflectionMapping, LinearSRGBColorSpace, LinearToneMapping, NormalAnimationBlendMode, SRGBColorSpace } from "./constants"
+import {
+	ACESFilmicToneMapping,
+	DoubleSide,
+	EquirectangularReflectionMapping,
+	FrontSide,
+	LinearSRGBColorSpace,
+	LinearToneMapping,
+	NormalAnimationBlendMode,
+	SRGBColorSpace,
+} from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
 import { EXRLoader } from "./jsm/loaders/EXRLoader"
@@ -61,6 +70,9 @@ import { CylinderGeometry } from "./geometries/CylinderGeometry"
 import { Bone } from "./objects/Bone"
 import { SkinnedMesh } from "./objects/SkinnedMesh"
 import { Skeleton } from "./objects/Skeleton"
+import { ShaderLib } from "./renderers/shaders/ShaderLib"
+import { UniformsUtils } from "./renderers/shaders/UniformsUtils"
+import { ShaderMaterial } from "./materials/ShaderMaterial"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -198,6 +210,7 @@ export class App {
 	}
 
 	// components
+	rootGroup = new Group()
 	brows = {
 		mesh: null,
 		material: null,
@@ -297,14 +310,16 @@ export class App {
 		this.createControls()
 		this.createLights()
 		// this.createCube()
-		this.createCylinder()
-		// this.loadTexure()
-		// this.loadMaterial()
+		// this.createCylinder()
+		this.loadTexure()
+		this.loadMaterial()
+		this.loadGLSLShader()
 		// this.loadModel()
 		// this.loadGLTF()
 		// this.loadHair()
 		// this.loadJSON()
 		// this.loadCustomModel()
+
 		if (this.state.postProcessing) {
 			this.createPostProcessing()
 		}
@@ -807,16 +822,15 @@ export class App {
 	}
 
 	async loadModel() {
-		const group = new Group()
-		const loader = new GLTFLoader(loadingManager)
-		loader.load("/hair/hair.glb", (gltf) => {
-			window.OPENHUMAN.gltf = gltf
-			let scene = gltf.scene || gltf.scenes[0]
-			group.add(scene)
-			// this.loadContent(scene, clips)
-		})
+		// const loader = new GLTFLoader(loadingManager)
+		// loader.load("/hair/hair.glb", (gltf) => {
+		// 	window.OPENHUMAN.gltf = gltf
+		// 	let scene = gltf.scene || gltf.scenes[0]
+		// 	group.add(scene)
+		// 	// this.loadContent(scene, clips)
+		// })
 
-		this.scene.add(group)
+		this.scene.add(this.rootGroup)
 		// const textureLoader = new TextureLoader(loadingManager)
 
 		const models = [
@@ -882,12 +896,12 @@ export class App {
 		const objloader = new OBJLoader(loadingManager)
 		Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
 			meshes.forEach(({ name, mesh }) => {
-				group.add(mesh)
+				this.rootGroup.add(mesh)
 				meshMap.set(name, mesh)
 			})
 
-			group.updateMatrixWorld()
-			const box = new Box3().setFromObject(group)
+			this.rootGroup.updateMatrixWorld()
+			const box = new Box3().setFromObject(this.rootGroup)
 			const size = box.getSize(new Vector3()).length()
 			const center = box.getCenter(new Vector3())
 
@@ -895,9 +909,9 @@ export class App {
 
 			// this.addMeshHelpers(group)
 
-			group.position.x -= center.x
-			group.position.y -= center.y
-			group.position.z -= center.z
+			this.rootGroup.position.x -= center.x
+			this.rootGroup.position.y -= center.y
+			this.rootGroup.position.z -= center.z
 
 			this.controls.maxDistance = size * 10
 
@@ -930,6 +944,132 @@ export class App {
 			this.updateEnvironment()
 			this.updateDisplay()
 		})
+	}
+
+	loadGLSLShader() {
+		// Trigger compilation by rendering once
+		console.log("this.face.material", this.face.material)
+		this.face.material.onBeforeCompile = (shader) => {
+			// Save or log the raw GLSL source
+			console.log("Vertex Shader:", shader.vertexShader)
+			console.log("Fragment Shader:", shader.fragmentShader)
+
+			// Optionally modify shader code here
+			// shader.vertexShader = shader.vertexShader.replace(...);
+			// shader.fragmentShader = shader.fragmentShader.replace(...);
+		}
+		this.camera.position.set(0, 48, 20)
+
+		const objloader = new OBJLoader(loadingManager)
+		objloader.load("/obj1/Head.obj", (obj) => {
+			let mesh = null
+			console.log("obj", obj)
+
+			obj.traverse((child) => {
+				if (child.isMesh) {
+					child.material = this.face.material
+					child.name = name
+					mesh = child
+				}
+			})
+
+			this.scene.add(obj)
+			// if (mesh) {
+			// 	resolve({ name, mesh })
+			// } else {
+			// 	reject(new Error(`No mesh found in ${path}`))
+			// }
+		})
+
+		// const geometry = new BoxGeometry(10, 10, 10)
+		// const material = new MeshPhysicalMaterial({ color: 0x00ff00 })
+		// const customMaterial = new ShaderMaterial({
+		// 	uniforms: UniformsUtils.merge([
+		// 		ShaderLib.physical.uniforms,
+		// 		{
+		// 			// You can add additional custom uniforms here
+		// 			time: { value: 0 },
+		// 		},
+		// 	]),
+		// 	vertexShader: ShaderLib.physical.vertexShader,
+		// 	fragmentShader: ShaderLib.physical.fragmentShader,
+
+		// 	// Physical material properties
+		// 	defines: {
+		// 		PHYSICAL: "",
+		// 	},
+		// 	clearcoat: 0.5,
+		// 	clearcoatRoughness: 0.1,
+		// 	metalness: 0.8,
+		// 	roughness: 0.3,
+		// 	color: new Color(0x156289),
+		// 	emissive: new Color(0x000000),
+		// 	ior: 1.5,
+		// 	transmission: 0.0,
+		// 	side: FrontSide,
+		// 	transparent: false,
+		// 	envMapIntensity: 1.0,
+		// })
+		// this.camera.position.set(0, 48, 1)
+		// this.cube = new Mesh(geometry, material)
+		// this.scene.add(this.cube)
+
+		// // Force compilation by rendering once
+		// this.renderer.render(this.scene, this.camera)
+
+		// // Access the program object after render
+		// const program = this.renderer.properties.get(this.cube.material)?.program
+		// console.log("program", program)
+
+		// if (program) {
+		// 	const vertexShaderFinal = program.vertexShader
+		// 	const fragmentShaderFinal = program.fragmentShader
+		// 	console.log("Full Vertex Shader:", vertexShaderFinal)
+		// 	console.log("Full Fragment Shader:", fragmentShaderFinal)
+		// } else {
+		// 	console.error("Shader program not compiled yet or material missing.")
+		// }
+
+		// material.onBeforeCompile = (shader) => {
+		// 	// Save or log the raw GLSL source
+		// 	console.log("Vertex Shader:", shader.vertexShader)
+		// 	console.log("Fragment Shader:", shader.fragmentShader)
+
+		// 	// Optionally modify shader code here
+		// 	// shader.vertexShader = shader.vertexShader.replace(...);
+		// 	// shader.fragmentShader = shader.fragmentShader.replace(...);
+		// }
+
+		// this.renderer.compile(this.scene, this.camera)
+		// console.log("material", material.vertexShader, material.fragmentShader)
+		// this.rootGroup.children.forEach((child) => {
+		// 	console.log('child', child)
+		// 	if (child.isMesh) {
+		// 		console.log("Mesh Name:", child.name)
+		// 		console.log("Material:", child.material)
+		// 		// console.log("Geometry:", child.geometry)
+		// 		// console.log("Attributes:", child.geometry.attributes)
+		// 	}
+		// })
+		// const headMesh = this.rootGroup.traverse(function (object) {
+		// 	if (object.isMesh && object.name === "Head") {
+		// 		return object
+		// 	}
+		// })
+		// // const mesh = meshMap.get("Head")
+		// console.log("Mesh:", headMesh)
+
+		// // Get internal compiled program
+		// const material = headMesh.material
+		// console.log(material)
+		// const program = this.renderer.properties.get(material).program
+		// console.log("program", program)
+
+		// // const vertexShader = program.vertexShader
+		// const fragmentShader = program.fragmentShader
+
+		// // console.log("Vertex Shader:", vertexShader)
+		// console.log("Fragment Shader:", fragmentShader)
 	}
 
 	loadAndApplyMaterial(objloader, { name, path, material }) {
@@ -971,11 +1111,30 @@ export class App {
 
 	async loadGLTF() {
 		const loader = new GLTFLoader(loadingManager)
-		loader.load("/facetoy/facetoy.glb", (gltf) => {
-			window.OPENHUMAN.gltf = gltf
-			let scene = gltf.scene || gltf.scenes[0]
-			let clips = gltf.animations || []
-			this.loadContent(scene, clips)
+		// /facetoy/facetoy.glb facecap_output.gltf
+		loader.load("/facecap_output.gltf", (gltf) => {
+			// window.OPENHUMAN.gltf = gltf
+			// let scene = gltf.scene || gltf.scenes[0]
+			// let clips = gltf.animations || []
+			// this.loadContent(scene, clips)
+			const mesh = gltf.scene.children[0]
+			console.log("gltf", gltf)
+
+			this.scene.add(mesh)
+
+			this.mixer = new AnimationMixer(mesh)
+			this.mixer.clipAction(gltf.animations[0]).play()
+
+			// GUI
+			// const head = mesh.getObjectByName("mesh_2")
+			// const influences = head.morphTargetInfluences
+
+			// const gui = new GUI()
+			// gui.close()
+
+			// for (const [key, value] of Object.entries(head.morphTargetDictionary)) {
+			// 	gui.add(influences, value, 0, 1, 0.01).name(key.replace("blendShape1.", "")).listen()
+			// }
 		})
 	}
 
@@ -1138,10 +1297,18 @@ export class App {
 		this.backgroundColor.set(this.state.bgColor)
 	}
 
+	logGLSL = false
+
 	createGUI() {
 		this.gui = new GUI()
 
 		const displaceFolder = this.gui.addFolder("Display")
+		displaceFolder
+			.add(this, "logGLSL")
+			.name("Log GLSL")
+			.onChange((value) => {
+				this.loadGLSLShader()
+			})
 		displaceFolder.close()
 		const envBackgroundCtrl = displaceFolder.add(this.state, "background")
 		envBackgroundCtrl.onChange(() => this.updateEnvironment())
