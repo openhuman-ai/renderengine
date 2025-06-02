@@ -17,6 +17,10 @@ import { MeshPhysicalMaterial } from "@/materials/MeshPhysicalMaterial"
 import { BoxGeometry } from "@/geometries/BoxGeometry"
 import { Mesh } from "@/objects/Mesh"
 import { Color } from "@/math/Color"
+import { Matrix4 } from "@/math/Matrix4"
+import { Matrix3 } from "@/math/Matrix3"
+import { Vector2 } from "@/math/Vector2"
+
 import { RawShaderMaterial } from "@/materials/RawShaderMaterial"
 import { ShaderMaterial } from "@/materials/ShaderMaterial"
 
@@ -24,9 +28,8 @@ import { ShaderMaterial } from "@/materials/ShaderMaterial"
 // import fragmentShader from "./fragment.glsl"
 import vertexShader from "./vertex_full.glsl"
 import fragmentShader from "./fragment_full.glsl"
-import { Matrix4 } from "@/math/Matrix4"
-import { Matrix3 } from "@/math/Matrix3"
-import { Vector2 } from "@/math/Vector2"
+// import vertexShader from "./vertex_raw.glsl"
+// import fragmentShader from "./fragment_raw.glsl"
 
 class CubeRotateSample {
 	gui
@@ -61,23 +64,19 @@ class CubeRotateSample {
 			// modelMatrix: { value: new Matrix4() },
 			// normalMatrix: { value: new Matrix3() },
 			// viewMatrix: { value: new Matrix4() },
-
 			// Texture transforms (example with some common ones)
 			// mapTransform: { value: new Matrix3() },
 			// normalMapTransform: { value: new Matrix3() },
 			// roughnessMapTransform: { value: new Matrix3() },
 			// metalnessMapTransform: { value: new Matrix3() },
-
 			// // Displacement map
 			// displacementMap: { value: null },
 			// displacementScale: { value: 1.0 },
 			// displacementBias: { value: 0.0 },
-
 			// // Shadow maps
 			// directionalShadowMatrix: { value: [] },
 			// pointShadowMatrix: { value: [] },
 			// spotLightMatrix: { value: [] },
-
 			// // Light shadow parameters
 			// directionalLightShadows: {
 			// 	value: [
@@ -90,17 +89,14 @@ class CubeRotateSample {
 			// 		},
 			// 	],
 			// },
-
 			// // For skinning
 			// bindMatrix: { value: new Matrix4() },
 			// bindMatrixInverse: { value: new Matrix4() },
 			// boneTexture: { value: null },
-
 			// // For morph targets
 			// morphTargetInfluences: { value: [] },
 			// morphTargetsTexture: { value: null },
 			// morphTargetsTextureSize: { value: new Vector2() },
-
 			// // Other possible uniforms
 			// time: { value: 0 },
 		}
@@ -149,20 +145,35 @@ class CubeRotateSample {
 			// 	reflectivity: 0.5,
 			// })
 			const geometry = new BoxGeometry(1, 1, 1)
-			const material = new ShaderMaterial({
+			// const material = new ShaderMaterial({
+			// 	vertexShader: vertexShader,
+			// 	fragmentShader: fragmentShader,
+			// 	uniforms: { map: texture, ...this.uniforms },
+			// 	defines: {
+			// 		USE_UV: false,
+			// 		USE_MAP: false,
+			// 		USE_NORMALMAP: false,
+			// 		USE_SKINNING: false, // Enable if using skinned meshes
+			// 		USE_MORPHTARGETS: false, // Enable if using morph targets
+			// 		USE_BATCHING: false, // Enable if using instanced/batched rendering
+			// 		// STANDARD: false,
+			// 	},
+			// 	side: DoubleSide,
+			// })
+			const material = new RawShaderMaterial({
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
-				uniforms: { map: texture, ...this.uniforms },
-				defines: {
-					USE_UV: false,
-					USE_MAP: false,
-					USE_NORMALMAP: false,
-					USE_SKINNING: false, // Enable if using skinned meshes
-					USE_MORPHTARGETS: false, // Enable if using morph targets
-					USE_BATCHING: false, // Enable if using instanced/batched rendering
-					// STANDARD: false,
+				uniforms: {
+					...this.uniforms,
+					uTexture: { value: texture },
+					uPosition: { value: 0 }, // Example uniform
 				},
 				side: DoubleSide,
+				defines: {
+					USE_UV: true, // Enable UV mapping
+					USE_MAP: true, // Enable texture mapping
+					USE_NORMALMAP: false, // Disable normal mapping
+				},
 			})
 
 			this.cube = new Mesh(geometry, material)
