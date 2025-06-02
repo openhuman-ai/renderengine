@@ -20,21 +20,22 @@ import { Color } from "@/math/Color"
 import { RawShaderMaterial } from "@/materials/RawShaderMaterial"
 import { ShaderMaterial } from "@/materials/ShaderMaterial"
 
-
 // import vertexShader from "./vertex.glsl"
 // import fragmentShader from "./fragment.glsl"
 import vertexShader from "./vertex_full.glsl"
 import fragmentShader from "./fragment_full.glsl"
+import { Matrix4 } from "@/math/Matrix4"
+import { Matrix3 } from "@/math/Matrix3"
+import { Vector2 } from "@/math/Vector2"
 
 class CubeRotateSample {
 	gui
 	cube
-	// // uniforms
-	// // scene
-	// // camera
-	// // renderer
-	// // light
-
+	// uniforms
+	// scene
+	// camera
+	// renderer
+	// light
 
 	constructor() {
 		this.scene = new Scene()
@@ -47,11 +48,63 @@ class CubeRotateSample {
 		document.body.appendChild(this.renderer.domElement)
 
 		this.cube = null
+		// this.uniforms = {
+		// 	uTime: { value: 0 },
+		// 	uTexture: { value: null },
+		// 	uPosition: 0,
+		// }
+		// Prepare uniforms
 		this.uniforms = {
-			uTime: { value: 0 },
-			uTexture: { value: null },
-			uPosition: 0
+			// // Core uniforms
+			// projectionMatrix: { value: new Matrix4() },
+			// modelViewMatrix: { value: new Matrix4() },
+			// modelMatrix: { value: new Matrix4() },
+			// normalMatrix: { value: new Matrix3() },
+			// viewMatrix: { value: new Matrix4() },
+
+			// Texture transforms (example with some common ones)
+			// mapTransform: { value: new Matrix3() },
+			// normalMapTransform: { value: new Matrix3() },
+			// roughnessMapTransform: { value: new Matrix3() },
+			// metalnessMapTransform: { value: new Matrix3() },
+
+			// // Displacement map
+			// displacementMap: { value: null },
+			// displacementScale: { value: 1.0 },
+			// displacementBias: { value: 0.0 },
+
+			// // Shadow maps
+			// directionalShadowMatrix: { value: [] },
+			// pointShadowMatrix: { value: [] },
+			// spotLightMatrix: { value: [] },
+
+			// // Light shadow parameters
+			// directionalLightShadows: {
+			// 	value: [
+			// 		{
+			// 			shadowIntensity: 0.5,
+			// 			shadowBias: 0.0039,
+			// 			shadowNormalBias: 0.051,
+			// 			shadowRadius: 1.0,
+			// 			shadowMapSize: new Vector2(512, 512),
+			// 		},
+			// 	],
+			// },
+
+			// // For skinning
+			// bindMatrix: { value: new Matrix4() },
+			// bindMatrixInverse: { value: new Matrix4() },
+			// boneTexture: { value: null },
+
+			// // For morph targets
+			// morphTargetInfluences: { value: [] },
+			// morphTargetsTexture: { value: null },
+			// morphTargetsTextureSize: { value: new Vector2() },
+
+			// // Other possible uniforms
+			// time: { value: 0 },
 		}
+
 		this.animate = this.animate.bind(this)
 		window.addEventListener("resize", () => this.onWindowResize())
 	}
@@ -61,7 +114,8 @@ class CubeRotateSample {
 		// this.addCubeWithTexture()
 		// this.animate()
 		this.loadTexture().then((texture) => {
-			this.uniforms.uTexture.value = texture
+			// this.uniforms.map.value = texture
+			// this.uniforms.uTexture.value = texture
 			this.addCube()
 			this.animate()
 			this.addGUI()
@@ -98,7 +152,7 @@ class CubeRotateSample {
 			const material = new ShaderMaterial({
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
-				uniforms: this.uniforms,
+				uniforms: { map: texture, ...this.uniforms },
 				defines: {
 					USE_UV: false,
 					USE_MAP: false,
@@ -120,7 +174,7 @@ class CubeRotateSample {
 		this.gui = new GUI()
 
 		const displaceFolder = this.gui.addFolder("Display")
-		displaceFolder.add(this.uniforms, "uPosition", 0, Math.PI * 2, 0.01).name("Position")
+		// displaceFolder.add(this.uniforms, "uPosition", 0, Math.PI * 2, 0.01).name("Position")
 		displaceFolder.close()
 	}
 
