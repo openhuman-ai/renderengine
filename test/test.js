@@ -153,13 +153,12 @@ class CubeRotateSample {
 				fragmentShader: fragmentShader,
 				uniforms: {map: { value: texture }},
 				defines: {
-					USE_UV: false,
-					USE_MAP: false,
+					USE_UV: true,
+					USE_MAP: true,
 					USE_NORMALMAP: false,
 					USE_SKINNING: false, // Enable if using skinned meshes
 					USE_MORPHTARGETS: false, // Enable if using morph targets
 					USE_BATCHING: false, // Enable if using instanced/batched rendering
-					// STANDARD: false,
 				},
 				side: DoubleSide,
 			})

@@ -11,6 +11,7 @@
 
 // Default material has no maps
 //#define USE_MAP
+#define MAP_UV uv
 //#define USE_ENVMAP
 //#define ENVMAP_TYPE_CUBE
 //#define USE_LIGHTMAP
@@ -426,41 +427,31 @@ vec3 getBatchingColor(const in float i) {
 
 // ********************* #include <displacementmap_pars_vertex>
 #ifdef USE_DISPLACEMENTMAP
-
-uniform sampler2D displacementMap;
-uniform float displacementScale;
-uniform float displacementBias;
-
+	uniform sampler2D displacementMap;
+	uniform float displacementScale;
+	uniform float displacementBias;
 #endif
 
 // ********************* #include <color_pars_vertex>
 #if defined( USE_COLOR_ALPHA )
-
-varying vec4 vColor;
-
+	varying vec4 vColor;
 #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR ) || defined( USE_BATCHING_COLOR )
-
-varying vec3 vColor;
-
+	varying vec3 vColor;
 #endif
 
 // ********************* #include <fog_pars_vertex>
 #ifdef USE_FOG
-
-varying float vFogDepth;
-
+	varying float vFogDepth;
 #endif
 
 // ********************* #include <normal_pars_vertex>
 #ifndef FLAT_SHADED
 
-varying vec3 vNormal;
+	varying vec3 vNormal;
 
 	#ifdef USE_TANGENT
-
-varying vec3 vTangent;
-varying vec3 vBitangent;
-
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
 	#endif
 
 #endif
@@ -469,24 +460,20 @@ varying vec3 vBitangent;
 #ifdef USE_MORPHTARGETS
 
 	#ifndef USE_INSTANCING_MORPH
-
-uniform float morphTargetBaseInfluence;
-uniform float morphTargetInfluences[MORPHTARGETS_COUNT];
-
+		uniform float morphTargetBaseInfluence;
+		uniform float morphTargetInfluences[MORPHTARGETS_COUNT];
 	#endif
 
 uniform sampler2DArray morphTargetsTexture;
 uniform ivec2 morphTargetsTextureSize;
 
 vec4 getMorph(const in int vertexIndex, const in int morphTargetIndex, const in int offset) {
-
 	int texelIndex = vertexIndex * MORPHTARGETS_TEXTURE_STRIDE + offset;
 	int y = texelIndex / morphTargetsTextureSize.x;
 	int x = texelIndex - y * morphTargetsTextureSize.x;
 
 	ivec3 morphUV = ivec3(x, y, morphTargetIndex);
 	return texelFetch(morphTargetsTexture, morphUV, 0);
-
 }
 
 #endif
