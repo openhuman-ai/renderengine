@@ -151,7 +151,7 @@ class CubeRotateSample {
 			const material = new ShaderMaterial({
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
-				uniforms: this.uniforms,
+				uniforms: {map: { value: texture }},
 				defines: {
 					USE_UV: false,
 					USE_MAP: false,
