@@ -99,6 +99,7 @@ class CubeRotateSample {
 			// morphTargetsTextureSize: { value: new Vector2() },
 			// // Other possible uniforms
 			// time: { value: 0 },
+			uniforms: { value: null },
 		}
 
 		this.animate = this.animate.bind(this)
@@ -144,37 +145,39 @@ class CubeRotateSample {
 			// 	clearcoat: 0.1,
 			// 	reflectivity: 0.5,
 			// })
+			// this.uniforms.map.value = texture
+			// console.log("texture", texture)
 			const geometry = new BoxGeometry(1, 1, 1)
-			// const material = new ShaderMaterial({
-			// 	vertexShader: vertexShader,
-			// 	fragmentShader: fragmentShader,
-			// 	uniforms: { map: texture, ...this.uniforms },
-			// 	defines: {
-			// 		USE_UV: false,
-			// 		USE_MAP: false,
-			// 		USE_NORMALMAP: false,
-			// 		USE_SKINNING: false, // Enable if using skinned meshes
-			// 		USE_MORPHTARGETS: false, // Enable if using morph targets
-			// 		USE_BATCHING: false, // Enable if using instanced/batched rendering
-			// 		// STANDARD: false,
-			// 	},
-			// 	side: DoubleSide,
-			// })
-			const material = new RawShaderMaterial({
+			const material = new ShaderMaterial({
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
-				uniforms: {
-					...this.uniforms,
-					uTexture: { value: texture },
-					uPosition: { value: 0 }, // Example uniform
+				uniforms: this.uniforms,
+				defines: {
+					USE_UV: false,
+					USE_MAP: false,
+					USE_NORMALMAP: false,
+					USE_SKINNING: false, // Enable if using skinned meshes
+					USE_MORPHTARGETS: false, // Enable if using morph targets
+					USE_BATCHING: false, // Enable if using instanced/batched rendering
+					// STANDARD: false,
 				},
 				side: DoubleSide,
-				defines: {
-					USE_UV: true, // Enable UV mapping
-					USE_MAP: true, // Enable texture mapping
-					USE_NORMALMAP: false, // Disable normal mapping
-				},
 			})
+			// const material = new RawShaderMaterial({
+			// 	vertexShader: vertexShader,
+			// 	fragmentShader: fragmentShader,
+			// 	uniforms: {
+			// 		...this.uniforms,
+			// 		uTexture: { value: texture },
+			// 		uPosition: { value: 0 }, // Example uniform
+			// 	},
+			// 	side: DoubleSide,
+			// 	defines: {
+			// 		USE_UV: true, // Enable UV mapping
+			// 		USE_MAP: true, // Enable texture mapping
+			// 		USE_NORMALMAP: false, // Disable normal mapping
+			// 	},
+			// })
 
 			this.cube = new Mesh(geometry, material)
 			this.scene.add(this.cube)

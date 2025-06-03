@@ -1,3 +1,126 @@
+//#define USE_CLIP_DISTANCE
+//#define USE_BATCHING
+//#define USE_BATCHING_COLOR
+//#define USE_INSTANCING
+//#define USE_INSTANCING_COLOR
+//#define USE_INSTANCING_MORPH
+
+// Fog is disabled by default
+//#define USE_FOG
+//#define FOG_EXP2
+
+// Default material has no maps
+//#define USE_MAP
+//#define USE_ENVMAP
+//#define ENVMAP_TYPE_CUBE
+//#define USE_LIGHTMAP
+//#define USE_AOMAP
+//#define USE_BUMPMAP
+//#define USE_NORMALMAP
+//#define USE_NORMALMAP_OBJECTSPACE
+//#define USE_NORMALMAP_TANGENTSPACE
+//#define USE_DISPLACEMENTMAP
+//#define USE_EMISSIVEMAP
+
+//#define USE_ANISOTROPY
+//#define USE_ANISOTROPYMAP
+
+// Clearcoat extensions
+//#define USE_CLEARCOATMAP
+//#define USE_CLEARCOAT_ROUGHNESSMAP
+//#define USE_CLEARCOAT_NORMALMAP
+
+// Iridescence
+//#define USE_IRIDESCENCEMAP
+//#define USE_IRIDESCENCE_THICKNESSMAP
+
+// Specular
+//#define USE_SPECULARMAP
+//#define USE_SPECULAR_COLORMAP
+//#define USE_SPECULAR_INTENSITYMAP
+
+// PBR
+//#define USE_ROUGHNESSMAP
+//#define USE_METALNESSMAP
+//#define USE_ALPHAMAP
+//#define USE_ALPHAHASH
+
+// Transmission
+//#define USE_TRANSMISSION
+//#define USE_TRANSMISSIONMAP
+//#define USE_THICKNESSMAP
+
+// Sheen
+//#define USE_SHEEN_COLORMAP
+//#define USE_SHEEN_ROUGHNESSMAP
+
+// ############################################################
+
+
+
+// ############################################################
+#define attribute in
+#define varying out
+#define texture2D texture
+
+#define SHADER_NAME 
+
+#ifdef USE_TANGENT
+    attribute vec4 tangent;
+#endif
+
+#ifdef USE_COLOR
+    attribute vec3 color;
+#endif
+
+#ifdef USE_COLOR_ALPHA
+    attribute vec4 color;
+#endif
+
+#ifdef USE_UV1
+    attribute vec2 uv1;
+#endif
+
+#ifdef USE_UV2
+    attribute vec2 uv2;
+#endif
+
+#ifdef USE_SKINNING
+    attribute vec4 skinIndex;
+    attribute vec4 skinWeight;
+#endif
+
+#ifdef USE_INSTANCING
+    attribute mat4 instanceMatrix;
+#endif
+
+#ifdef USE_INSTANCING_COLOR
+    attribute vec3 instanceColor;
+#endif
+
+#ifdef USE_MORPHTARGETS
+    uniform sampler2D morphTexture;
+#endif
+
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+precision highp samplerCube;
+precision highp sampler3D;
+precision highp sampler2DArray;
+precision highp sampler2DShadow;
+precision highp samplerCubeShadow;
+precision highp sampler2DArrayShadow;
+precision highp isampler2D;
+precision highp isampler3D;
+precision highp isamplerCube;
+precision highp isampler2DArray;
+precision highp usampler2D;
+precision highp usampler3D;
+precision highp usamplerCube;
+precision highp usampler2DArray;
+#define HIGH_PRECISION
+// ############################################################
 #define STANDARD
 
 varying vec3 vViewPosition;
