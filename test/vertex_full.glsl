@@ -64,7 +64,7 @@
 #define varying out
 #define texture2D texture
 
-#define SHADER_NAME 
+#define SHADER_NAME
 
 #ifdef USE_TANGENT
     attribute vec4 tangent;

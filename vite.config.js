@@ -32,6 +32,7 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				main: resolve(__dirname, "index.html"),
+				facetoy: resolve(__dirname, "facetoy.html"),
 			},
 		},
 		assetsDir: "assets",
