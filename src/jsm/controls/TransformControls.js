@@ -1,25 +1,19 @@
-import {
-	BoxGeometry,
-	BufferGeometry,
-	Controls,
-	CylinderGeometry,
-	DoubleSide,
-	Euler,
-	Float32BufferAttribute,
-	Line,
-	LineBasicMaterial,
-	Matrix4,
-	Mesh,
-	MeshBasicMaterial,
-	Object3D,
-	OctahedronGeometry,
-	PlaneGeometry,
-	Quaternion,
-	Raycaster,
-	SphereGeometry,
-	TorusGeometry,
-	Vector3,
-} from "three"
+import { Float32BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { Object3D } from "@/core/Object3D"
+import { Raycaster } from "@/core/Raycaster"
+import { Controls } from "@/extras/Controls"
+import { BoxGeometry } from "@/geometries/BoxGeometry"
+import { CylinderGeometry } from "@/geometries/CylinderGeometry"
+import { OctahedronGeometry } from "@/geometries/OctahedronGeometry"
+import { TorusGeometry } from "@/geometries/TorusGeometry"
+import { LineBasicMaterial } from "@/materials/LineBasicMaterial"
+import { MeshBasicMaterial } from "@/materials/MeshBasicMaterial"
+import { Euler } from "@/math/Euler"
+import { Matrix4 } from "@/math/Matrix4"
+import { Quaternion } from "@/math/Quaternion"
+import { Vector3 } from "@/math/Vector3"
+import { Mesh } from "@/objects/Mesh"
 
 const _raycaster = new Raycaster()
 
