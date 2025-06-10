@@ -1,4 +1,17 @@
-import { BufferAttribute, BufferGeometry, Color, Line, LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, Object3D, Quaternion, SphereGeometry, Vector3 } from "three"
+// import { BufferAttribute, BufferGeometry, Color, Line, LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, Object3D, Quaternion, SphereGeometry, Vector3 } from "three"
+
+import { BufferAttribute } from "@/core/BufferAttribute"
+import { BufferGeometry } from "@/core/BufferGeometry"
+import { Object3D } from "@/core/Object3D"
+import { SphereGeometry } from "@/geometries/SphereGeometry"
+import { LineBasicMaterial } from "@/materials/LineBasicMaterial"
+import { MeshBasicMaterial } from "@/materials/MeshBasicMaterial"
+import { Color } from "@/math/Color"
+import { Matrix4 } from "@/math/Matrix4"
+import { Quaternion } from "@/math/Quaternion"
+import { Vector3 } from "@/math/Vector3"
+import { Line } from "@/objects/Line"
+import { Mesh } from "@/objects/Mesh"
 
 const _q = new Quaternion()
 const _targetPos = new Vector3()
