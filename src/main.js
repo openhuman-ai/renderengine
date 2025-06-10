@@ -73,7 +73,6 @@ import { Skeleton } from "./objects/Skeleton"
 import { ShaderLib } from "./renderers/shaders/ShaderLib"
 import { UniformsUtils } from "./renderers/shaders/UniformsUtils"
 import { ShaderMaterial } from "./materials/ShaderMaterial"
-import { TransformControls } from "./jsm/controls/TransformControls"
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -165,7 +164,6 @@ export class App {
 	scene
 	mixer
 	controls
-	transformControl
 	clock
 	material
 	model
@@ -310,7 +308,6 @@ export class App {
 		this.createEnvironment()
 		this.createClock()
 		this.createControls()
-		this.createTransformControls()
 		this.createLights()
 		// this.createCube()
 		// this.createCylinder()
@@ -422,14 +419,6 @@ export class App {
 
 		// this.camera.rotation.y = MathUtils.degToRad(45)
 		// this.camera.updateProjectionMatrix()
-	}
-
-	createTransformControls() {
-		this.transformControl = new TransformControls(this.camera, this.renderer.domElement)
-		// this.tranformControls.addEventListener("change", this.renderer)
-		this.transformControl.addEventListener("change", () => {
-			this.renderer.render(this.scene, this.camera)
-		})
 	}
 
 	createControls() {
@@ -954,61 +943,6 @@ export class App {
 			// this.updateGUI()
 			this.updateEnvironment()
 			this.updateDisplay()
-		})
-
-		console.log("this.tranformControls", this.transformControl)
-		// console.log(object)
-		this.transformControl.attach(this.rootGroup)
-		if (this.transformControl instanceof Object3D) {
-			this.scene.add(this.transformControl)
-		} else {
-			console.warn("TransformControls is not an Object3D — check import/version.")
-		}
-		this.scene.add(this.transformControl)
-		// this.scene.add(this.tranformControls)
-
-		window.addEventListener("keydown", function (event) {
-			switch (event.keyCode) {
-				case 81: // Q
-					this.transformControls.setSpace(this.transformControls.space === "local" ? "world" : "local")
-					break
-
-				case 17: // Ctrl
-					this.transformControls.setTranslationSnap(100)
-					this.transformControls.setRotationSnap(THREE.Math.degToRad(15))
-					break
-
-				case 87: // W
-					this.transformControls.setMode("translate")
-					break
-
-				case 69: // E
-					this.transformControls.setMode("rotate")
-					break
-
-				case 82: // R
-					this.transformControls.setMode("scale")
-					break
-
-				case 187:
-				case 107: // +, =, num+
-					this.transformControls.setSize(this.transformControls.size + 0.1)
-					break
-
-				case 189:
-				case 109: // -, _, num-
-					this.transformControls.setSize(Math.max(this.transformControls.size - 0.1, 0.1))
-					break
-			}
-		})
-
-		window.addEventListener("keyup", function (event) {
-			switch (event.keyCode) {
-				case 17: // Ctrl
-					this.transformControls.setTranslationSnap(null)
-					this.transformControls.setRotationSnap(null)
-					break
-			}
 		})
 	}
 
@@ -1915,8 +1849,6 @@ export class App {
 	render() {
 		const delta = this.clock.getDelta()
 
-		this.transformControl.update()
-
 		if (this.mixer) {
 			this.mixer.update(delta)
 		}
@@ -1939,11 +1871,11 @@ export class App {
 		if (this.controls) {
 		}
 
-		// if (this.state.postProcessing) {
-		// 	this.composer.render()
-		// } else {
-		// }
-		this.renderer.render(this.scene, this.camera)
+		if (this.state.postProcessing) {
+			this.composer.render()
+		} else {
+			this.renderer.render(this.scene, this.camera)
+		}
 	}
 }
 
