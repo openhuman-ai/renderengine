@@ -273,6 +273,7 @@ export class App {
 		normal: null,
 		roughness: null,
 	}
+	centerBox = new Vector3()
 
 	pmremGenerator
 
@@ -821,14 +822,14 @@ export class App {
 		})
 	}
 
-	addFace(meshMap, loader) {
+	addFace(loader) {
 		this.loadAndApplyMaterial(loader, {
 			name: "Head",
-			path: "/expression/010_Mouth_Open_Left.obj",
+			path: "/smooth/010_Mouth_Open_Left.obj",
 			material: this.face.material,
 		}).then((meshes) => {
-			console.log("meshes", meshes)
-			this.rootGroup.add(meshes.mesh)
+			const mesh = meshes.mesh
+			this.rootGroup.add(mesh)
 
 			this.rootGroup.updateMatrixWorld()
 			const box = new Box3().setFromObject(this.rootGroup)
@@ -877,6 +878,46 @@ export class App {
 		})
 	}
 
+	addBrows(loader) {
+		this.loadAndApplyMaterial(loader, {
+			name: "Brows",
+			path: "/obj1/Brows.obj",
+			material: this.brows.material,
+		}).then((meshes) => {
+			this.rootGroup.add(meshes.mesh)
+		})
+	}
+
+	addEyeWet(loader) {
+		this.loadAndApplyMaterial(loader, {
+			name: "Brows",
+			path: "/obj1/EyeWet.obj",
+			material: this.eyewet.material,
+		}).then((meshes) => {
+			this.rootGroup.add(meshes.mesh)
+		})
+	}
+
+	addLens(loader) {
+		this.loadAndApplyMaterial(loader, {
+			name: "Lens",
+			path: "/obj1/LensLeft.obj",
+			material: this.brows.material,
+		}).then((meshes) => {
+			this.rootGroup.add(meshes.mesh)
+		})
+	}
+
+	addTeeth(loader) {
+		this.loadAndApplyMaterial(loader, {
+			name: "UpperTeeth",
+			path: "/obj1/UpperTeeth.obj",
+			material: this.teeth.material,
+		}).then((meshes) => {
+			this.rootGroup.add(meshes.mesh)
+		})
+	}
+
 	async loadModel() {
 		// const loader = new GLTFLoader(loadingManager)
 		// loader.load("/hair/hair.glb", (gltf) => {
@@ -889,246 +930,257 @@ export class App {
 		this.scene.add(this.rootGroup)
 		const objloader = new OBJLoader(loadingManager)
 
+		// this.addFace(objloader)
+		// this.addBrows(objloader)
+		// this.addEyeWet(objloader)
+		// this.addLens(objloader)
+		// this.addLashes(objloader)
+		// this.addEyeball(objloader)
+		// this.addTeeth(objloader)
+		// this.addTongue(objloader)
+
+		// path: "/expression/Neutral.obj",
+		const models = [
+			{
+				name: "Head",
+				path: "/obj1/Head.obj",
+				material: this.face.material,
+			},
+			{
+				name: "Brows",
+				path: "/obj1/Brows.obj",
+				material: this.brows.material,
+			},
+			{
+				name: "EyeWet",
+				path: "/obj1/EyeWet.obj",
+				material: this.eyewet.material,
+			},
+			{
+				name: "LensLeft",
+				path: "/obj1/LensLeft.obj",
+				material: this.lens.material,
+			},
+			{
+				name: "LensRight",
+				path: "/obj1/LensRight.obj",
+				material: this.lens.material,
+			},
+			{
+				name: "Lashes",
+				path: "/obj1/Lashes.obj",
+				material: this.lashes.material,
+			},
+			{
+				name: "RealtimeEyeballLeft",
+				path: "/obj1/RealtimeEyeballLeft.obj",
+				material: this.eyeball.material,
+			},
+			{
+				name: "RealtimeEyeballRight",
+				path: "/obj1/RealtimeEyeballRight.obj",
+				material: this.eyeball.material,
+			},
+			{
+				name: "UpperTeeth",
+				path: "/obj1/UpperTeeth.obj",
+				material: this.teeth.material,
+			},
+			{
+				name: "LowerTeeth",
+				path: "/obj1/LowerTeeth.obj",
+				material: this.teeth.material,
+			},
+			{
+				name: "Tongue",
+				path: "/obj1/Tongue.obj",
+				material: this.tongue.material,
+			},
+		]
+
 		const meshMap = new Map()
-		this.addFace(meshMap, objloader)
 
-		// const models = [
-		// 	{
-		// 		name: "Head",
-		// 		path: "/obj1/Head.obj",
-		// 		material: this.face.material,
-		// 	},
-		// 	{
-		// 		name: "Brows",
-		// 		path: "/obj1/Brows.obj",
-		// 		material: this.brows.material,
-		// 	},
-		// 	{
-		// 		name: "EyeWet",
-		// 		path: "/obj1/EyeWet.obj",
-		// 		material: this.eyewet.material,
-		// 	},
-		// 	{
-		// 		name: "LensLeft",
-		// 		path: "/obj1/LensLeft.obj",
-		// 		material: this.lens.material,
-		// 	},
-		// 	{
-		// 		name: "LensRight",
-		// 		path: "/obj1/LensRight.obj",
-		// 		material: this.lens.material,
-		// 	},
-		// 	{
-		// 		name: "Lashes",
-		// 		path: "/obj1/Lashes.obj",
-		// 		material: this.lashes.material,
-		// 	},
-		// 	{
-		// 		name: "RealtimeEyeballLeft",
-		// 		path: "/obj1/RealtimeEyeballLeft.obj",
-		// 		material: this.eyeball.material,
-		// 	},
-		// 	{
-		// 		name: "RealtimeEyeballRight",
-		// 		path: "/obj1/RealtimeEyeballRight.obj",
-		// 		material: this.eyeball.material,
-		// 	},
-		// 	{
-		// 		name: "UpperTeeth",
-		// 		path: "/obj1/UpperTeeth.obj",
-		// 		material: this.teeth.material,
-		// 	},
-		// 	{
-		// 		name: "LowerTeeth",
-		// 		path: "/obj1/LowerTeeth.obj",
-		// 		material: this.teeth.material,
-		// 	},
-		// 	{
-		// 		name: "Tongue",
-		// 		path: "/obj1/Tongue.obj",
-		// 		material: this.tongue.material,
-		// 	},
-		// ]
-
-		// const meshMap = new Map()
-
-		// Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
-		// 	meshes.forEach(({ name, mesh }) => {
-		// 		this.rootGroup.add(mesh)
-		// 		meshMap.set(name, mesh)
-		// 	})
-
-		// 	this.rootGroup.updateMatrixWorld()
-		// 	const box = new Box3().setFromObject(this.rootGroup)
-		// 	const size = box.getSize(new Vector3()).length()
-		// 	const center = box.getCenter(new Vector3())
-
-		// 	this.controls.reset()
-
-		// 	// this.addMeshHelpers(group)
-
-		// 	this.rootGroup.position.x -= center.x
-		// 	this.rootGroup.position.y -= center.y
-		// 	this.rootGroup.position.z -= center.z
-
-		// 	this.controls.maxDistance = size * 10
-
-		// 	this.camera.near = size / 100
-		// 	this.camera.far = size * 100
-		// 	this.camera.setFocalLength(30)
-		// 	this.camera.updateProjectionMatrix()
-
-		// 	this.camera.position.copy(center)
-		// 	this.camera.position.x += size / 3.0
-		// 	this.camera.position.y -= size / 3.0
-		// 	this.camera.position.z += size * 2
-		// 	this.camera.lookAt(center)
-
-		// 	// this.setCamera(this.camera)
-
-		// 	// this.brows.mesh = meshMap.get("Brows")
-		// 	// this.eyewet.mesh = meshMap.get("EyeWet")
-		// 	// this.lens.meshLeft = meshMap.get("LensLeft")
-		// 	// this.lens.meshRight = meshMap.get("LensRight")
-		// 	// this.lashes.mesh = meshMap.get("Lashes")
-		// 	// this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
-		// 	// this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
-		// 	// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
-		// 	// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
-		// 	// this.tongue.tougueMesh = meshMap.get("Tongue")
-
-		// 	this.updateLights()
-		// 	// this.updateGUI()
-		// 	this.updateEnvironment()
-		// 	this.updateDisplay()
-		// })
-	}
-
-	loadGLSLShader() {
-		// Trigger compilation by rendering once
-		console.log("this.face.material", this.face.material)
-		this.face.material.onBeforeCompile = (shader) => {
-			// Save or log the raw GLSL source
-			console.log("Vertex Shader:", shader.vertexShader)
-			console.log("Fragment Shader:", shader.fragmentShader)
-
-			// Optionally modify shader code here
-			// shader.vertexShader = shader.vertexShader.replace(...);
-			// shader.fragmentShader = shader.fragmentShader.replace(...);
-		}
-		this.camera.position.set(0, 48, 20)
-
-		const objloader = new OBJLoader(loadingManager)
-		objloader.load("/obj1/Head.obj", (obj) => {
-			let mesh = null
-			console.log("obj", obj)
-
-			obj.traverse((child) => {
-				if (child.isMesh) {
-					child.material = this.face.material
-					child.name = name
-					mesh = child
-				}
+		Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
+			meshes.forEach(({ name, mesh }) => {
+				this.rootGroup.add(mesh)
+				meshMap.set(name, mesh)
 			})
 
-			this.scene.add(obj)
-			// if (mesh) {
-			// 	resolve({ name, mesh })
-			// } else {
-			// 	reject(new Error(`No mesh found in ${path}`))
-			// }
+			this.rootGroup.updateMatrixWorld()
+			const box = new Box3().setFromObject(this.rootGroup)
+			const size = box.getSize(new Vector3()).length()
+			const center = box.getCenter(new Vector3())
+
+			this.controls.reset()
+
+			// this.addMeshHelpers(group)
+
+			this.rootGroup.position.x -= center.x
+			this.rootGroup.position.y -= center.y
+			this.rootGroup.position.z -= center.z
+
+			this.controls.maxDistance = size * 10
+
+			this.camera.near = size / 100
+			this.camera.far = size * 100
+			this.camera.setFocalLength(30)
+			this.camera.updateProjectionMatrix()
+
+			this.camera.position.copy(center)
+			this.camera.position.x += size / 3.0
+			this.camera.position.y -= size / 3.0
+			this.camera.position.z += size * 2
+			this.camera.lookAt(center)
+
+			// this.setCamera(this.camera)
+
+			// this.brows.mesh = meshMap.get("Brows")
+			// this.eyewet.mesh = meshMap.get("EyeWet")
+			// this.lens.meshLeft = meshMap.get("LensLeft")
+			// this.lens.meshRight = meshMap.get("LensRight")
+			// this.lashes.mesh = meshMap.get("Lashes")
+			// this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
+			// this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
+			// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
+			// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
+			// this.tongue.tougueMesh = meshMap.get("Tongue")
+
+			this.updateLights()
+			// this.updateGUI()
+			this.updateEnvironment()
+			this.updateDisplay()
 		})
 
-		// const geometry = new BoxGeometry(10, 10, 10)
-		// const material = new MeshPhysicalMaterial({ color: 0x00ff00 })
-		// const customMaterial = new ShaderMaterial({
-		// 	uniforms: UniformsUtils.merge([
-		// 		ShaderLib.physical.uniforms,
-		// 		{
-		// 			// You can add additional custom uniforms here
-		// 			time: { value: 0 },
-		// 		},
-		// 	]),
-		// 	vertexShader: ShaderLib.physical.vertexShader,
-		// 	fragmentShader: ShaderLib.physical.fragmentShader,
+		// this.addFace(objloader)
 
-		// 	// Physical material properties
-		// 	defines: {
-		// 		PHYSICAL: "",
-		// 	},
-		// 	clearcoat: 0.5,
-		// 	clearcoatRoughness: 0.1,
-		// 	metalness: 0.8,
-		// 	roughness: 0.3,
-		// 	color: new Color(0x156289),
-		// 	emissive: new Color(0x000000),
-		// 	ior: 1.5,
-		// 	transmission: 0.0,
-		// 	side: FrontSide,
-		// 	transparent: false,
-		// 	envMapIntensity: 1.0,
-		// })
-		// this.camera.position.set(0, 48, 1)
-		// this.cube = new Mesh(geometry, material)
-		// this.scene.add(this.cube)
-
-		// // Force compilation by rendering once
-		// this.renderer.render(this.scene, this.camera)
-
-		// // Access the program object after render
-		// const program = this.renderer.properties.get(this.cube.material)?.program
-		// console.log("program", program)
-
-		// if (program) {
-		// 	const vertexShaderFinal = program.vertexShader
-		// 	const fragmentShaderFinal = program.fragmentShader
-		// 	console.log("Full Vertex Shader:", vertexShaderFinal)
-		// 	console.log("Full Fragment Shader:", fragmentShaderFinal)
-		// } else {
-		// 	console.error("Shader program not compiled yet or material missing.")
-		// }
-
-		// material.onBeforeCompile = (shader) => {
-		// 	// Save or log the raw GLSL source
-		// 	console.log("Vertex Shader:", shader.vertexShader)
-		// 	console.log("Fragment Shader:", shader.fragmentShader)
-
-		// 	// Optionally modify shader code here
-		// 	// shader.vertexShader = shader.vertexShader.replace(...);
-		// 	// shader.fragmentShader = shader.fragmentShader.replace(...);
-		// }
-
-		// this.renderer.compile(this.scene, this.camera)
-		// console.log("material", material.vertexShader, material.fragmentShader)
-		// this.rootGroup.children.forEach((child) => {
-		// 	console.log('child', child)
-		// 	if (child.isMesh) {
-		// 		console.log("Mesh Name:", child.name)
-		// 		console.log("Material:", child.material)
-		// 		// console.log("Geometry:", child.geometry)
-		// 		// console.log("Attributes:", child.geometry.attributes)
-		// 	}
-		// })
-		// const headMesh = this.rootGroup.traverse(function (object) {
-		// 	if (object.isMesh && object.name === "Head") {
-		// 		return object
-		// 	}
-		// })
-		// // const mesh = meshMap.get("Head")
-		// console.log("Mesh:", headMesh)
-
-		// // Get internal compiled program
-		// const material = headMesh.material
-		// console.log(material)
-		// const program = this.renderer.properties.get(material).program
-		// console.log("program", program)
-
-		// // const vertexShader = program.vertexShader
-		// const fragmentShader = program.fragmentShader
-
-		// // console.log("Vertex Shader:", vertexShader)
-		// console.log("Fragment Shader:", fragmentShader)
+		// console.log("meshMap", meshMap)
 	}
+
+	// loadGLSLShader() {
+	// 	// Trigger compilation by rendering once
+	// 	console.log("this.face.material", this.face.material)
+	// 	this.face.material.onBeforeCompile = (shader) => {
+	// 		// Save or log the raw GLSL source
+	// 		console.log("Vertex Shader:", shader.vertexShader)
+	// 		console.log("Fragment Shader:", shader.fragmentShader)
+
+	// 		// Optionally modify shader code here
+	// 		// shader.vertexShader = shader.vertexShader.replace(...);
+	// 		// shader.fragmentShader = shader.fragmentShader.replace(...);
+	// 	}
+	// 	this.camera.position.set(0, 48, 20)
+
+	// 	const objloader = new OBJLoader(loadingManager)
+	// 	objloader.load("/obj1/Head.obj", (obj) => {
+	// 		let mesh = null
+	// 		console.log("obj", obj)
+
+	// 		obj.traverse((child) => {
+	// 			if (child.isMesh) {
+	// 				child.material = this.face.material
+	// 				child.name = name
+	// 				mesh = child
+	// 			}
+	// 		})
+
+	// 		this.scene.add(obj)
+	// 		// if (mesh) {
+	// 		// 	resolve({ name, mesh })
+	// 		// } else {
+	// 		// 	reject(new Error(`No mesh found in ${path}`))
+	// 		// }
+	// 	})
+
+	// 	// const geometry = new BoxGeometry(10, 10, 10)
+	// 	// const material = new MeshPhysicalMaterial({ color: 0x00ff00 })
+	// 	// const customMaterial = new ShaderMaterial({
+	// 	// 	uniforms: UniformsUtils.merge([
+	// 	// 		ShaderLib.physical.uniforms,
+	// 	// 		{
+	// 	// 			// You can add additional custom uniforms here
+	// 	// 			time: { value: 0 },
+	// 	// 		},
+	// 	// 	]),
+	// 	// 	vertexShader: ShaderLib.physical.vertexShader,
+	// 	// 	fragmentShader: ShaderLib.physical.fragmentShader,
+
+	// 	// 	// Physical material properties
+	// 	// 	defines: {
+	// 	// 		PHYSICAL: "",
+	// 	// 	},
+	// 	// 	clearcoat: 0.5,
+	// 	// 	clearcoatRoughness: 0.1,
+	// 	// 	metalness: 0.8,
+	// 	// 	roughness: 0.3,
+	// 	// 	color: new Color(0x156289),
+	// 	// 	emissive: new Color(0x000000),
+	// 	// 	ior: 1.5,
+	// 	// 	transmission: 0.0,
+	// 	// 	side: FrontSide,
+	// 	// 	transparent: false,
+	// 	// 	envMapIntensity: 1.0,
+	// 	// })
+	// 	// this.camera.position.set(0, 48, 1)
+	// 	// this.cube = new Mesh(geometry, material)
+	// 	// this.scene.add(this.cube)
+
+	// 	// // Force compilation by rendering once
+	// 	// this.renderer.render(this.scene, this.camera)
+
+	// 	// // Access the program object after render
+	// 	// const program = this.renderer.properties.get(this.cube.material)?.program
+	// 	// console.log("program", program)
+
+	// 	// if (program) {
+	// 	// 	const vertexShaderFinal = program.vertexShader
+	// 	// 	const fragmentShaderFinal = program.fragmentShader
+	// 	// 	console.log("Full Vertex Shader:", vertexShaderFinal)
+	// 	// 	console.log("Full Fragment Shader:", fragmentShaderFinal)
+	// 	// } else {
+	// 	// 	console.error("Shader program not compiled yet or material missing.")
+	// 	// }
+
+	// 	// material.onBeforeCompile = (shader) => {
+	// 	// 	// Save or log the raw GLSL source
+	// 	// 	console.log("Vertex Shader:", shader.vertexShader)
+	// 	// 	console.log("Fragment Shader:", shader.fragmentShader)
+
+	// 	// 	// Optionally modify shader code here
+	// 	// 	// shader.vertexShader = shader.vertexShader.replace(...);
+	// 	// 	// shader.fragmentShader = shader.fragmentShader.replace(...);
+	// 	// }
+
+	// 	// this.renderer.compile(this.scene, this.camera)
+	// 	// console.log("material", material.vertexShader, material.fragmentShader)
+	// 	// this.rootGroup.children.forEach((child) => {
+	// 	// 	console.log('child', child)
+	// 	// 	if (child.isMesh) {
+	// 	// 		console.log("Mesh Name:", child.name)
+	// 	// 		console.log("Material:", child.material)
+	// 	// 		// console.log("Geometry:", child.geometry)
+	// 	// 		// console.log("Attributes:", child.geometry.attributes)
+	// 	// 	}
+	// 	// })
+	// 	// const headMesh = this.rootGroup.traverse(function (object) {
+	// 	// 	if (object.isMesh && object.name === "Head") {
+	// 	// 		return object
+	// 	// 	}
+	// 	// })
+	// 	// // const mesh = meshMap.get("Head")
+	// 	// console.log("Mesh:", headMesh)
+
+	// 	// // Get internal compiled program
+	// 	// const material = headMesh.material
+	// 	// console.log(material)
+	// 	// const program = this.renderer.properties.get(material).program
+	// 	// console.log("program", program)
+
+	// 	// // const vertexShader = program.vertexShader
+	// 	// const fragmentShader = program.fragmentShader
+
+	// 	// // console.log("Vertex Shader:", vertexShader)
+	// 	// console.log("Fragment Shader:", fragmentShader)
+	// }
 
 	loadAndApplyMaterial(objloader, { name, path, material }) {
 		return new Promise((resolve, reject) => {
