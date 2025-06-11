@@ -821,84 +821,14 @@ export class App {
 		})
 	}
 
-	async loadModel() {
-		// const loader = new GLTFLoader(loadingManager)
-		// loader.load("/hair/hair.glb", (gltf) => {
-		// 	window.OPENHUMAN.gltf = gltf
-		// 	let scene = gltf.scene || gltf.scenes[0]
-		// 	group.add(scene)
-		// 	// this.loadContent(scene, clips)
-		// })
-
-		this.scene.add(this.rootGroup)
-		// const textureLoader = new TextureLoader(loadingManager)
-
-		const models = [
-			{
-				name: "Head",
-				path: "/obj1/Head.obj",
-				material: this.face.material,
-			},
-			{
-				name: "Brows",
-				path: "/obj1/Brows.obj",
-				material: this.brows.material,
-			},
-			{
-				name: "EyeWet",
-				path: "/obj1/EyeWet.obj",
-				material: this.eyewet.material,
-			},
-			{
-				name: "LensLeft",
-				path: "/obj1/LensLeft.obj",
-				material: this.lens.material,
-			},
-			{
-				name: "LensRight",
-				path: "/obj1/LensRight.obj",
-				material: this.lens.material,
-			},
-			{
-				name: "Lashes",
-				path: "/obj1/Lashes.obj",
-				material: this.lashes.material,
-			},
-			{
-				name: "RealtimeEyeballLeft",
-				path: "/obj1/RealtimeEyeballLeft.obj",
-				material: this.eyeball.material,
-			},
-			{
-				name: "RealtimeEyeballRight",
-				path: "/obj1/RealtimeEyeballRight.obj",
-				material: this.eyeball.material,
-			},
-			{
-				name: "UpperTeeth",
-				path: "/obj1/UpperTeeth.obj",
-				material: this.teeth.material,
-			},
-			{
-				name: "LowerTeeth",
-				path: "/obj1/LowerTeeth.obj",
-				material: this.teeth.material,
-			},
-			{
-				name: "Tongue",
-				path: "/obj1/Tongue.obj",
-				material: this.tongue.material,
-			},
-		]
-
-		const meshMap = new Map()
-
-		const objloader = new OBJLoader(loadingManager)
-		Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
-			meshes.forEach(({ name, mesh }) => {
-				this.rootGroup.add(mesh)
-				meshMap.set(name, mesh)
-			})
+	addFace(meshMap, loader) {
+		this.loadAndApplyMaterial(loader, {
+			name: "Head",
+			path: "/expression/010_Mouth_Open_Left.obj",
+			material: this.face.material,
+		}).then((meshes) => {
+			console.log("meshes", meshes)
+			this.rootGroup.add(meshes.mesh)
 
 			this.rootGroup.updateMatrixWorld()
 			const box = new Box3().setFromObject(this.rootGroup)
@@ -943,7 +873,135 @@ export class App {
 			// this.updateGUI()
 			this.updateEnvironment()
 			this.updateDisplay()
+			// meshMap.set(name, meshes)
 		})
+	}
+
+	async loadModel() {
+		// const loader = new GLTFLoader(loadingManager)
+		// loader.load("/hair/hair.glb", (gltf) => {
+		// 	window.OPENHUMAN.gltf = gltf
+		// 	let scene = gltf.scene || gltf.scenes[0]
+		// 	group.add(scene)
+		// 	// this.loadContent(scene, clips)
+		// })
+
+		this.scene.add(this.rootGroup)
+		const objloader = new OBJLoader(loadingManager)
+
+		const meshMap = new Map()
+		this.addFace(meshMap, objloader)
+
+		// const models = [
+		// 	{
+		// 		name: "Head",
+		// 		path: "/obj1/Head.obj",
+		// 		material: this.face.material,
+		// 	},
+		// 	{
+		// 		name: "Brows",
+		// 		path: "/obj1/Brows.obj",
+		// 		material: this.brows.material,
+		// 	},
+		// 	{
+		// 		name: "EyeWet",
+		// 		path: "/obj1/EyeWet.obj",
+		// 		material: this.eyewet.material,
+		// 	},
+		// 	{
+		// 		name: "LensLeft",
+		// 		path: "/obj1/LensLeft.obj",
+		// 		material: this.lens.material,
+		// 	},
+		// 	{
+		// 		name: "LensRight",
+		// 		path: "/obj1/LensRight.obj",
+		// 		material: this.lens.material,
+		// 	},
+		// 	{
+		// 		name: "Lashes",
+		// 		path: "/obj1/Lashes.obj",
+		// 		material: this.lashes.material,
+		// 	},
+		// 	{
+		// 		name: "RealtimeEyeballLeft",
+		// 		path: "/obj1/RealtimeEyeballLeft.obj",
+		// 		material: this.eyeball.material,
+		// 	},
+		// 	{
+		// 		name: "RealtimeEyeballRight",
+		// 		path: "/obj1/RealtimeEyeballRight.obj",
+		// 		material: this.eyeball.material,
+		// 	},
+		// 	{
+		// 		name: "UpperTeeth",
+		// 		path: "/obj1/UpperTeeth.obj",
+		// 		material: this.teeth.material,
+		// 	},
+		// 	{
+		// 		name: "LowerTeeth",
+		// 		path: "/obj1/LowerTeeth.obj",
+		// 		material: this.teeth.material,
+		// 	},
+		// 	{
+		// 		name: "Tongue",
+		// 		path: "/obj1/Tongue.obj",
+		// 		material: this.tongue.material,
+		// 	},
+		// ]
+
+		// const meshMap = new Map()
+
+		// Promise.all(models.map((model) => this.loadAndApplyMaterial(objloader, model))).then((meshes) => {
+		// 	meshes.forEach(({ name, mesh }) => {
+		// 		this.rootGroup.add(mesh)
+		// 		meshMap.set(name, mesh)
+		// 	})
+
+		// 	this.rootGroup.updateMatrixWorld()
+		// 	const box = new Box3().setFromObject(this.rootGroup)
+		// 	const size = box.getSize(new Vector3()).length()
+		// 	const center = box.getCenter(new Vector3())
+
+		// 	this.controls.reset()
+
+		// 	// this.addMeshHelpers(group)
+
+		// 	this.rootGroup.position.x -= center.x
+		// 	this.rootGroup.position.y -= center.y
+		// 	this.rootGroup.position.z -= center.z
+
+		// 	this.controls.maxDistance = size * 10
+
+		// 	this.camera.near = size / 100
+		// 	this.camera.far = size * 100
+		// 	this.camera.setFocalLength(30)
+		// 	this.camera.updateProjectionMatrix()
+
+		// 	this.camera.position.copy(center)
+		// 	this.camera.position.x += size / 3.0
+		// 	this.camera.position.y -= size / 3.0
+		// 	this.camera.position.z += size * 2
+		// 	this.camera.lookAt(center)
+
+		// 	// this.setCamera(this.camera)
+
+		// 	// this.brows.mesh = meshMap.get("Brows")
+		// 	// this.eyewet.mesh = meshMap.get("EyeWet")
+		// 	// this.lens.meshLeft = meshMap.get("LensLeft")
+		// 	// this.lens.meshRight = meshMap.get("LensRight")
+		// 	// this.lashes.mesh = meshMap.get("Lashes")
+		// 	// this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
+		// 	// this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
+		// 	// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
+		// 	// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
+		// 	// this.tongue.tougueMesh = meshMap.get("Tongue")
+
+		// 	this.updateLights()
+		// 	// this.updateGUI()
+		// 	this.updateEnvironment()
+		// 	this.updateDisplay()
+		// })
 	}
 
 	loadGLSLShader() {
@@ -1303,12 +1361,12 @@ export class App {
 		this.gui = new GUI()
 
 		const displaceFolder = this.gui.addFolder("Display")
-		displaceFolder
-			.add(this, "logGLSL")
-			.name("Log GLSL")
-			.onChange((value) => {
-				this.loadGLSLShader()
-			})
+		// displaceFolder
+		// 	.add(this, "logGLSL")
+		// 	.name("Log GLSL")
+		// 	.onChange((value) => {
+		// 		this.loadGLSLShader()
+		// 	})
 		displaceFolder.close()
 		const envBackgroundCtrl = displaceFolder.add(this.state, "background")
 		envBackgroundCtrl.onChange(() => this.updateEnvironment())
