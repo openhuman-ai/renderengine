@@ -277,6 +277,9 @@ export class App {
 
 	pmremGenerator
 
+	eyePivotLeft = null
+	eyePivotRight = null
+
 	mouseX = 0
 	mouseY = 0
 
@@ -615,15 +618,46 @@ export class App {
 		}
 	}
 
-	updateEyeRotation(eyeMesh) {
+	updateEyeRotation(pivot) {
 		const maxRotation = 0.35 // radians (~20 degrees)
+		const targetX = -this.mouseY * maxRotation
+		const targetY = this.mouseX * maxRotation
+		pivot.rotation.x += (targetX - pivot.rotation.x) * 0.1
+		pivot.rotation.y += (targetY - pivot.rotation.y) * 0.1
+	}
 
-		const targetX = this.mouseY * maxRotation // vertical movement → rotate eye around X
-		const targetY = this.mouseX * maxRotation // horizontal movement → rotate eye around Y
+	setupEyePivots() {
+		const createPivot = (eyeballMesh, lensMesh) => {
+			if (!eyeballMesh) return null
 
-		// Apply smooth rotation (optional)
-		eyeMesh.rotation.x += (targetX - eyeMesh.rotation.x) * 0.1
-		eyeMesh.rotation.y += (targetY - eyeMesh.rotation.y) * 0.1
+			// Compute the eyeball's geometric center in rootGroup-local space.
+			// Mesh positions are (0,0,0) after OBJ loading, so geometry-local space
+			// equals rootGroup-local space here.
+			eyeballMesh.geometry.computeBoundingBox()
+			const center = new Vector3()
+			eyeballMesh.geometry.boundingBox.getCenter(center)
+
+			// Place the pivot group at the eyeball center
+			const pivot = new Group()
+			pivot.position.copy(center)
+
+			// Offset both meshes so their geometry center sits at the pivot origin
+			eyeballMesh.position.sub(center)
+			this.rootGroup.remove(eyeballMesh)
+			pivot.add(eyeballMesh)
+
+			if (lensMesh) {
+				lensMesh.position.sub(center)
+				this.rootGroup.remove(lensMesh)
+				pivot.add(lensMesh)
+			}
+
+			this.rootGroup.add(pivot)
+			return pivot
+		}
+
+		this.eyePivotLeft = createPivot(this.eyeball.meshLeft, this.lens.meshLeft)
+		this.eyePivotRight = createPivot(this.eyeball.meshRight, this.lens.meshRight)
 	}
 
 	async loadTexure() {
@@ -1034,13 +1068,14 @@ export class App {
 
 			// this.setCamera(this.camera)
 
+			this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
+			this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
+			this.lens.meshLeft = meshMap.get("LensLeft")
+			this.lens.meshRight = meshMap.get("LensRight")
+			this.setupEyePivots()
 			// this.brows.mesh = meshMap.get("Brows")
-			// this.eyewet.mesh = meshMap.get("EyeWet")
-			// this.lens.meshLeft = meshMap.get("LensLeft")
-			// this.lens.meshRight = meshMap.get("LensRight")
+			// this.eyewet.meshLeft = meshMap.get("EyeWet")
 			// this.lashes.mesh = meshMap.get("Lashes")
-			// this.eyeball.meshLeft = meshMap.get("RealtimeEyeballLeft")
-			// this.eyeball.meshRight = meshMap.get("RealtimeEyeballRight")
 			// this.teeth.upperTeethMesh = meshMap.get("UpperTeeth")
 			// this.teeth.lowerTeethMesh = meshMap.get("LowerTeeth")
 			// this.tongue.tougueMesh = meshMap.get("Tongue")
@@ -1978,8 +2013,9 @@ export class App {
 		}
 
 		this.controls.update()
-		if (this.controls) {
-		}
+
+		if (this.eyePivotLeft) this.updateEyeRotation(this.eyePivotLeft)
+		if (this.eyePivotRight) this.updateEyeRotation(this.eyePivotRight)
 
 		if (this.state.postProcessing) {
 			this.composer.render()

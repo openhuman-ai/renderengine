@@ -90,3 +90,24 @@ This document summarizes the current repository, goals, and a concrete increment
 
 If you'd like, I can now generate the first concrete patch: a tiny `WebGLRenderer` shim (minimal features: `setSize`, `setPixelRatio`, `setClearColor`, `setAnimationLoop`, `render`) that you can progressively expand. Which next step should I take?
 
+**Architecture (code map)**
+
+This project already includes a full Three-style codebase organized into directories of classes and utilities. Below are the major groups with representative filenames so an LLM or reviewer can quickly understand what's present.
+
+- **Core / Geometry / Buffers**: low-level geometry & attribute classes. Examples: [src/core/BufferAttribute.js](src/core/BufferAttribute.js#L1), [src/core/BufferGeometry.js](src/core/BufferGeometry.js#L1), [src/core/GLBufferAttribute.js](src/core/GLBufferAttribute.js#L1), [src/geometries/BoxGeometry.js](src/geometries/BoxGeometry.js#L1).
+- **Renderers & Backends**: main rendering drivers & platform backends. Examples: [src/renderers/WebGLRenderer.js](src/renderers/WebGLRenderer.js#L1), [src/renderers/webgl/WebGLProgram.js](src/renderers/webgl/WebGLProgram.js#L1), [src/renderers/webgpu/WebGPURenderer.js](src/renderers/webgpu/WebGPURenderer.js#L1).
+- **Materials & Shaders**: material classes and shader libraries. Examples: [src/materials/MeshStandardMaterial.js](src/materials/MeshStandardMaterial.js#L1), [src/materials/ShaderMaterial.js](src/materials/ShaderMaterial.js#L1), shader chunks and libs: [src/renderers/shaders/ShaderChunk.js](src/renderers/shaders/ShaderChunk.js#L1), [src/renderers/shaders/ShaderLib/meshphysical.glsl.js](src/renderers/shaders/ShaderLib/meshphysical.glsl.js#L1).
+- **Objects & Scene graph**: scene nodes, meshes, skinned objects. Examples: [src/objects/Mesh.js](src/objects/Mesh.js#L1), [src/objects/SkinnedMesh.js](src/objects/SkinnedMesh.js#L1), [src/core/Object3D.js](src/core/Object3D.js#L1), [src/objects/Skeleton.js](src/objects/Skeleton.js#L1).
+- **Cameras & Controls**: camera types and user controls. Examples: [src/cameras/PerspectiveCamera.js](src/cameras/PerspectiveCamera.js#L1), [src/jsm/controls/OrbitControls.js](src/jsm/controls/OrbitControls.js#L1).
+- **Animation system**: clips, mixers, and keyframe tracks. Examples: [src/animation/AnimationMixer.js](src/animation/AnimationMixer.js#L1), [src/animation/AnimationClip.js](src/animation/AnimationClip.js#L1), [src/animation/tracks/NumberKeyframeTrack.js](src/animation/tracks/NumberKeyframeTrack.js#L1).
+- **Loaders & IO**: GLTF/OBJ/EXR/RGBE loaders and file utilities. Examples: [src/jsm/loaders/GLTFLoader.js](src/jsm/loaders/GLTFLoader.js#L1), [src/loaders/LoadingManager.js](src/loaders/LoadingManager.js#L1), [src/jsm/loaders/RGBELoader.js](src/jsm/loaders/RGBELoader.js#L1), [src/jsm/loaders/EXRLoader.js](src/jsm/loaders/EXRLoader.js#L1).
+- **Post-processing & Effects**: composer and passes. Examples: [src/jsm/postprocessing/EffectComposer.js](src/jsm/postprocessing/EffectComposer.js#L1), [src/jsm/postprocessing/RenderPass.js](src/jsm/postprocessing/RenderPass.js#L1), [src/jsm/postprocessing/ShaderPass.js](src/jsm/postprocessing/ShaderPass.js#L1).
+- **Shaders (passes & utilities)**: many ready-to-use full-screen and utility shaders under `src/renderers/shaders` and `src/jsm/shaders`. Examples: [src/jsm/shaders/CopyShader.js](src/jsm/shaders/CopyShader.js#L1), [src/renderers/shaders/ShaderChunk.js](src/renderers/shaders/ShaderChunk.js#L1).
+- **Nodes & Material Graph**: node-based shader system and transpilers (advanced material authoring). Examples: [src/nodes/Nodes.js](src/nodes/Nodes.js#L1), [src/nodes/core/Node.js](src/nodes/core/Node.js#L1).
+- **Helpers, GUI & Utilities**: debug helpers and GUI controls. Examples: [src/helpers/AxesHelper.js](src/helpers/AxesHelper.js#L1), [src/gui/GUI.js](src/gui/GUI.js#L1).
+- **Textures & Cube maps**: texture classes and utilities. Examples: [src/textures/Texture.js](src/textures/Texture.js#L1), [src/textures/DataTexture.js](src/textures/DataTexture.js#L1).
+- **Lights & Environments**: light types and environment utilities. Examples: [src/lights/DirectionalLight.js](src/lights/DirectionalLight.js#L1), [src/jsm/environments/RoomEnvironment.js](src/jsm/environments/RoomEnvironment.js#L1).
+
+Use this map when you need an LLM to reference a specific class or file: the file names above match the classes the codebase exposes, so you can directly import or replace those modules during the migration.
+
+
