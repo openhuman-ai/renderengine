@@ -12,11 +12,11 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
-    "vite": "^7.0.0",
-    "vite-plugin-glsl": "^1.5.1"
+    "prettier": "^3.8.3",
+    "vite": "^8.0.13",
+    "vite-plugin-glsl": "^1.6.0"
   },
   "dependencies": {
-    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304"
+    "@mediapipe/tasks-vision": "^0.10.35"
   }
 }
