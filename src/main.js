@@ -328,7 +328,7 @@ export class App {
 			this.createPostProcessing()
 		}
 		this.addHelpers()
-		this.createGUI()
+		// this.createGUI()
 
 		this.setupEventListeners()
 
