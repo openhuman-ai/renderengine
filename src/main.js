@@ -10,6 +10,7 @@ import { Mesh } from "./objects/Mesh"
 import { MeshPhongMaterial } from "./materials/MeshPhongMaterial"
 import { OrbitControls } from "./jsm/controls/OrbitControls"
 import { PerspectiveCamera } from "./cameras/PerspectiveCamera"
+import { OrthographicCamera } from "./cameras/OrthographicCamera"
 import { PointLight } from "./lights/PointLight"
 import { RoomEnvironment } from "./jsm/environments/RoomEnvironment"
 import { Scene } from "./scenes/Scene"
@@ -19,13 +20,29 @@ import { AnimationClip } from "./animation/AnimationClip"
 import { NumberKeyframeTrack } from "./animation/tracks/NumberKeyframeTrack"
 import {
 	ACESFilmicToneMapping,
+	AlwaysDepth,
+	BackSide,
+	CustomBlending,
+	DepthFormat,
 	DoubleSide,
 	EquirectangularReflectionMapping,
 	FrontSide,
+	GLSL3,
+	HalfFloatType,
+	LinearFilter,
+	LinearMipmapLinearFilter,
 	LinearSRGBColorSpace,
 	LinearToneMapping,
+	NoBlending,
 	NormalAnimationBlendMode,
+	OneFactor,
+	OneMinusSrcAlphaFactor,
+	RepeatWrapping,
+	RGBAFormat,
 	SRGBColorSpace,
+	SrcAlphaFactor,
+	UnsignedShortType,
+	ZeroFactor,
 } from "./constants"
 import { aniTime, aniValues } from "./data"
 import { RGBELoader } from "./jsm/loaders/RGBELoader"
@@ -40,6 +57,7 @@ import { BufferGeometry } from "./core/BufferGeometry"
 import { MeshStandardMaterial } from "./materials/MeshStandardMaterial"
 import { BufferAttribute, Float32BufferAttribute, Uint16BufferAttribute } from "./core/BufferAttribute"
 import { SphereGeometry } from "./geometries/SphereGeometry"
+import { PlaneGeometry } from "./geometries/PlaneGeometry"
 import { MeshPhysicalMaterial } from "./materials/MeshPhysicalMaterial"
 import { TextureLoader } from "./loaders/TextureLoader"
 import { Color } from "./math/Color"
@@ -73,6 +91,157 @@ import { Skeleton } from "./objects/Skeleton"
 import { ShaderLib } from "./renderers/shaders/ShaderLib"
 import { UniformsUtils } from "./renderers/shaders/UniformsUtils"
 import { ShaderMaterial } from "./materials/ShaderMaterial"
+import { RawShaderMaterial } from "./materials/RawShaderMaterial"
+import { WebGLRenderTarget } from "./renderers/WebGLRenderTarget"
+import { DepthTexture } from "./textures/DepthTexture"
+
+const HAIR_REFERENCE_HEAD_BOUNDS = {
+	center: new Vector3((-4.7792 + 3.6015) * 0.5, (-3.674 + 3.6739) * 0.5, 12.3833 * 0.5),
+	height: 12.3833,
+}
+
+const HAIR_ACCUM_VERTEX_SHADER = `precision highp float;
+
+in vec3 position;
+in vec2 uv;
+in vec3 normal;
+in vec4 tangent;
+
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 viewMatrix;
+uniform mat3 normalMatrix;
+uniform vec3 uLightPosition;
+uniform vec3 uHairColor;
+uniform float uHairOpacity;
+
+out vec3 vPosition;
+out vec2 vUV;
+out vec3 vNormal;
+out vec3 vTangent;
+out vec3 vLightPos;
+flat out vec4 vColor;
+
+void main() {
+	vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
+	vLightPos = (viewMatrix * vec4(uLightPosition, 1.0)).xyz;
+	vUV = uv;
+	vNormal = normalize(normalMatrix * normal);
+	vec3 transformedTangent = normalize(normalMatrix * tangent.xyz);
+	vTangent = normalize(cross(vNormal, transformedTangent));
+	vColor = vec4(uHairColor, uHairOpacity);
+	gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`
+
+const HAIR_ACCUM_FRAGMENT_SHADER = `precision highp float;
+
+uniform sampler2D uTexture;
+uniform int uWeighted;
+uniform int uWeightFunc;
+
+in vec3 vPosition;
+in vec2 vUV;
+in vec3 vNormal;
+in vec3 vTangent;
+in vec3 vLightPos;
+flat in vec4 vColor;
+
+layout(location = 0) out vec4 accumColor;
+layout(location = 1) out float accumAlpha;
+
+vec3 shiftTangent(vec3 T, vec3 N, float shift) {
+	return normalize(T + shift * N);
+}
+
+float strandSpecular(vec3 T, vec3 V, vec3 L, float exponent) {
+	vec3 H = normalize(L + V);
+	float dotTH = dot(T, H);
+	float sinTH = sin(acos(clamp(dotTH, -1.0, 1.0)));
+	float dirAtten = smoothstep(-1.0, 0.0, dotTH);
+	return dirAtten * pow(sinTH, exponent);
+}
+
+vec3 computeScheuermannLighting() {
+	vec3 tangentDir = normalize(vTangent);
+	vec3 normalDir = normalize(vNormal);
+	vec3 lightDir = normalize(vLightPos - vPosition);
+	vec3 viewDir = normalize(-vPosition);
+	vec3 shiftedTangent = shiftTangent(tangentDir, normalDir, -0.5);
+	vec3 ambient = vColor.rgb * 0.2;
+	vec3 diffuse = vColor.rgb * clamp(dot(normalDir, lightDir), 0.0, 1.0);
+	vec3 specular = clamp(vColor.rgb * strandSpecular(shiftedTangent, viewDir, lightDir, 120.0), 0.0, 1.0);
+	return ambient + diffuse + clamp(dot(normalDir, lightDir) * specular, 0.0, 1.0);
+}
+
+float weight(float z, float a) {
+	if (uWeightFunc == 0) {
+		float tmp = 10.0 * (1.0 - 0.99 * z) * a;
+		tmp *= tmp * tmp;
+		return clamp(tmp, 0.01, 30.0);
+	}
+	if (uWeightFunc == 1) {
+		return a * max(pow(10.0, -2.0), min(3000.0, 0.03 / (pow(10.0, -5.0) + pow((abs(z) / 200.0), 4.0))));
+	}
+	if (uWeightFunc == 2) {
+		float tmp = 1.0 - z * 0.99;
+		tmp *= tmp * tmp * 1e4;
+		return clamp(a * tmp, 1e-3, 3e4);
+	}
+	if (uWeightFunc == 3) {
+		float d = 1.0 - z * 0.99;
+		float d2 = d * d;
+		float d4 = d2 * d2;
+		float d8 = d4 * d4;
+		float d16 = d8 * d8;
+		float depthWeight = d + 10.0 * d2 + 1e2 * d4 + 1e5 * d16;
+		return clamp(a * depthWeight, 0.01, 1e4);
+	}
+	return clamp(pow(min(1.0, a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - z * 0.9, 3.0), 1e-2, 3e3);
+}
+
+void main() {
+	float alpha = texture(uTexture, vUV).r * vColor.a;
+	if (alpha < 0.003) discard;
+	vec4 color = vec4(computeScheuermannLighting(), alpha);
+	color.rgb *= color.a;
+	float w = uWeighted == 1 ? weight(gl_FragCoord.z, color.a) : 1.0;
+	accumColor = vec4(color.rgb * w, color.a);
+	accumAlpha = color.a * w;
+}`
+
+const HAIR_FULLSCREEN_VERTEX_SHADER = `precision highp float;
+
+in vec3 position;
+
+void main() {
+	gl_Position = vec4(position.xy, 0.0, 1.0);
+}`
+
+const HAIR_COMPOSITE_FRAGMENT_SHADER = `precision highp float;
+
+uniform sampler2D uAccumulate;
+uniform sampler2D uAccumulateAlpha;
+
+out vec4 fragColor;
+
+void main() {
+	ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+	vec4 accum = texelFetch(uAccumulate, fragCoord, 0);
+	float revealage = accum.a;
+	float weightedAlpha = texelFetch(uAccumulateAlpha, fragCoord, 0).r;
+	fragColor = vec4(accum.rgb / clamp(weightedAlpha, 0.001, 50000.0), revealage);
+}`
+
+const HAIR_SCREEN_FRAGMENT_SHADER = `precision highp float;
+
+uniform sampler2D screen;
+
+out vec4 fragColor;
+
+void main() {
+	ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+	fragColor = vec4(pow(texelFetch(screen, fragCoord, 0).rgb, vec3(1.0 / 2.2)), 1.0);
+}`
 
 const loadingManager = new LoadingManager()
 loadingManager.onProgress = (url, loaded, total) => {
@@ -243,6 +412,24 @@ export class App {
 	lashes = {
 		mesh: null,
 		material: null,
+	}
+	hair = {
+		mesh: null,
+		material: null,
+		alpha: null,
+		enabled: true,
+		drawFrontFace: true,
+		drawBackFace: true,
+		opaqueTarget: null,
+		accumTarget: null,
+		depthTexture: null,
+		compositeMaterial: null,
+		screenMaterial: null,
+		fullscreenScene: null,
+		fullscreenCamera: null,
+		fullscreenQuad: null,
+		clearColor: new Color(0, 0, 0),
+		lightPosition: new Vector3(15, 0, 7),
 	}
 	eyeball = {
 		meshLeft: null,
@@ -546,6 +733,17 @@ export class App {
 		this.camera.aspect = window.innerWidth / window.innerHeight
 		this.camera.updateProjectionMatrix()
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
+		this.resizeHairRenderTargets()
+	}
+
+	resizeHairRenderTargets() {
+		if (!this.hair.opaqueTarget || !this.hair.accumTarget) return
+
+		const pixelRatio = Math.min(window.devicePixelRatio, 2)
+		const width = Math.max(1, Math.floor(window.innerWidth * pixelRatio))
+		const height = Math.max(1, Math.floor(window.innerHeight * pixelRatio))
+		this.hair.opaqueTarget.setSize(width, height)
+		this.hair.accumTarget.setSize(width, height)
 	}
 
 	loadScene() {
@@ -689,6 +887,12 @@ export class App {
 
 		this.face.displacement = textureLoader.load("/facetoy/displacement/displacement_face.png")
 		this.eyeball.displacement = textureLoader.load("/facetoy/displacement/displacement_eyeball.png")
+
+		this.hair.alpha = textureLoader.load("/hair/resources/T_StandardWSet_Alpha.png")
+		this.hair.alpha.wrapS = RepeatWrapping
+		this.hair.alpha.wrapT = RepeatWrapping
+		this.hair.alpha.magFilter = LinearFilter
+		this.hair.alpha.minFilter = LinearMipmapLinearFilter
 	}
 
 	async loadMaterial() {
@@ -794,6 +998,30 @@ export class App {
 			ior: 1.45, // KHR_materials_ior
 			specularColor: new Color(2, 2, 2), // KHR_materials_specular
 			emissive: new Color(0, 0, 0), // emissiveFactor
+		})
+
+		this.hair.material = new RawShaderMaterial({
+			name: "hair-weighted-oit-accum",
+			glslVersion: GLSL3,
+			vertexShader: HAIR_ACCUM_VERTEX_SHADER,
+			fragmentShader: HAIR_ACCUM_FRAGMENT_SHADER,
+			uniforms: {
+				uTexture: { value: this.hair.alpha },
+				uHairColor: { value: new Color(45 / 255, 45 / 255, 45 / 255) },
+				uHairOpacity: { value: 0.99 },
+				uWeighted: { value: 1 },
+				uWeightFunc: { value: 2 },
+				uLightPosition: { value: this.hair.lightPosition },
+			},
+			depthTest: true,
+			depthWrite: false,
+			transparent: true,
+			blending: CustomBlending,
+			blendSrc: OneFactor,
+			blendDst: OneFactor,
+			blendSrcAlpha: ZeroFactor,
+			blendDstAlpha: OneMinusSrcAlphaFactor,
+			side: FrontSide,
 		})
 
 		this.eyeball.material = new MeshPhysicalMaterial({
@@ -1073,6 +1301,9 @@ export class App {
 			this.lens.meshLeft = meshMap.get("LensLeft")
 			this.lens.meshRight = meshMap.get("LensRight")
 			this.setupEyePivots()
+			this.loadHairAssets(objloader, meshMap.get("Head")).catch((error) => {
+				console.error("Failed to load weighted OIT hair", error)
+			})
 			// this.brows.mesh = meshMap.get("Brows")
 			// this.eyewet.meshLeft = meshMap.get("EyeWet")
 			// this.lashes.mesh = meshMap.get("Lashes")
@@ -1242,6 +1473,168 @@ export class App {
 				reject
 			)
 		})
+	}
+
+	ensureHairTangents(geometry) {
+		if (!geometry.attributes.normal) {
+			geometry.computeVertexNormals()
+		}
+
+		if (!geometry.attributes.tangent && geometry.index && geometry.attributes.uv) {
+			geometry.computeTangents()
+		}
+
+		if (!geometry.attributes.tangent) {
+			const tangent = new Float32Array(geometry.attributes.position.count * 4)
+			for (let i = 0; i < geometry.attributes.position.count; i++) {
+				const offset = i * 4
+				tangent[offset] = 1
+				tangent[offset + 1] = 0
+				tangent[offset + 2] = 0
+				tangent[offset + 3] = 1
+			}
+			geometry.setAttribute("tangent", new Float32BufferAttribute(tangent, 4))
+		}
+	}
+
+	fitHairToHead(hairMesh, headMesh) {
+		if (!hairMesh || !headMesh) return
+
+		headMesh.geometry.computeBoundingBox()
+		const headBox = headMesh.geometry.boundingBox
+		const headCenter = headBox.getCenter(new Vector3())
+		const headSize = headBox.getSize(new Vector3())
+		const scale = headSize.y / HAIR_REFERENCE_HEAD_BOUNDS.height
+		const referenceCenter = HAIR_REFERENCE_HEAD_BOUNDS.center
+		const geometry = hairMesh.geometry
+		const position = geometry.attributes.position
+		const normal = geometry.attributes.normal
+		const tangent = geometry.attributes.tangent
+
+		for (let i = 0; i < position.count; i++) {
+			const x = position.getX(i)
+			const y = position.getY(i)
+			const z = position.getZ(i)
+			position.setXYZ(
+				i,
+				headCenter.x + (y - referenceCenter.y) * scale,
+				headCenter.y + (z - referenceCenter.z) * scale,
+				headCenter.z + (x - referenceCenter.x) * scale
+			)
+
+			if (normal) {
+				const nx = normal.getX(i)
+				const ny = normal.getY(i)
+				const nz = normal.getZ(i)
+				normal.setXYZ(i, ny, nz, nx)
+			}
+
+			if (tangent) {
+				const tx = tangent.getX(i)
+				const ty = tangent.getY(i)
+				const tz = tangent.getZ(i)
+				tangent.setXYZ(i, ty, tz, tx)
+			}
+		}
+
+		position.needsUpdate = true
+		if (normal) normal.needsUpdate = true
+		if (tangent) tangent.needsUpdate = true
+		geometry.computeBoundingSphere()
+	}
+
+	loadHairAssets(objloader, headMesh) {
+		return new Promise((resolve, reject) => {
+			objloader.load(
+				"/hair/resources/hair__.obj",
+				(obj) => {
+					let hairMesh = null
+
+					obj.traverse((child) => {
+						if (child.isMesh) {
+							child.name = "WeightedOITHair"
+							child.material = this.hair.material
+							child.renderOrder = 100
+							child.frustumCulled = false
+							child.visible = false
+							this.ensureHairTangents(child.geometry)
+							hairMesh = child
+						}
+					})
+
+					if (!hairMesh) {
+						reject(new Error("No mesh found in /hair/resources/hair__.obj"))
+						return
+					}
+
+					this.fitHairToHead(hairMesh, headMesh)
+					this.hair.mesh = hairMesh
+					this.rootGroup.add(hairMesh)
+					this.createHairRenderTargets()
+					resolve(hairMesh)
+				},
+				undefined,
+				reject
+			)
+		})
+	}
+
+	createHairRenderTargets() {
+		const width = Math.max(1, Math.floor(window.innerWidth * Math.min(window.devicePixelRatio, 2)))
+		const height = Math.max(1, Math.floor(window.innerHeight * Math.min(window.devicePixelRatio, 2)))
+		const targetOptions = {
+			type: HalfFloatType,
+			format: RGBAFormat,
+			minFilter: LinearFilter,
+			magFilter: LinearFilter,
+			depthBuffer: true,
+			stencilBuffer: false,
+		}
+
+		this.hair.depthTexture = new DepthTexture(width, height, UnsignedShortType)
+		this.hair.depthTexture.format = DepthFormat
+
+		this.hair.opaqueTarget = new WebGLRenderTarget(width, height, targetOptions)
+		this.hair.opaqueTarget.depthTexture = this.hair.depthTexture
+		this.hair.accumTarget = new WebGLRenderTarget(width, height, { ...targetOptions, count: 2 })
+		this.hair.accumTarget.depthTexture = this.hair.depthTexture
+
+		this.hair.compositeMaterial = new RawShaderMaterial({
+			name: "hair-weighted-oit-composite",
+			glslVersion: GLSL3,
+			vertexShader: HAIR_FULLSCREEN_VERTEX_SHADER,
+			fragmentShader: HAIR_COMPOSITE_FRAGMENT_SHADER,
+			uniforms: {
+				uAccumulate: { value: this.hair.accumTarget.textures[0] },
+				uAccumulateAlpha: { value: this.hair.accumTarget.textures[1] },
+			},
+			depthTest: false,
+			depthWrite: false,
+			depthFunc: AlwaysDepth,
+			transparent: true,
+			blending: CustomBlending,
+			blendSrc: OneMinusSrcAlphaFactor,
+			blendDst: SrcAlphaFactor,
+		})
+
+		this.hair.screenMaterial = new RawShaderMaterial({
+			name: "hair-screen-gamma",
+			glslVersion: GLSL3,
+			vertexShader: HAIR_FULLSCREEN_VERTEX_SHADER,
+			fragmentShader: HAIR_SCREEN_FRAGMENT_SHADER,
+			uniforms: {
+				screen: { value: this.hair.opaqueTarget.texture },
+			},
+			depthTest: false,
+			depthWrite: false,
+			depthFunc: AlwaysDepth,
+			blending: NoBlending,
+		})
+
+		this.hair.fullscreenScene = new Scene()
+		this.hair.fullscreenCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1)
+		this.hair.fullscreenQuad = new Mesh(new PlaneGeometry(2, 2), this.hair.screenMaterial)
+		this.hair.fullscreenScene.add(this.hair.fullscreenQuad)
 	}
 
 	async loadHair() {
@@ -1991,6 +2384,94 @@ export class App {
 		})
 	}
 
+	renderHairAccumulationPass(side) {
+		this.hair.material.side = side
+		this.hair.fullscreenQuad.visible = false
+
+		this.hair.mesh.visible = false
+		this.renderer.setRenderTarget(this.hair.accumTarget)
+		this.setActiveDrawBuffers(2)
+		this.renderer.setClearColor(this.hair.clearColor, 1)
+		this.renderer.clear(true, true, true)
+		this.renderer.render(this.scene, this.camera)
+		this.renderer.setClearColor(this.hair.clearColor, 1)
+		this.renderer.clear(true, false, false)
+
+		this.hair.mesh.visible = true
+		const visibility = []
+		this.rootGroup.traverse((object) => {
+			if (object !== this.rootGroup && object !== this.hair.mesh) {
+				visibility.push([object, object.visible])
+				object.visible = false
+			}
+		})
+
+		this.renderer.render(this.scene, this.camera)
+		visibility.forEach(([object, visible]) => {
+			object.visible = visible
+		})
+	}
+
+	compositeHairPass() {
+		this.hair.mesh.visible = false
+		this.hair.fullscreenQuad.visible = true
+		this.hair.fullscreenQuad.material = this.hair.compositeMaterial
+
+		this.renderer.setRenderTarget(this.hair.opaqueTarget)
+		this.setActiveDrawBuffers(1)
+		this.renderer.render(this.hair.fullscreenScene, this.hair.fullscreenCamera)
+	}
+
+	setActiveDrawBuffers(count, defaultFramebuffer = false) {
+		const gl = this.renderer.getContext()
+		if (!gl.drawBuffers) return
+
+		if (defaultFramebuffer) {
+			gl.drawBuffers([gl.BACK])
+			return
+		}
+
+		gl.drawBuffers(count === 2 ? [gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1] : [gl.COLOR_ATTACHMENT0])
+	}
+
+	renderWithHairOIT() {
+		this.resizeHairRenderTargets()
+
+		const previousAutoClear = this.renderer.autoClear
+		this.renderer.autoClear = false
+		this.hair.mesh.visible = false
+
+		this.renderer.setRenderTarget(this.hair.opaqueTarget)
+		this.setActiveDrawBuffers(1)
+		this.renderer.setClearColor(this.backgroundColor, 1)
+		this.renderer.clear(true, true, true)
+		this.renderer.render(this.scene, this.camera)
+
+		if (this.hair.enabled) {
+			if (this.hair.drawBackFace) {
+				this.renderHairAccumulationPass(BackSide)
+				this.compositeHairPass()
+			}
+
+			if (this.hair.drawFrontFace) {
+				this.renderHairAccumulationPass(FrontSide)
+				this.compositeHairPass()
+			}
+		}
+
+		this.hair.mesh.visible = false
+		this.hair.fullscreenQuad.visible = true
+		this.hair.fullscreenQuad.material = this.hair.screenMaterial
+		this.hair.screenMaterial.uniforms.screen.value = this.hair.opaqueTarget.texture
+		this.renderer.setRenderTarget(null)
+		this.setActiveDrawBuffers(1, true)
+		this.renderer.setClearColor(this.backgroundColor, 1)
+		this.renderer.clear(true, true, true)
+		this.renderer.render(this.hair.fullscreenScene, this.hair.fullscreenCamera)
+		this.renderer.setRenderTarget(null)
+		this.renderer.autoClear = previousAutoClear
+	}
+
 	render() {
 		const delta = this.clock.getDelta()
 
@@ -2019,6 +2500,8 @@ export class App {
 
 		if (this.state.postProcessing) {
 			this.composer.render()
+		} else if (this.hair.mesh && this.hair.opaqueTarget && this.hair.accumTarget) {
+			this.renderWithHairOIT()
 		} else {
 			this.renderer.render(this.scene, this.camera)
 		}
