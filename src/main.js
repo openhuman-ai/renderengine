@@ -132,7 +132,7 @@ export class App {
 		bgColor: "#191919",
 		environment: environments[1].name,
 		autoRotate: false,
-		background: true,
+		background: false,
 		focalLength: 60,
 		fov: 60,
 		toneMapping: ACESFilmicToneMapping,
@@ -345,7 +345,8 @@ export class App {
 		this.canvas = canvas
 
 		this.renderer = new WebGLRenderer({ canvas: canvas, antialias: true, alpha: true })
-		this.renderer.setClearColor(0xcccccc)
+		this.renderer.setClearColor(0x000000, 0)
+		this.renderer.setClearAlpha(0)
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
@@ -362,7 +363,7 @@ export class App {
 	createScene() {
 		this.backgroundColor = new Color(this.state.bgColor)
 		this.scene = new Scene()
-		this.scene.background = this.backgroundColor
+		this.scene.background = null
 	}
 
 	createEnvironment() {
@@ -1440,6 +1441,9 @@ export class App {
 
 	updateBackground() {
 		this.backgroundColor.set(this.state.bgColor)
+		if (!this.state.background) {
+			this.scene.background = null
+		}
 	}
 
 	logGLSL = false
@@ -1909,7 +1913,7 @@ export class App {
 		// console.log("updateEnvironment", environment)
 		this.getEnvironmentTexture(environment).then(({ envMap }) => {
 			this.scene.environment = envMap
-			this.scene.background = this.state.background ? envMap : this.backgroundColor
+			this.scene.background = this.state.background ? envMap : null
 		})
 	}
 
